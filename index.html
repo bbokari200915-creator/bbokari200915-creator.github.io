@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouShop 数据仪表板</title>
+    <title>YouShop 數據儀表板</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
@@ -336,65 +336,65 @@
 
         <div class="navigation">
             <div class="nav-tabs">
-                <button class="nav-tab active" onclick="showPage('comparison')">📊 最新数据比較</button>
-                <button class="nav-tab" onclick="showPage('trends')">📈 趋势分析</button>
+                <button class="nav-tab active" onclick="showPage('comparison')">📊 最新數據比較</button>
+                <button class="nav-tab" onclick="showPage('trends')">📈 趨勢分析</button>
                 <button class="nav-tab" onclick="showPage('differences')">📊 差值分析</button>
             </div>
         </div>
 
-        <!-- 页面1: 最新数据比較 -->
+        <!-- 頁面1: 最新數據比較 -->
         <div id="comparison" class="page active">
             <div class="sync-controls-bar">
-                <button class="sync-btn" onclick="startAutoSync()">🔄 開始自动同步</button>
+                <button class="sync-btn" onclick="startAutoSync()">🔄 開始自動同步</button>
                 <button class="stop-btn" onclick="stopAutoSync()" disabled>⏹️ 停止同步</button>
                 <button class="manual-sync-btn" onclick="manualSync()">⚡ 立即同步</button>
                 <div class="sync-info">
-                    <span id="syncStatus">未连接</span>
+                    <span id="syncStatus">未連接</span>
                     <span id="lastSync"></span>
                     <span id="nextSync"></span>
                 </div>
             </div>
             <div id="status" class="status" style="display:none;"></div>
             <div class="members-comparison">
-                <h2>📈 最新数据詳細比較</h2>
+                <h2>📈 最新數據詳細比較</h2>
                 <div class="comparison-grid" id="comparisonGrid">
                 </div>
             </div>
         </div>
 
-        <!-- 页面2: 趋势分析 -->
+        <!-- 頁面2: 趨勢分析 -->
         <div id="trends" class="page">
             <div class="charts-grid">
                 <div class="chart-container">
-                    <div class="chart-title">💖 总人气值趨勢</div>
+                    <div class="chart-title">💖 總人氣值趨勢</div>
                     <div class="chart-canvas">
                         <canvas id="totalPopularityChart"></canvas>
                     </div>
                 </div>
 
                 <div class="chart-container">
-                    <div class="chart-title">🤝 总助力人数趨勢</div>
+                    <div class="chart-title">🤝 總助力人數趨勢</div>
                     <div class="chart-canvas">
                         <canvas id="totalSupportChart"></canvas>
                     </div>
                 </div>
 
                 <div class="chart-container">
-                    <div class="chart-title">🔥 今日人气值趨勢</div>
+                    <div class="chart-title">🔥 今日人氣值趨勢</div>
                     <div class="chart-canvas">
                         <canvas id="todayPopularityChart"></canvas>
                     </div>
                 </div>
 
                 <div class="chart-container">
-                    <div class="chart-title">👥 今日参与人数趨勢</div>
+                    <div class="chart-title">👥 今日參與人數趨勢</div>
                     <div class="chart-canvas">
                         <canvas id="todayParticipantsChart"></canvas>
                     </div>
                 </div>
 
                 <div class="chart-container">
-                    <div class="chart-title">📊 今日人数趨勢</div>
+                    <div class="chart-title">📊 今日人數趨勢</div>
                     <div class="chart-canvas">
                         <canvas id="todayCountChart"></canvas>
                     </div>
@@ -402,39 +402,39 @@
             </div>
         </div>
 
-        <!-- 页面3: 差值分析 -->
+        <!-- 頁面3: 差值分析 -->
         <div id="differences" class="page">
             <div class="charts-grid">
                 <div class="chart-container">
-                    <div class="chart-title">💖 总人气值差值</div>
+                    <div class="chart-title">💖 總人氣值差值</div>
                     <div class="chart-canvas">
                         <canvas id="totalPopularityDiffChart"></canvas>
                     </div>
                 </div>
 
                 <div class="chart-container">
-                    <div class="chart-title">🤝 总助力人数差值</div>
+                    <div class="chart-title">🤝 總助力人數差值</div>
                     <div class="chart-canvas">
                         <canvas id="totalSupportDiffChart"></canvas>
                     </div>
                 </div>
 
                 <div class="chart-container">
-                    <div class="chart-title">🔥 今日人气值差值</div>
+                    <div class="chart-title">🔥 今日人氣值差值</div>
                     <div class="chart-canvas">
                         <canvas id="todayPopularityDiffChart"></canvas>
                     </div>
                 </div>
 
                 <div class="chart-container">
-                    <div class="chart-title">👥 今日参与人数差值</div>
+                    <div class="chart-title">👥 今日參與人數差值</div>
                     <div class="chart-canvas">
                         <canvas id="todayParticipantsDiffChart"></canvas>
                     </div>
                 </div>
 
                 <div class="chart-container">
-                    <div class="chart-title">📊 今日人数差值</div>
+                    <div class="chart-title">📊 今日人數差值</div>
                     <div class="chart-canvas">
                         <canvas id="todayCountDiffChart"></canvas>
                     </div>
@@ -461,13 +461,13 @@
             statusElement.className = '';
             
             switch(status) {
-                case '🟢 已連接 - 自动同步中':
+                case '🟢 已連接 - 自動同步中':
                     statusElement.classList.add('status', 'connected');
                     break;
                 case '🔄 同步中...':
                     statusElement.classList.add('status', 'syncing');
                     break;
-                case '❌ 连接错误':
+                case '❌ 連接錯誤':
                     statusElement.classList.add('status', 'error');
                     break;
                 default:
@@ -475,7 +475,7 @@
             }
             
             if (message) {
-                showStatus(message, status.includes('错误') ? 'error' : 'success');
+                showStatus(message, status.includes('錯誤') ? 'error' : 'success');
             }
             
             if (lastSyncTime) {
@@ -506,7 +506,7 @@
                 return;
             }
             
-            // 停止現有的自动同步
+            // 停止現有的自動同步
             if (autoSyncInterval) {
                 clearInterval(autoSyncInterval);
             }
@@ -525,7 +525,7 @@
             // 更新UI狀態
             document.querySelector('.sync-btn').disabled = true;
             document.querySelector('.stop-btn').disabled = false;
-            updateSyncStatus('🟢 已連接 - 自动同步中', '自动同步已啟動，每分鐘更新一次');
+            updateSyncStatus('🟢 已連接 - 自動同步中', '自動同步已啟動，每分鐘更新一次');
         }
 
         function stopAutoSync() {
@@ -539,7 +539,7 @@
             // 更新UI狀態
             document.querySelector('.sync-btn').disabled = false;
             document.querySelector('.stop-btn').disabled = true;
-            updateSyncStatus('⏹️ 已停止', '自动同步已停止');
+            updateSyncStatus('⏹️ 已停止', '自動同步已停止');
         }
 
         function manualSync() {
@@ -572,7 +572,7 @@
                     }
                     csvText = await response.text();
                 } catch (corsError) {
-                    // 如果遇到CORS错误，使用代理服務
+                    // 如果遇到CORS錯誤，使用代理服務
                     console.log('直接存取失敗，嘗試使用代理服務...');
                     
                     // 使用公開的CORS代理服務
@@ -598,7 +598,7 @@
                     }
                     
                     if (!success) {
-                        throw new Error('无法透過代理服務存取 Google Sheets。请确认：\n1. 試算表已設定為公開存取\n2. 網路連線正常\n3. 或嘗試手動上傳CSV文件');
+                        throw new Error('無法透過代理服務存取 Google Sheets。請確認：\n1. 試算表已設定為公開存取\n2. 網路連線正常\n3. 或嘗試手動上傳CSV檔案');
                     }
                 }
                 
@@ -607,9 +607,9 @@
                     throw new Error('獲取的資料為空，請檢查Google Sheets連結是否正確');
                 }
                 
-                // 檢查是否包含错误訊息（Google Sheets错误页面）
+                // 檢查是否包含錯誤訊息（Google Sheets錯誤頁面）
                 if (csvText.includes('<html') || csvText.includes('<!DOCTYPE')) {
-                    throw new Error('獲取的不是CSV資料，可能是權限問題。请确认：\n1. 試算表設定為「知道連結的使用者可檢視」\n2. gid參數正確');
+                    throw new Error('獲取的不是CSV資料，可能是權限問題。請確認：\n1. 試算表設定為「知道連結的使用者可檢視」\n2. gid參數正確');
                 }
                 
                 // 解析 CSV 資料
@@ -628,14 +628,14 @@
                             const newData = results.data.filter(row => row.成員 && (row.成員 === 'Felix' || row.成員 === 'Hyunjin'));
                             
                             if (newData.length === 0) {
-                                // 显示可用的欄位名稱來幫助除錯
+                                // 顯示可用的欄位名稱來幫助除錯
                                 const availableFields = results.meta.fields || Object.keys(results.data[0] || {});
-                                updateSyncStatus('❌ 连接错误', `未找到Felix或Hyunjin的資料。\n可用欄位：${availableFields.join(', ')}\n请确认資料表中的成員欄位包含正確的名稱。`);
+                                updateSyncStatus('❌ 連接錯誤', `未找到Felix或Hyunjin的資料。\n可用欄位：${availableFields.join(', ')}\n請確認資料表中的成員欄位包含正確的名稱。`);
                                 return;
                             }
 
                             // 排序資料按時間
-                            newData.sort((a, b) => parseDateTime(a.执行时间) - parseDateTime(b.执行时间));
+                            newData.sort((a, b) => parseDateTime(a.執行時間) - parseDateTime(b.執行時間));
 
                             // 檢查是否有新資料
                             const hasNewData = !globalData.length || JSON.stringify(newData) !== JSON.stringify(globalData);
@@ -643,11 +643,11 @@
                             globalData = newData;
                             lastSyncTime = new Date();
                             
-                            // 更新仪表板
+                            // 更新儀表板
                             createDashboard();
                             
                             updateSyncStatus(
-                                autoSyncInterval ? '🟢 已連接 - 自动同步中' : '✅ 同步完成', 
+                                autoSyncInterval ? '🟢 已連接 - 自動同步中' : '✅ 同步完成', 
                                 `成功同步 ${globalData.length} 筆資料${hasNewData ? ' (發現新資料)' : ' (資料已是最新)'}`
                             );
                             
@@ -657,22 +657,22 @@
                             }
                             
                         } catch (error) {
-                            updateSyncStatus('❌ 连接错误', '資料处理错误: ' + error.message);
+                            updateSyncStatus('❌ 連接錯誤', '資料處理錯誤: ' + error.message);
                         }
                     },
                     error: function(error) {
-                        updateSyncStatus('❌ 连接错误', 'CSV解析错误: ' + error.message);
+                        updateSyncStatus('❌ 連接錯誤', 'CSV解析錯誤: ' + error.message);
                     }
                 });
                 
             } catch (error) {
-                console.error('同步错误:', error);
-                updateSyncStatus('❌ 连接错误', error.message);
+                console.error('同步錯誤:', error);
+                updateSyncStatus('❌ 連接錯誤', error.message);
             }
         }
 
         function showPage(pageId) {
-            // 隱藏所有页面
+            // 隱藏所有頁面
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
             });
@@ -682,13 +682,13 @@
                 tab.classList.remove('active');
             });
             
-            // 显示選定页面
+            // 顯示選定頁面
             document.getElementById(pageId).classList.add('active');
             event.target.classList.add('active');
             
             currentPage = pageId;
             
-            // 如果有資料且切換到图表页面，創建图表
+            // 如果有資料且切換到圖表頁面，創建圖表
             if (globalData.length > 0 && (pageId === 'trends' || pageId === 'differences')) {
                 setTimeout(() => createCharts(), 100);
             }
@@ -757,11 +757,11 @@
             const file = fileInput.files[0];
 
             if (!file) {
-                showStatus('请选择一個CSV文件', 'error');
+                showStatus('請選擇一個CSV檔案', 'error');
                 return;
             }
 
-            showStatus('正在载入資料...', 'success');
+            showStatus('正在載入資料...', 'success');
 
             Papa.parse(file, {
                 header: true,
@@ -777,18 +777,18 @@
                         }
 
                         // 排序資料按時間
-                        globalData.sort((a, b) => parseDateTime(a.执行时间) - parseDateTime(b.执行时间));
+                        globalData.sort((a, b) => parseDateTime(a.執行時間) - parseDateTime(b.執行時間));
 
-                        showStatus(`成功载入 ${globalData.length} 筆資料`, 'success');
+                        showStatus(`成功載入 ${globalData.length} 筆資料`, 'success');
                         setTimeout(() => {
                             createDashboard();
                         }, 1000);
                     } catch (error) {
-                        showStatus('資料处理错误: ' + error.message, 'error');
+                        showStatus('資料處理錯誤: ' + error.message, 'error');
                     }
                 },
                 error: function(error) {
-                    showStatus('文件讀取错误: ' + error.message, 'error');
+                    showStatus('檔案讀取錯誤: ' + error.message, 'error');
                 }
             });
         }
@@ -810,19 +810,19 @@
             summaryStats.innerHTML = `
                 <div class="stat-card">
                     <div class="stat-value">${totalRecords}</div>
-                    <div class="stat-label">总记录数</div>
+                    <div class="stat-label">總記錄數</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">2</div>
-                    <div class="stat-label">追踪成员</div>
+                    <div class="stat-label">追蹤成員</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">${timeRange.days}</div>
-                    <div class="stat-label">追踪天数</div>
+                    <div class="stat-label">追蹤天數</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">${timeRange.lastUpdate}</div>
-                    <div class="stat-label">最后更新</div>
+                    <div class="stat-label">最後更新</div>
                 </div>
             `;
         }
@@ -830,7 +830,7 @@
         function getTimeRange() {
             if (globalData.length === 0) return { days: 0, lastUpdate: '-' };
             
-            const dates = globalData.map(row => parseDateTime(row.执行时间));
+            const dates = globalData.map(row => parseDateTime(row.執行時間));
             const minDate = new Date(Math.min(...dates));
             const maxDate = new Date(Math.max(...dates));
             
@@ -848,11 +848,11 @@
             const latestData = getLatestData();
             
             const metrics = [
-                { key: '总人气值', icon: '💖' },
-                { key: '总助力人数', icon: '🤝' },
-                { key: '今日人气值', icon: '🔥' },
-                { key: '今日参与人数', icon: '👥' },
-                { key: '今日人数', icon: '📊' }
+                { key: '總人氣值', icon: '💖' },
+                { key: '總助力人數', icon: '🤝' },
+                { key: '今日人氣值', icon: '🔥' },
+                { key: '今日參與人數', icon: '👥' },
+                { key: '今日人數', icon: '📊' }
             ];
 
             comparisonGrid.innerHTML = metrics.map(metric => {
@@ -884,7 +884,7 @@
         function getLatestData() {
             const latest = {};
             globalData.forEach(row => {
-                if (!latest[row.成員] || parseDateTime(row.执行时间) > parseDateTime(latest[row.成員].执行时间)) {
+                if (!latest[row.成員] || parseDateTime(row.執行時間) > parseDateTime(latest[row.成員].執行時間)) {
                     latest[row.成員] = row;
                 }
             });
@@ -892,9 +892,9 @@
         }
 
         function createCharts() {
-            const timePoints = [...new Set(globalData.map(row => row.执行时间))].sort((a, b) => parseDateTime(a) - parseDateTime(b));
+            const timePoints = [...new Set(globalData.map(row => row.執行時間))].sort((a, b) => parseDateTime(a) - parseDateTime(b));
             
-            // 銷毀舊的图表
+            // 銷毀舊的圖表
             Object.values(charts).forEach(chart => {
                 if (chart) chart.destroy();
             });
@@ -909,11 +909,11 @@
 
         function createTrendCharts(timePoints) {
             const metrics = [
-                { key: '总人气值', id: 'totalPopularityChart', title: '总人气值' },
-                { key: '总助力人数', id: 'totalSupportChart', title: '总助力人数' },
-                { key: '今日人气值', id: 'todayPopularityChart', title: '今日人气值' },
-                { key: '今日参与人数', id: 'todayParticipantsChart', title: '今日参与人数' },
-                { key: '今日人数', id: 'todayCountChart', title: '今日人数' }
+                { key: '總人氣值', id: 'totalPopularityChart', title: '總人氣值' },
+                { key: '總助力人數', id: 'totalSupportChart', title: '總助力人數' },
+                { key: '今日人氣值', id: 'todayPopularityChart', title: '今日人氣值' },
+                { key: '今日參與人數', id: 'todayParticipantsChart', title: '今日參與人數' },
+                { key: '今日人數', id: 'todayCountChart', title: '今日人數' }
             ];
 
             metrics.forEach(metric => {
@@ -923,11 +923,11 @@
 
         function createDifferenceCharts(timePoints) {
             const metrics = [
-                { key: '总人气值', id: 'totalPopularityDiffChart', title: '总人气值差值' },
-                { key: '总助力人数', id: 'totalSupportDiffChart', title: '总助力人数差值' },
-                { key: '今日人气值', id: 'todayPopularityDiffChart', title: '今日人气值差值' },
-                { key: '今日参与人数', id: 'todayParticipantsDiffChart', title: '今日参与人数差值' },
-                { key: '今日人数', id: 'todayCountDiffChart', title: '今日人数差值' }
+                { key: '總人氣值', id: 'totalPopularityDiffChart', title: '總人氣值差值' },
+                { key: '總助力人數', id: 'totalSupportDiffChart', title: '總助力人數差值' },
+                { key: '今日人氣值', id: 'todayPopularityDiffChart', title: '今日人氣值差值' },
+                { key: '今日參與人數', id: 'todayParticipantsDiffChart', title: '今日參與人數差值' },
+                { key: '今日人數', id: 'todayCountDiffChart', title: '今日人數差值' }
             ];
 
             metrics.forEach(metric => {
@@ -942,12 +942,12 @@
             const ctx = canvas.getContext('2d');
             
             const felixData = timePoints.map(time => {
-                const row = globalData.find(r => r.执行时间 === time && r.成員 === 'Felix');
+                const row = globalData.find(r => r.執行時間 === time && r.成員 === 'Felix');
                 return row ? parseNumber(row[dataKey]) : null;
             });
 
             const hyunjinData = timePoints.map(time => {
-                const row = globalData.find(r => r.执行时间 === time && r.成員 === 'Hyunjin');
+                const row = globalData.find(r => r.執行時間 === time && r.成員 === 'Hyunjin');
                 return row ? parseNumber(row[dataKey]) : null;
             });
 
@@ -1046,8 +1046,8 @@
             const ctx = canvas.getContext('2d');
             
             const differences = timePoints.map(time => {
-                const felixRow = globalData.find(r => r.执行时间 === time && r.成員 === 'Felix');
-                const hyunjinRow = globalData.find(r => r.执行时间 === time && r.成員 === 'Hyunjin');
+                const felixRow = globalData.find(r => r.執行時間 === time && r.成員 === 'Felix');
+                const hyunjinRow = globalData.find(r => r.執行時間 === time && r.成員 === 'Hyunjin');
                 
                 if (!felixRow || !hyunjinRow) return null;
                 
@@ -1149,13 +1149,13 @@
 
         // 初始化
         window.addEventListener('load', function() {
-            // 页面载入完成後立即執行一次同步
+            // 頁面載入完成後立即執行一次同步
             setTimeout(() => {
                 manualSync();
             }, 1000);
         });
 
-        // 页面關閉時清理定時器
+        // 頁面關閉時清理定時器
         window.addEventListener('beforeunload', function() {
             if (autoSyncInterval) {
                 clearInterval(autoSyncInterval);
