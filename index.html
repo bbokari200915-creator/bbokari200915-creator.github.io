@@ -502,7 +502,9 @@
                         data: felixData,
                         borderColor: '#64B5F6',
                         backgroundColor: 'rgba(100, 181, 246, 0.1)',
-                        borderWidth: 3,
+                        borderWidth: window.innerWidth < 768 ? 2 : 3,
+                        pointRadius: window.innerWidth < 768 ? 3 : 4,
+                        pointHoverRadius: window.innerWidth < 768 ? 5 : 6,
                         tension: 0.4,
                         spanGaps: true
                     }, {
@@ -510,7 +512,9 @@
                         data: hyunjinData,
                         borderColor: '#FFB74D',
                         backgroundColor: 'rgba(255, 183, 77, 0.1)',
-                        borderWidth: 3,
+                        borderWidth: window.innerWidth < 768 ? 2 : 3,
+                        pointRadius: window.innerWidth < 768 ? 3 : 4,
+                        pointHoverRadius: window.innerWidth < 768 ? 5 : 6,
                         tension: 0.4,
                         spanGaps: true
                     }]
