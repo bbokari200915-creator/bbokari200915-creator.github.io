@@ -17,8 +17,6 @@
             min-height: 100vh;
         }
         .container { max-width: 1400px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { font-size: 2.5rem; margin: 0; color: white; }
         
         .controls {
             background: #2d2d2d;
@@ -153,10 +151,6 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>YouShop 數據儀表板</h1>
-        </div>
-
         <div class="controls">
             <button class="btn btn-success" onclick="startAutoSync()">🔄 開始自動同步</button>
             <button class="btn btn-danger" onclick="stopAutoSync()" disabled>⏹️ 停止同步</button>
@@ -199,7 +193,7 @@
                     <div class="chart-canvas"><canvas id="todayPopularityChart"></canvas></div>
                 </div>
                 <div class="card">
-                    <div class="chart-title">💥 今日參與人數趨勢</div>
+                    <div class="chart-title">👥 今日參與人數趨勢</div>
                     <div class="chart-canvas"><canvas id="todayParticipantsChart"></canvas></div>
                 </div>
             </div>
@@ -221,7 +215,7 @@
                     <div class="chart-canvas"><canvas id="todayPopularityDiffChart"></canvas></div>
                 </div>
                 <div class="card">
-                    <div class="chart-title">💥 今日參與人數差值</div>
+                    <div class="chart-title">👥 今日參與人數差值</div>
                     <div class="chart-canvas"><canvas id="todayParticipantsDiffChart"></canvas></div>
                 </div>
             </div>
@@ -380,7 +374,7 @@
                 { key: '總人氣值', icon: '💖' },
                 { key: '總助力人數', icon: '🤝' },
                 { key: '今日人氣值', icon: '🔥' },
-                { key: '今日參與人數', icon: '💥' }
+                { key: '今日參與人數', icon: '👥' }
             ];
 
             document.getElementById('comparisonGrid').innerHTML = metrics.map(metric => {
