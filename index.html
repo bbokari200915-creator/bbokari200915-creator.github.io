@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouShop 数据仪表板</title>
+    <title>YouShop 數據儀表板</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
@@ -154,74 +154,74 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>YouShop 数据仪表板</h1>
+            <h1>YouShop 數據儀表板</h1>
         </div>
 
         <div class="controls">
-            <button class="btn btn-success" onclick="startAutoSync()">🔄 开始自动同步</button>
+            <button class="btn btn-success" onclick="startAutoSync()">🔄 開始自動同步</button>
             <button class="btn btn-danger" onclick="stopAutoSync()" disabled>⏹️ 停止同步</button>
             <button class="btn btn-primary" onclick="manualSync()">⚡ 立即同步</button>
             <div class="sync-info">
-                <span id="syncStatus">未连接</span>
+                <span id="syncStatus">未連接</span>
                 <span id="lastSync"></span>
             </div>
         </div>
 
         <div class="nav-tabs">
-            <button class="nav-tab active" onclick="showPage('comparison')">📊 最新数据比较</button>
-            <button class="nav-tab" onclick="showPage('trends')">📈 趋势分析</button>
+            <button class="nav-tab active" onclick="showPage('comparison')">📊 最新數據比較</button>
+            <button class="nav-tab" onclick="showPage('trends')">📈 趨勢分析</button>
             <button class="nav-tab" onclick="showPage('differences')">📊 差值分析</button>
         </div>
 
         <div id="status" class="status" style="display:none;"></div>
 
-        <!-- 页面1: 最新数据比较 -->
+        <!-- 頁面1: 最新數據比較 -->
         <div id="comparison" class="page active">
             <div class="card">
-                <h2>📈 最新数据详细比较</h2>
+                <h2>📈 最新數據詳細比較</h2>
                 <div class="comparison-grid" id="comparisonGrid"></div>
             </div>
         </div>
 
-        <!-- 页面2: 趋势分析 -->
+        <!-- 頁面2: 趨勢分析 -->
         <div id="trends" class="page">
             <div class="charts-grid">
                 <div class="card">
-                    <div class="chart-title">💖 总人气值趋势</div>
+                    <div class="chart-title">💖 總人氣值趨勢</div>
                     <div class="chart-canvas"><canvas id="totalPopularityChart"></canvas></div>
                 </div>
                 <div class="card">
-                    <div class="chart-title">🤝 总助力人数趋势</div>
+                    <div class="chart-title">🤝 總助力人數趨勢</div>
                     <div class="chart-canvas"><canvas id="totalSupportChart"></canvas></div>
                 </div>
                 <div class="card">
-                    <div class="chart-title">🔥 今日人气值趋势</div>
+                    <div class="chart-title">🔥 今日人氣值趨勢</div>
                     <div class="chart-canvas"><canvas id="todayPopularityChart"></canvas></div>
                 </div>
                 <div class="card">
-                    <div class="chart-title">👥 今日参与人数趋势</div>
+                    <div class="chart-title">💥 今日參與人數趨勢</div>
                     <div class="chart-canvas"><canvas id="todayParticipantsChart"></canvas></div>
                 </div>
             </div>
         </div>
 
-        <!-- 页面3: 差值分析 -->
+        <!-- 頁面3: 差值分析 -->
         <div id="differences" class="page">
             <div class="charts-grid">
                 <div class="card">
-                    <div class="chart-title">💖 总人气值差值</div>
+                    <div class="chart-title">💖 總人氣值差值</div>
                     <div class="chart-canvas"><canvas id="totalPopularityDiffChart"></canvas></div>
                 </div>
                 <div class="card">
-                    <div class="chart-title">🤝 总助力人数差值</div>
+                    <div class="chart-title">🤝 總助力人數差值</div>
                     <div class="chart-canvas"><canvas id="totalSupportDiffChart"></canvas></div>
                 </div>
                 <div class="card">
-                    <div class="chart-title">🔥 今日人气值差值</div>
+                    <div class="chart-title">🔥 今日人氣值差值</div>
                     <div class="chart-canvas"><canvas id="todayPopularityDiffChart"></canvas></div>
                 </div>
                 <div class="card">
-                    <div class="chart-title">👥 今日参与人数差值</div>
+                    <div class="chart-title">💥 今日參與人數差值</div>
                     <div class="chart-canvas"><canvas id="todayParticipantsDiffChart"></canvas></div>
                 </div>
             </div>
@@ -247,9 +247,9 @@
         function updateSyncStatus(status, message = '') {
             document.getElementById('syncStatus').textContent = status;
             if (lastSyncTime) {
-                document.getElementById('lastSync').textContent = `上次同步: ${lastSyncTime.toLocaleString('zh-CN')}`;
+                document.getElementById('lastSync').textContent = `上次同步: ${lastSyncTime.toLocaleString('zh-TW')}`;
             }
-            if (message) showStatus(message, status.includes('错误') ? 'error' : 'success');
+            if (message) showStatus(message, status.includes('錯誤') ? 'error' : 'success');
         }
 
         function parseNumber(value) {
@@ -284,7 +284,7 @@
             autoSyncInterval = setInterval(syncFromGoogleSheets, 60000);
             document.querySelector('.btn-success').disabled = true;
             document.querySelector('.btn-danger').disabled = false;
-            updateSyncStatus('🟢 已连接 - 自动同步中', '自动同步已启动，每分钟更新一次');
+            updateSyncStatus('🟢 已連接 - 自動同步中', '自動同步已啟動，每分鐘更新一次');
         }
 
         function stopAutoSync() {
@@ -294,12 +294,12 @@
             }
             document.querySelector('.btn-success').disabled = false;
             document.querySelector('.btn-danger').disabled = true;
-            updateSyncStatus('⏹️ 已停止', '自动同步已停止');
+            updateSyncStatus('⏹️ 已停止', '自動同步已停止');
         }
 
         function manualSync() {
             if (!sheetsUrl) {
-                showStatus('Google Sheets连接未设定', 'error');
+                showStatus('Google Sheets連接未設定', 'error');
                 return;
             }
             syncFromGoogleSheets();
@@ -313,7 +313,7 @@
                 const csvText = await response.text();
                 
                 if (!csvText || csvText.includes('<html')) {
-                    throw new Error('获取的不是CSV资料，可能是权限问题');
+                    throw new Error('獲取的不是CSV資料，可能是權限問題');
                 }
 
                 Papa.parse(csvText, {
@@ -322,30 +322,30 @@
                     skipEmptyLines: true,
                     complete: function(results) {
                         const newData = results.data.filter(row => 
-                            row.成员 && (row.成员 === 'Felix' || row.成员 === 'Hyunjin')
+                            row.成員 && (row.成員 === 'Felix' || row.成員 === 'Hyunjin')
                         );
                         
                         if (newData.length === 0) {
-                            updateSyncStatus('❌ 连接错误', '未找到Felix或Hyunjin的资料');
+                            updateSyncStatus('❌ 連接錯誤', '未找到Felix或Hyunjin的資料');
                             return;
                         }
 
-                        newData.sort((a, b) => parseDateTime(a.执行时间) - parseDateTime(b.执行时间));
+                        newData.sort((a, b) => parseDateTime(a.執行時間) - parseDateTime(b.執行時間));
                         globalData = newData;
                         lastSyncTime = new Date();
                         
                         createDashboard();
                         updateSyncStatus(
-                            autoSyncInterval ? '🟢 已连接 - 自动同步中' : '✅ 同步完成',
-                            `成功同步 ${globalData.length} 笔资料`
+                            autoSyncInterval ? '🟢 已連接 - 自動同步中' : '✅ 同步完成',
+                            `成功同步 ${globalData.length} 筆資料`
                         );
                     },
                     error: function(error) {
-                        updateSyncStatus('❌ 连接错误', 'CSV解析错误: ' + error.message);
+                        updateSyncStatus('❌ 連接錯誤', 'CSV解析錯誤: ' + error.message);
                     }
                 });
             } catch (error) {
-                updateSyncStatus('❌ 连接错误', error.message);
+                updateSyncStatus('❌ 連接錯誤', error.message);
             }
         }
 
@@ -371,16 +371,16 @@
         function createComparisonCards() {
             const latestData = {};
             globalData.forEach(row => {
-                if (!latestData[row.成员] || parseDateTime(row.执行时间) > parseDateTime(latestData[row.成员].执行时间)) {
-                    latestData[row.成员] = row;
+                if (!latestData[row.成員] || parseDateTime(row.執行時間) > parseDateTime(latestData[row.成員].執行時間)) {
+                    latestData[row.成員] = row;
                 }
             });
 
             const metrics = [
-                { key: '总人气值', icon: '💖' },
-                { key: '总助力人数', icon: '🤝' },
-                { key: '今日人气值', icon: '🔥' },
-                { key: '今日参与人数', icon: '👥' }
+                { key: '總人氣值', icon: '💖' },
+                { key: '總助力人數', icon: '🤝' },
+                { key: '今日人氣值', icon: '🔥' },
+                { key: '今日參與人數', icon: '💥' }
             ];
 
             document.getElementById('comparisonGrid').innerHTML = metrics.map(metric => {
@@ -410,16 +410,16 @@
         }
 
         function createCharts() {
-            const timePoints = [...new Set(globalData.map(row => row.执行时间))].sort((a, b) => parseDateTime(a) - parseDateTime(b));
+            const timePoints = [...new Set(globalData.map(row => row.執行時間))].sort((a, b) => parseDateTime(a) - parseDateTime(b));
             
             Object.values(charts).forEach(chart => chart && chart.destroy());
             charts = {};
 
             const metrics = [
-                { key: '总人气值', id: 'totalPopularityChart' },
-                { key: '总助力人数', id: 'totalSupportChart' },
-                { key: '今日人气值', id: 'todayPopularityChart' },
-                { key: '今日参与人数', id: 'todayParticipantsChart' }
+                { key: '總人氣值', id: 'totalPopularityChart' },
+                { key: '總助力人數', id: 'totalSupportChart' },
+                { key: '今日人氣值', id: 'todayPopularityChart' },
+                { key: '今日參與人數', id: 'todayParticipantsChart' }
             ];
 
             metrics.forEach(metric => {
@@ -437,18 +437,18 @@
             
             const ctx = canvas.getContext('2d');
             const felixData = timePoints.map(time => {
-                const row = globalData.find(r => r.执行时间 === time && r.成员 === 'Felix');
+                const row = globalData.find(r => r.執行時間 === time && r.成員 === 'Felix');
                 return row ? parseNumber(row[dataKey]) : null;
             });
             const hyunjinData = timePoints.map(time => {
-                const row = globalData.find(r => r.执行时间 === time && r.成员 === 'Hyunjin');
+                const row = globalData.find(r => r.執行時間 === time && r.成員 === 'Hyunjin');
                 return row ? parseNumber(row[dataKey]) : null;
             });
 
             return new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: timePoints.map(time => parseDateTime(time).toLocaleDateString('zh-CN', { 
+                    labels: timePoints.map(time => parseDateTime(time).toLocaleDateString('zh-TW', { 
                         month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
                     })),
                     datasets: [{
@@ -504,8 +504,8 @@
             
             const ctx = canvas.getContext('2d');
             const differences = timePoints.map(time => {
-                const felixRow = globalData.find(r => r.执行时间 === time && r.成员 === 'Felix');
-                const hyunjinRow = globalData.find(r => r.执行时间 === time && r.成员 === 'Hyunjin');
+                const felixRow = globalData.find(r => r.執行時間 === time && r.成員 === 'Felix');
+                const hyunjinRow = globalData.find(r => r.執行時間 === time && r.成員 === 'Hyunjin');
                 
                 if (!felixRow || !hyunjinRow) return null;
                 return parseNumber(felixRow[dataKey]) - parseNumber(hyunjinRow[dataKey]);
@@ -514,7 +514,7 @@
             return new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: timePoints.map(time => parseDateTime(time).toLocaleDateString('zh-CN', { 
+                    labels: timePoints.map(time => parseDateTime(time).toLocaleDateString('zh-TW', { 
                         month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
                     })),
                     datasets: [{
