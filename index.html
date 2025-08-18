@@ -38,12 +38,8 @@
             font-weight: bold;
             transition: background-color 0.2s;
         }
-        .btn-primary { background: #64B5F6; color: #1a1a1a; }
-        .btn-primary:hover { background: #42A5F5; }
         .btn-success { background: #4CAF50; color: white; }
         .btn-success:hover { background: #45a049; }
-        .btn-danger { background: #f44336; color: white; }
-        .btn-danger:hover:not(:disabled) { background: #da190b; }
         .btn:disabled { background: #666; cursor: not-allowed; }
         
         .nav-tabs {
@@ -153,8 +149,6 @@
     <div class="container">
         <div class="controls">
             <button class="btn btn-success" onclick="startAutoSync()">🔄 開始自動同步</button>
-            <button class="btn btn-danger" onclick="stopAutoSync()" disabled>⏹️ 停止同步</button>
-            <button class="btn btn-primary" onclick="manualSync()">⚡ 立即同步</button>
             <div class="sync-info">
                 <span id="syncStatus">未連接</span>
                 <span id="lastSync"></span>
@@ -193,7 +187,7 @@
                     <div class="chart-canvas"><canvas id="todayPopularityChart"></canvas></div>
                 </div>
                 <div class="card">
-                    <div class="chart-title">👥 今日參與人數趨勢</div>
+                    <div class="chart-title">💥 今日參與人數趨勢</div>
                     <div class="chart-canvas"><canvas id="todayParticipantsChart"></canvas></div>
                 </div>
             </div>
@@ -215,7 +209,7 @@
                     <div class="chart-canvas"><canvas id="todayPopularityDiffChart"></canvas></div>
                 </div>
                 <div class="card">
-                    <div class="chart-title">👥 今日參與人數差值</div>
+                    <div class="chart-title">💥 今日參與人數差值</div>
                     <div class="chart-canvas"><canvas id="todayParticipantsDiffChart"></canvas></div>
                 </div>
             </div>
@@ -274,29 +268,10 @@
 
         function startAutoSync() {
             if (autoSyncInterval) clearInterval(autoSyncInterval);
-            manualSync();
+            syncFromGoogleSheets();
             autoSyncInterval = setInterval(syncFromGoogleSheets, 60000);
             document.querySelector('.btn-success').disabled = true;
-            document.querySelector('.btn-danger').disabled = false;
             updateSyncStatus('🟢 已連接 - 自動同步中', '自動同步已啟動，每分鐘更新一次');
-        }
-
-        function stopAutoSync() {
-            if (autoSyncInterval) {
-                clearInterval(autoSyncInterval);
-                autoSyncInterval = null;
-            }
-            document.querySelector('.btn-success').disabled = false;
-            document.querySelector('.btn-danger').disabled = true;
-            updateSyncStatus('⏹️ 已停止', '自動同步已停止');
-        }
-
-        function manualSync() {
-            if (!sheetsUrl) {
-                showStatus('Google Sheets連接未設定', 'error');
-                return;
-            }
-            syncFromGoogleSheets();
         }
 
         async function syncFromGoogleSheets() {
@@ -374,7 +349,7 @@
                 { key: '總人氣值', icon: '💖' },
                 { key: '總助力人數', icon: '🤝' },
                 { key: '今日人氣值', icon: '🔥' },
-                { key: '今日參與人數', icon: '👥' }
+                { key: '今日參與人數', icon: '💥' }
             ];
 
             document.getElementById('comparisonGrid').innerHTML = metrics.map(metric => {
@@ -554,7 +529,7 @@
         }
 
         // 初始化
-        window.addEventListener('load', () => setTimeout(manualSync, 1000));
+        window.addEventListener('load', () => setTimeout(startAutoSync, 1000));
         window.addEventListener('beforeunload', () => autoSyncInterval && clearInterval(autoSyncInterval));
     </script>
 </body>
