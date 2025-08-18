@@ -28,19 +28,8 @@
             gap: 15px;
             flex-wrap: wrap;
             align-items: center;
+            justify-content: flex-end;
         }
-        
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.2s;
-        }
-        .btn-success { background: #4CAF50; color: white; }
-        .btn-success:hover { background: #45a049; }
-        .btn:disabled { background: #666; cursor: not-allowed; }
         
         .nav-tabs {
             display: flex;
@@ -63,7 +52,6 @@
         .nav-tab:hover { background: #555; }
         
         .sync-info {
-            margin-left: auto;
             font-size: 13px;
             color: #b0b0b0;
             display: flex;
@@ -148,7 +136,6 @@
 <body>
     <div class="container">
         <div class="controls">
-            <button class="btn btn-success" onclick="startAutoSync()">🔄 開始自動同步</button>
             <div class="sync-info">
                 <span id="syncStatus">未連接</span>
                 <span id="lastSync"></span>
@@ -266,14 +253,6 @@
             }
         }
 
-        function startAutoSync() {
-            if (autoSyncInterval) clearInterval(autoSyncInterval);
-            syncFromGoogleSheets();
-            autoSyncInterval = setInterval(syncFromGoogleSheets, 60000);
-            document.querySelector('.btn-success').disabled = true;
-            updateSyncStatus('🟢 已連接 - 自動同步中', '自動同步已啟動，每分鐘更新一次');
-        }
-
         async function syncFromGoogleSheets() {
             updateSyncStatus('🔄 同步中...');
             try {
@@ -304,10 +283,7 @@
                         lastSyncTime = new Date();
                         
                         createDashboard();
-                        updateSyncStatus(
-                            autoSyncInterval ? '🟢 已連接 - 自動同步中' : '✅ 同步完成',
-                            `成功同步 ${globalData.length} 筆資料`
-                        );
+                        updateSyncStatus('✅ 同步完成', `成功同步 ${globalData.length} 筆資料`);
                     },
                     error: function(error) {
                         updateSyncStatus('❌ 連接錯誤', 'CSV解析錯誤: ' + error.message);
@@ -528,8 +504,16 @@
             });
         }
 
-        // 初始化
-        window.addEventListener('load', () => setTimeout(startAutoSync, 1000));
+        // 初始化 - 自動開始同步
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                syncFromGoogleSheets();
+                // 設置自動同步，每分鐘更新一次
+                autoSyncInterval = setInterval(syncFromGoogleSheets, 60000);
+                updateSyncStatus('🟢 已連接 - 自動同步中');
+            }, 1000);
+        });
+        
         window.addEventListener('beforeunload', () => autoSyncInterval && clearInterval(autoSyncInterval));
     </script>
 </body>
