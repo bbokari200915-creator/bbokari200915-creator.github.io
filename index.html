@@ -77,15 +77,6 @@
             gap: 5px;
         }
         
-        .file-input input[type="file"] {
-            padding: 12px;
-            border: 2px dashed #64B5F6;
-            border-radius: 8px;
-            background: #1a1a1a;
-            color: #e0e0e0;
-            min-width: 250px;
-        }
-        
         .page { display: none; }
         .page.active { display: block; }
         
@@ -170,10 +161,6 @@
             <button class="btn btn-success" onclick="startAutoSync()">🔄 開始自動同步</button>
             <button class="btn btn-danger" onclick="stopAutoSync()" disabled>⏹️ 停止同步</button>
             <button class="btn btn-primary" onclick="manualSync()">⚡ 立即同步</button>
-            <div class="file-input">
-                <input type="file" id="csvFile" accept=".csv" />
-            </div>
-            <button class="btn btn-primary" onclick="loadData()">載入檔案</button>
             <div class="sync-info">
                 <span id="syncStatus">未連接</span>
                 <span id="lastSync"></span>
@@ -212,7 +199,7 @@
                     <div class="chart-canvas"><canvas id="todayPopularityChart"></canvas></div>
                 </div>
                 <div class="card">
-                    <div class="chart-title">👥 今日參與人數趨勢</div>
+                    <div class="chart-title">💥 今日參與人數趨勢</div>
                     <div class="chart-canvas"><canvas id="todayParticipantsChart"></canvas></div>
                 </div>
             </div>
@@ -234,7 +221,7 @@
                     <div class="chart-canvas"><canvas id="todayPopularityDiffChart"></canvas></div>
                 </div>
                 <div class="card">
-                    <div class="chart-title">👥 今日參與人數差值</div>
+                    <div class="chart-title">💥 今日參與人數差值</div>
                     <div class="chart-canvas"><canvas id="todayParticipantsDiffChart"></canvas></div>
                 </div>
             </div>
@@ -362,30 +349,6 @@
             }
         }
 
-        function loadData() {
-            const file = document.getElementById('csvFile').files[0];
-            if (!file) {
-                showStatus('請選擇一個CSV檔案', 'error');
-                return;
-            }
-
-            Papa.parse(file, {
-                header: true,
-                complete: function(results) {
-                    globalData = results.data.filter(row => 
-                        row.成員 && (row.成員 === 'Felix' || row.成員 === 'Hyunjin')
-                    );
-                    if (globalData.length === 0) {
-                        showStatus('未找到Felix或Hyunjin的資料', 'error');
-                        return;
-                    }
-                    globalData.sort((a, b) => parseDateTime(a.執行時間) - parseDateTime(b.執行時間));
-                    showStatus(`成功載入 ${globalData.length} 筆資料`);
-                    createDashboard();
-                }
-            });
-        }
-
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
@@ -417,7 +380,7 @@
                 { key: '總人氣值', icon: '💖' },
                 { key: '總助力人數', icon: '🤝' },
                 { key: '今日人氣值', icon: '🔥' },
-                { key: '今日參與人數', icon: '👥' }
+                { key: '今日參與人數', icon: '💥' }
             ];
 
             document.getElementById('comparisonGrid').innerHTML = metrics.map(metric => {
