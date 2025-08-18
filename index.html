@@ -966,7 +966,7 @@
                     datasets: [{
                         label: 'Felix',
                         data: felixData,
-                        borderColor: '#e53935',
+                        borderColor: '#64B5F6',
                         backgroundColor: 'rgba(100, 181, 246, 0.1)',
                         borderWidth: 3,
                         fill: false,
@@ -1025,7 +1025,7 @@
                             backgroundColor: '#2d2d2d',
                             titleColor: '#e0e0e0',
                             bodyColor: '#e0e0e0',
-                            borderColor: '#e53935',
+                            borderColor: '#64B5F6',
                             borderWidth: 1,
                             callbacks: {
                                 label: function(context) {
@@ -1071,11 +1071,11 @@
                     datasets: [{
                         label: `${title} (Felix - Hyunjin)`,
                         data: differences,
-                        borderColor: '#e53935',
+                        borderColor: '#64B5F6',
                         backgroundColor: function(context) {
                             const value = context.parsed?.y;
                             if (value === null || value === undefined) return 'transparent';
-                            return 'rgba(229, 57, 53, 0.3)';
+                            return value >= 0 ? 'rgba(100, 181, 246, 0.2)' : 'rgba(244, 67, 54, 0.2)';
                         },
                         borderWidth: 3,
                         fill: true,
@@ -1084,7 +1084,7 @@
                         pointBackgroundColor: function(context) {
                             const value = context.parsed?.y;
                             if (value === null || value === undefined) return 'transparent';
-                            return '#e53935';
+                            return value >= 0 ? '#64B5F6' : '#f44336';
                         }
                     }]
                 },
@@ -1105,7 +1105,7 @@
                             },
                             grid: {
                                 color: function(context) {
-                                    return context.tick.value === 0 ? '#e53935' : '#404040';
+                                    return context.tick.value === 0 ? '#64B5F6' : '#404040';
                                 }
                             }
                         },
@@ -1131,7 +1131,7 @@
                             backgroundColor: '#2d2d2d',
                             titleColor: '#e0e0e0',
                             bodyColor: '#e0e0e0',
-                            borderColor: '#e53935',
+                            borderColor: '#64B5F6',
                             borderWidth: 1,
                             callbacks: {
                                 label: function(context) {
