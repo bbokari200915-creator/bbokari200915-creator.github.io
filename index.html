@@ -7,208 +7,106 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
+        * { box-sizing: border-box; }
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
             background: #1a1a1a;
+            color: #e0e0e0;
             min-height: 100vh;
-            color: #e0e0e0;
         }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .navigation {
-            background: #2d2d2d;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            border: 1px solid #404040;
-        }
-
-        .nav-tabs {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .nav-tab {
-            padding: 12px 25px;
-            background: #404040;
-            color: #e0e0e0;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: all 0.3s;
-            cursor: pointer;
-            border: 1px solid #555;
-            font-size: 16px;
-        }
-
-        .nav-tab.active {
-            background: #64B5F6;
-            color: #1a1a1a;
-            border-color: #64B5F6;
-        }
-
-        .nav-tab:hover {
-            background: #555;
-            border-color: #777;
-        }
-
-        .nav-tab.active:hover {
-            background: #42A5F5;
-            border-color: #42A5F5;
-        }
-
-        .sync-controls-bar {
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 2.5rem; margin: 0; color: white; }
+        
+        .controls {
             background: #2d2d2d;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
             border: 1px solid #404040;
             display: flex;
-            align-items: center;
             gap: 15px;
             flex-wrap: wrap;
+            align-items: center;
         }
-
-        .sync-controls-bar .sync-btn,
-        .sync-controls-bar .stop-btn, 
-        .sync-controls-bar .manual-sync-btn {
+        
+        .btn {
             padding: 10px 20px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 14px;
             transition: background-color 0.2s;
         }
-
-        .sync-controls-bar .sync-btn {
-            background: #4CAF50;
-            color: white;
+        .btn-primary { background: #64B5F6; color: #1a1a1a; }
+        .btn-primary:hover { background: #42A5F5; }
+        .btn-success { background: #4CAF50; color: white; }
+        .btn-success:hover { background: #45a049; }
+        .btn-danger { background: #f44336; color: white; }
+        .btn-danger:hover:not(:disabled) { background: #da190b; }
+        .btn:disabled { background: #666; cursor: not-allowed; }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
         }
-
-        .sync-controls-bar .sync-btn:hover {
-            background: #45a049;
+        .nav-tab {
+            padding: 12px 25px;
+            background: #404040;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
         }
-
-        .sync-controls-bar .stop-btn {
-            background: #f44336;
-            color: white;
-        }
-
-        .sync-controls-bar .stop-btn:hover:not(:disabled) {
-            background: #da190b;
-        }
-
-        .sync-controls-bar .stop-btn:disabled {
-            background: #666;
-            cursor: not-allowed;
-        }
-
-        .sync-controls-bar .manual-sync-btn {
-            background: #64B5F6;
-            color: #1a1a1a;
-        }
-
-        .sync-controls-bar .manual-sync-btn:hover {
-            background: #42A5F5;
-        }
-
-        .sync-controls-bar .sync-info {
+        .nav-tab.active { background: #64B5F6; color: #1a1a1a; }
+        .nav-tab:hover { background: #555; }
+        
+        .sync-info {
+            margin-left: auto;
+            font-size: 13px;
+            color: #b0b0b0;
             display: flex;
             flex-direction: column;
             gap: 5px;
-            font-size: 13px;
-            color: #b0b0b0;
-            margin-left: auto;
         }
-
-        .file-input-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .file-input {
-            flex: 1;
-            min-width: 250px;
-        }
-
+        
         .file-input input[type="file"] {
-            width: 100%;
             padding: 12px;
             border: 2px dashed #64B5F6;
             border-radius: 8px;
             background: #1a1a1a;
             color: #e0e0e0;
+            min-width: 250px;
         }
-
-        .load-btn {
-            background: #64B5F6;
-            color: #1a1a1a;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.2s;
-        }
-
-        .load-btn:hover {
-            background: #42A5F5;
-        }
-
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        .members-comparison {
-            background: #2d2d2d;
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            margin-bottom: 30px;
-            border: 1px solid #404040;
-        }
-
-        .members-comparison h2 {
-            color: #e0e0e0;
-            margin-top: 0;
-        }
-
+        
+        .page { display: none; }
+        .page.active { display: block; }
+        
         .comparison-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
-            margin-top: 20px;
         }
-
+        
+        .card {
+            background: #2d2d2d;
+            border-radius: 10px;
+            padding: 25px;
+            border: 1px solid #404040;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: #64B5F6;
+        }
+        
         .comparison-card {
             background: #424242;
             color: #e0e0e0;
@@ -218,51 +116,31 @@
             transition: transform 0.2s;
             border: 1px solid #555;
         }
-
         .comparison-card:hover {
             transform: translateY(-3px);
             background: #505050;
             border-color: #64B5F6;
         }
-
-        .comparison-card h4 {
-            margin: 0 0 15px 0;
-            font-size: 1.2rem;
-        }
-
+        .comparison-card h4 { margin: 0 0 15px 0; font-size: 1.2rem; }
+        
         .member-value {
             display: flex;
             justify-content: space-between;
             margin: 8px 0;
             font-size: 1.1rem;
         }
-
         .difference-row {
             border-top: 1px solid rgba(255,255,255,0.3);
             padding-top: 12px;
             margin-top: 12px;
         }
-
+        
         .charts-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
             gap: 30px;
         }
-
-        .chart-container {
-            background: #2d2d2d;
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            border: 1px solid #404040;
-            transition: transform 0.2s ease;
-        }
-
-        .chart-container:hover {
-            transform: translateY(-3px);
-            border-color: #64B5F6;
-        }
-
+        
         .chart-title {
             text-align: center;
             font-size: 1.4rem;
@@ -270,134 +148,72 @@
             margin-bottom: 20px;
             color: #e0e0e0;
         }
-
-        .chart-canvas {
-            position: relative;
-            height: 400px;
-        }
-
+        .chart-canvas { position: relative; height: 400px; }
+        
         .status {
             padding: 15px;
             border-radius: 10px;
             margin: 15px 0;
             font-weight: bold;
         }
-
-        .status.success {
-            background: #1B5E20;
-            color: #C8E6C9;
-            border: 1px solid #2E7D32;
-        }
-
-        .status.error {
-            background: #B71C1C;
-            color: #FFCDD2;
-            border: 1px solid #D32F2F;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #666;
-        }
-
-        .summary-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: #2d2d2d;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            border: 1px solid #404040;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #64B5F6;
-        }
-
-        .stat-label {
-            color: #b0b0b0;
-            margin-top: 5px;
-        }
+        .status.success { background: #1B5E20; color: #C8E6C9; }
+        .status.error { background: #B71C1C; color: #FFCDD2; }
     </style>
 </head>
 <body>
-            <div class="container">
+    <div class="container">
         <div class="header">
+            <h1>YouShop 數據儀表板</h1>
         </div>
 
-        <div class="navigation">
-            <div class="nav-tabs">
-                <button class="nav-tab active" onclick="showPage('comparison')">📊 最新數據比較</button>
-                <button class="nav-tab" onclick="showPage('trends')">📈 趨勢分析</button>
-                <button class="nav-tab" onclick="showPage('differences')">📊 差值分析</button>
+        <div class="controls">
+            <button class="btn btn-success" onclick="startAutoSync()">🔄 開始自動同步</button>
+            <button class="btn btn-danger" onclick="stopAutoSync()" disabled>⏹️ 停止同步</button>
+            <button class="btn btn-primary" onclick="manualSync()">⚡ 立即同步</button>
+            <div class="file-input">
+                <input type="file" id="csvFile" accept=".csv" />
+            </div>
+            <button class="btn btn-primary" onclick="loadData()">載入檔案</button>
+            <div class="sync-info">
+                <span id="syncStatus">未連接</span>
+                <span id="lastSync"></span>
             </div>
         </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showPage('comparison')">📊 最新數據比較</button>
+            <button class="nav-tab" onclick="showPage('trends')">📈 趨勢分析</button>
+            <button class="nav-tab" onclick="showPage('differences')">📊 差值分析</button>
+        </div>
+
+        <div id="status" class="status" style="display:none;"></div>
 
         <!-- 頁面1: 最新數據比較 -->
         <div id="comparison" class="page active">
-            <div class="sync-controls-bar">
-                <button class="sync-btn" onclick="startAutoSync()">🔄 開始自動同步</button>
-                <button class="stop-btn" onclick="stopAutoSync()" disabled>⏹️ 停止同步</button>
-                <button class="manual-sync-btn" onclick="manualSync()">⚡ 立即同步</button>
-                <div class="sync-info">
-                    <span id="syncStatus">未連接</span>
-                    <span id="lastSync"></span>
-                    <span id="nextSync"></span>
-                </div>
-            </div>
-            <div id="status" class="status" style="display:none;"></div>
-            <div class="members-comparison">
+            <div class="card">
                 <h2>📈 最新數據詳細比較</h2>
-                <div class="comparison-grid" id="comparisonGrid">
-                </div>
+                <div class="comparison-grid" id="comparisonGrid"></div>
             </div>
         </div>
 
         <!-- 頁面2: 趨勢分析 -->
         <div id="trends" class="page">
             <div class="charts-grid">
-                <div class="chart-container">
+                <div class="card">
                     <div class="chart-title">💖 總人氣值趨勢</div>
-                    <div class="chart-canvas">
-                        <canvas id="totalPopularityChart"></canvas>
-                    </div>
+                    <div class="chart-canvas"><canvas id="totalPopularityChart"></canvas></div>
                 </div>
-
-                <div class="chart-container">
+                <div class="card">
                     <div class="chart-title">🤝 總助力人數趨勢</div>
-                    <div class="chart-canvas">
-                        <canvas id="totalSupportChart"></canvas>
-                    </div>
+                    <div class="chart-canvas"><canvas id="totalSupportChart"></canvas></div>
                 </div>
-
-                <div class="chart-container">
+                <div class="card">
                     <div class="chart-title">🔥 今日人氣值趨勢</div>
-                    <div class="chart-canvas">
-                        <canvas id="todayPopularityChart"></canvas>
-                    </div>
+                    <div class="chart-canvas"><canvas id="todayPopularityChart"></canvas></div>
                 </div>
-
-                <div class="chart-container">
+                <div class="card">
                     <div class="chart-title">👥 今日參與人數趨勢</div>
-                    <div class="chart-canvas">
-                        <canvas id="todayParticipantsChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="chart-container">
-                    <div class="chart-title">📊 今日人數趨勢</div>
-                    <div class="chart-canvas">
-                        <canvas id="todayCountChart"></canvas>
-                    </div>
+                    <div class="chart-canvas"><canvas id="todayParticipantsChart"></canvas></div>
                 </div>
             </div>
         </div>
@@ -405,39 +221,21 @@
         <!-- 頁面3: 差值分析 -->
         <div id="differences" class="page">
             <div class="charts-grid">
-                <div class="chart-container">
+                <div class="card">
                     <div class="chart-title">💖 總人氣值差值</div>
-                    <div class="chart-canvas">
-                        <canvas id="totalPopularityDiffChart"></canvas>
-                    </div>
+                    <div class="chart-canvas"><canvas id="totalPopularityDiffChart"></canvas></div>
                 </div>
-
-                <div class="chart-container">
+                <div class="card">
                     <div class="chart-title">🤝 總助力人數差值</div>
-                    <div class="chart-canvas">
-                        <canvas id="totalSupportDiffChart"></canvas>
-                    </div>
+                    <div class="chart-canvas"><canvas id="totalSupportDiffChart"></canvas></div>
                 </div>
-
-                <div class="chart-container">
+                <div class="card">
                     <div class="chart-title">🔥 今日人氣值差值</div>
-                    <div class="chart-canvas">
-                        <canvas id="todayPopularityDiffChart"></canvas>
-                    </div>
+                    <div class="chart-canvas"><canvas id="todayPopularityDiffChart"></canvas></div>
                 </div>
-
-                <div class="chart-container">
+                <div class="card">
                     <div class="chart-title">👥 今日參與人數差值</div>
-                    <div class="chart-canvas">
-                        <canvas id="todayParticipantsDiffChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="chart-container">
-                    <div class="chart-title">📊 今日人數差值</div>
-                    <div class="chart-canvas">
-                        <canvas id="todayCountDiffChart"></canvas>
-                    </div>
+                    <div class="chart-canvas"><canvas id="todayParticipantsDiffChart"></canvas></div>
                 </div>
             </div>
         </div>
@@ -450,81 +248,55 @@
         let autoSyncInterval = null;
         let sheetsUrl = 'https://docs.google.com/spreadsheets/d/1OwdPmIuge1Bw8p6laA8QdPcFzKrWwezJQGAi2uBlR1Y/export?format=csv&gid=1642175178';
         let lastSyncTime = null;
-        let nextSyncTime = null;
-
-        function updateSyncStatus(status, message = '') {
-            const statusElement = document.getElementById('syncStatus');
-            const lastSyncElement = document.getElementById('lastSync');
-            const nextSyncElement = document.getElementById('nextSync');
-            
-            statusElement.textContent = status;
-            statusElement.className = '';
-            
-            switch(status) {
-                case '🟢 已連接 - 自動同步中':
-                    statusElement.classList.add('status', 'connected');
-                    break;
-                case '🔄 同步中...':
-                    statusElement.classList.add('status', 'syncing');
-                    break;
-                case '❌ 連接錯誤':
-                    statusElement.classList.add('status', 'error');
-                    break;
-                default:
-                    statusElement.classList.add('status');
-            }
-            
-            if (message) {
-                showStatus(message, status.includes('錯誤') ? 'error' : 'success');
-            }
-            
-            if (lastSyncTime) {
-                lastSyncElement.textContent = `上次同步: ${lastSyncTime.toLocaleString('zh-TW')}`;
-            }
-            
-            if (nextSyncTime) {
-                nextSyncElement.textContent = `下次同步: ${nextSyncTime.toLocaleString('zh-TW')}`;
-            }
-        }
 
         function showStatus(message, type = 'success') {
             const statusDiv = document.getElementById('status');
             statusDiv.textContent = message;
             statusDiv.className = `status ${type}`;
             statusDiv.style.display = 'block';
-            
-            // 3秒後自動隱藏狀態訊息
-            setTimeout(() => {
-                statusDiv.style.display = 'none';
-            }, 3000);
+            setTimeout(() => statusDiv.style.display = 'none', 3000);
+        }
+
+        function updateSyncStatus(status, message = '') {
+            document.getElementById('syncStatus').textContent = status;
+            if (lastSyncTime) {
+                document.getElementById('lastSync').textContent = `上次同步: ${lastSyncTime.toLocaleString('zh-TW')}`;
+            }
+            if (message) showStatus(message, status.includes('錯誤') ? 'error' : 'success');
+        }
+
+        function parseNumber(value) {
+            if (typeof value === 'number') return value;
+            return parseInt(String(value).replace(/,/g, '')) || 0;
+        }
+
+        function parseDateTime(dateTimeStr) {
+            if (!dateTimeStr) return new Date();
+            let cleanedStr = dateTimeStr.replace(/上午|下午/g, '').trim();
+            if (dateTimeStr.includes('下午')) {
+                const parts = cleanedStr.split(' ');
+                if (parts.length >= 2) {
+                    const timeComponents = parts[1].split(':');
+                    let hour = parseInt(timeComponents[0]);
+                    if (hour !== 12) hour += 12;
+                    timeComponents[0] = hour.toString();
+                    parts[1] = timeComponents.join(':');
+                    cleanedStr = parts.join(' ');
+                }
+            }
+            try {
+                return new Date(cleanedStr);
+            } catch {
+                return new Date();
+            }
         }
 
         function startAutoSync() {
-            // 使用預設的Google Sheets連結
-            if (!sheetsUrl) {
-                showStatus('Google Sheets連結未設定', 'error');
-                return;
-            }
-            
-            // 停止現有的自動同步
-            if (autoSyncInterval) {
-                clearInterval(autoSyncInterval);
-            }
-            
-            // 立即執行一次同步
+            if (autoSyncInterval) clearInterval(autoSyncInterval);
             manualSync();
-            
-            // 設定每分鐘同步一次
-            autoSyncInterval = setInterval(() => {
-                syncFromGoogleSheets();
-            }, 60000); // 60秒 = 1分鐘
-            
-            // 更新下次同步時間
-            nextSyncTime = new Date(Date.now() + 60000);
-            
-            // 更新UI狀態
-            document.querySelector('.sync-btn').disabled = true;
-            document.querySelector('.stop-btn').disabled = false;
+            autoSyncInterval = setInterval(syncFromGoogleSheets, 60000);
+            document.querySelector('.btn-success').disabled = true;
+            document.querySelector('.btn-danger').disabled = false;
             updateSyncStatus('🟢 已連接 - 自動同步中', '自動同步已啟動，每分鐘更新一次');
         }
 
@@ -533,264 +305,97 @@
                 clearInterval(autoSyncInterval);
                 autoSyncInterval = null;
             }
-            
-            nextSyncTime = null;
-            
-            // 更新UI狀態
-            document.querySelector('.sync-btn').disabled = false;
-            document.querySelector('.stop-btn').disabled = true;
+            document.querySelector('.btn-success').disabled = false;
+            document.querySelector('.btn-danger').disabled = true;
             updateSyncStatus('⏹️ 已停止', '自動同步已停止');
         }
 
         function manualSync() {
-            // 使用預設的Google Sheets連結
             if (!sheetsUrl) {
                 showStatus('Google Sheets連結未設定', 'error');
                 return;
             }
-            
             syncFromGoogleSheets();
         }
 
-        function isValidGoogleSheetsUrl(url) {
-            return url.includes('docs.google.com/spreadsheets') && 
-                   (url.includes('export?format=csv') || url.includes('/export?'));
-        }
-
         async function syncFromGoogleSheets() {
-            if (!sheetsUrl) return;
-            
             updateSyncStatus('🔄 同步中...');
-            
             try {
-                // 嘗試直接獲取
-                let csvText;
-                try {
-                    const response = await fetch(sheetsUrl);
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-                    csvText = await response.text();
-                } catch (corsError) {
-                    // 如果遇到CORS錯誤，使用代理服務
-                    console.log('直接存取失敗，嘗試使用代理服務...');
-                    
-                    // 使用公開的CORS代理服務
-                    const proxyUrls = [
-                        `https://api.allorigins.win/get?url=${encodeURIComponent(sheetsUrl)}`,
-                        `https://corsproxy.io/?${encodeURIComponent(sheetsUrl)}`,
-                        `https://cors-anywhere.herokuapp.com/${sheetsUrl}`
-                    ];
-                    
-                    let success = false;
-                    for (const proxyUrl of proxyUrls) {
-                        try {
-                            const response = await fetch(proxyUrl);
-                            if (response.ok) {
-                                const data = await response.json();
-                                csvText = data.contents || data.body || await response.text();
-                                success = true;
-                                break;
-                            }
-                        } catch (e) {
-                            continue;
-                        }
-                    }
-                    
-                    if (!success) {
-                        throw new Error('無法透過代理服務存取 Google Sheets。請確認：\n1. 試算表已設定為公開存取\n2. 網路連線正常\n3. 或嘗試手動上傳CSV檔案');
-                    }
-                }
+                const response = await fetch(sheetsUrl);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const csvText = await response.text();
                 
-                // 檢查是否是有效的CSV資料
-                if (!csvText || csvText.trim().length === 0) {
-                    throw new Error('獲取的資料為空，請檢查Google Sheets連結是否正確');
+                if (!csvText || csvText.includes('<html')) {
+                    throw new Error('獲取的不是CSV資料，可能是權限問題');
                 }
-                
-                // 檢查是否包含錯誤訊息（Google Sheets錯誤頁面）
-                if (csvText.includes('<html') || csvText.includes('<!DOCTYPE')) {
-                    throw new Error('獲取的不是CSV資料，可能是權限問題。請確認：\n1. 試算表設定為「知道連結的使用者可檢視」\n2. gid參數正確');
-                }
-                
-                // 解析 CSV 資料
+
                 Papa.parse(csvText, {
                     header: true,
                     dynamicTyping: false,
                     skipEmptyLines: true,
                     complete: function(results) {
-                        try {
-                            console.log('解析結果:', results);
-                            
-                            if (results.errors && results.errors.length > 0) {
-                                console.warn('CSV解析警告:', results.errors);
-                            }
-                            
-                            const newData = results.data.filter(row => row.成員 && (row.成員 === 'Felix' || row.成員 === 'Hyunjin'));
-                            
-                            if (newData.length === 0) {
-                                // 顯示可用的欄位名稱來幫助除錯
-                                const availableFields = results.meta.fields || Object.keys(results.data[0] || {});
-                                updateSyncStatus('❌ 連接錯誤', `未找到Felix或Hyunjin的資料。\n可用欄位：${availableFields.join(', ')}\n請確認資料表中的成員欄位包含正確的名稱。`);
-                                return;
-                            }
-
-                            // 排序資料按時間
-                            newData.sort((a, b) => parseDateTime(a.執行時間) - parseDateTime(b.執行時間));
-
-                            // 檢查是否有新資料
-                            const hasNewData = !globalData.length || JSON.stringify(newData) !== JSON.stringify(globalData);
-                            
-                            globalData = newData;
-                            lastSyncTime = new Date();
-                            
-                            // 更新儀表板
-                            createDashboard();
-                            
-                            updateSyncStatus(
-                                autoSyncInterval ? '🟢 已連接 - 自動同步中' : '✅ 同步完成', 
-                                `成功同步 ${globalData.length} 筆資料${hasNewData ? ' (發現新資料)' : ' (資料已是最新)'}`
-                            );
-                            
-                            // 更新下次同步時間
-                            if (autoSyncInterval) {
-                                nextSyncTime = new Date(Date.now() + 60000);
-                            }
-                            
-                        } catch (error) {
-                            updateSyncStatus('❌ 連接錯誤', '資料處理錯誤: ' + error.message);
+                        const newData = results.data.filter(row => 
+                            row.成員 && (row.成員 === 'Felix' || row.成員 === 'Hyunjin')
+                        );
+                        
+                        if (newData.length === 0) {
+                            updateSyncStatus('❌ 連接錯誤', '未找到Felix或Hyunjin的資料');
+                            return;
                         }
+
+                        newData.sort((a, b) => parseDateTime(a.執行時間) - parseDateTime(b.執行時間));
+                        globalData = newData;
+                        lastSyncTime = new Date();
+                        
+                        createDashboard();
+                        updateSyncStatus(
+                            autoSyncInterval ? '🟢 已連接 - 自動同步中' : '✅ 同步完成',
+                            `成功同步 ${globalData.length} 筆資料`
+                        );
                     },
                     error: function(error) {
                         updateSyncStatus('❌ 連接錯誤', 'CSV解析錯誤: ' + error.message);
                     }
                 });
-                
             } catch (error) {
-                console.error('同步錯誤:', error);
                 updateSyncStatus('❌ 連接錯誤', error.message);
             }
         }
 
-        function showPage(pageId) {
-            // 隱藏所有頁面
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // 移除所有nav-tab的active類別
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // 顯示選定頁面
-            document.getElementById(pageId).classList.add('active');
-            event.target.classList.add('active');
-            
-            currentPage = pageId;
-            
-            // 如果有資料且切換到圖表頁面，創建圖表
-            if (globalData.length > 0 && (pageId === 'trends' || pageId === 'differences')) {
-                setTimeout(() => createCharts(), 100);
-            }
-        }
-
-        function showStatus(message, type = 'success') {
-            const statusDiv = document.getElementById('status');
-            statusDiv.textContent = message;
-            statusDiv.className = `status ${type}`;
-            statusDiv.style.display = 'block';
-        }
-
-        function parseNumber(value) {
-            if (typeof value === 'number') return value;
-            if (typeof value === 'string') {
-                return parseInt(value.replace(/,/g, '')) || 0;
-            }
-            return 0;
-        }
-
-        function parseDateTime(dateTimeStr) {
-            if (!dateTimeStr) return new Date();
-            
-            // 處理 "2025/8/19 上午 12:04:13" 格式
-            let cleanedStr = dateTimeStr.replace(/上午|下午/g, '').trim();
-            
-            // 如果包含 "下午" 且小時不是12，需要加12
-            if (dateTimeStr.includes('下午')) {
-                const parts = cleanedStr.split(' ');
-                if (parts.length >= 2) {
-                    const timePart = parts[1];
-                    const timeComponents = timePart.split(':');
-                    let hour = parseInt(timeComponents[0]);
-                    if (hour !== 12) {
-                        hour += 12;
-                    }
-                    timeComponents[0] = hour.toString();
-                    parts[1] = timeComponents.join(':');
-                    cleanedStr = parts.join(' ');
-                }
-            } else if (dateTimeStr.includes('上午')) {
-                const parts = cleanedStr.split(' ');
-                if (parts.length >= 2) {
-                    const timePart = parts[1];
-                    const timeComponents = timePart.split(':');
-                    let hour = parseInt(timeComponents[0]);
-                    if (hour === 12) {
-                        hour = 0;
-                    }
-                    timeComponents[0] = hour.toString().padStart(2, '0');
-                    parts[1] = timeComponents.join(':');
-                    cleanedStr = parts.join(' ');
-                }
-            }
-            
-            try {
-                return new Date(cleanedStr);
-            } catch (error) {
-                console.warn('Date parsing failed for:', dateTimeStr, 'using current date');
-                return new Date();
-            }
-        }
-
         function loadData() {
-            const fileInput = document.getElementById('csvFile');
-            const file = fileInput.files[0];
-
+            const file = document.getElementById('csvFile').files[0];
             if (!file) {
                 showStatus('請選擇一個CSV檔案', 'error');
                 return;
             }
 
-            showStatus('正在載入資料...', 'success');
-
             Papa.parse(file, {
                 header: true,
-                dynamicTyping: false,
-                skipEmptyLines: true,
                 complete: function(results) {
-                    try {
-                        globalData = results.data.filter(row => row.成員 && (row.成員 === 'Felix' || row.成員 === 'Hyunjin'));
-                        
-                        if (globalData.length === 0) {
-                            showStatus('未找到Felix或Hyunjin的資料', 'error');
-                            return;
-                        }
-
-                        // 排序資料按時間
-                        globalData.sort((a, b) => parseDateTime(a.執行時間) - parseDateTime(b.執行時間));
-
-                        showStatus(`成功載入 ${globalData.length} 筆資料`, 'success');
-                        setTimeout(() => {
-                            createDashboard();
-                        }, 1000);
-                    } catch (error) {
-                        showStatus('資料處理錯誤: ' + error.message, 'error');
+                    globalData = results.data.filter(row => 
+                        row.成員 && (row.成員 === 'Felix' || row.成員 === 'Hyunjin')
+                    );
+                    if (globalData.length === 0) {
+                        showStatus('未找到Felix或Hyunjin的資料', 'error');
+                        return;
                     }
-                },
-                error: function(error) {
-                    showStatus('檔案讀取錯誤: ' + error.message, 'error');
+                    globalData.sort((a, b) => parseDateTime(a.執行時間) - parseDateTime(b.執行時間));
+                    showStatus(`成功載入 ${globalData.length} 筆資料`);
+                    createDashboard();
                 }
             });
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            event.target.classList.add('active');
+            currentPage = pageId;
+            
+            if (globalData.length > 0 && (pageId === 'trends' || pageId === 'differences')) {
+                setTimeout(createCharts, 100);
+            }
         }
 
         function createDashboard() {
@@ -800,62 +405,22 @@
             }
         }
 
-        function createSummaryStats() {
-            const summaryStats = document.getElementById('summaryStats');
-            const latestData = getLatestData();
-            
-            const totalRecords = globalData.length;
-            const timeRange = getTimeRange();
-            
-            summaryStats.innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-value">${totalRecords}</div>
-                    <div class="stat-label">總記錄數</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">2</div>
-                    <div class="stat-label">追蹤成員</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${timeRange.days}</div>
-                    <div class="stat-label">追蹤天數</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value">${timeRange.lastUpdate}</div>
-                    <div class="stat-label">最後更新</div>
-                </div>
-            `;
-        }
-
-        function getTimeRange() {
-            if (globalData.length === 0) return { days: 0, lastUpdate: '-' };
-            
-            const dates = globalData.map(row => parseDateTime(row.執行時間));
-            const minDate = new Date(Math.min(...dates));
-            const maxDate = new Date(Math.max(...dates));
-            
-            const diffTime = maxDate - minDate;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            return {
-                days: diffDays || 1,
-                lastUpdate: maxDate.toLocaleDateString('zh-TW')
-            };
-        }
-
         function createComparisonCards() {
-            const comparisonGrid = document.getElementById('comparisonGrid');
-            const latestData = getLatestData();
-            
+            const latestData = {};
+            globalData.forEach(row => {
+                if (!latestData[row.成員] || parseDateTime(row.執行時間) > parseDateTime(latestData[row.成員].執行時間)) {
+                    latestData[row.成員] = row;
+                }
+            });
+
             const metrics = [
                 { key: '總人氣值', icon: '💖' },
                 { key: '總助力人數', icon: '🤝' },
                 { key: '今日人氣值', icon: '🔥' },
-                { key: '今日參與人數', icon: '👥' },
-                { key: '今日人數', icon: '📊' }
+                { key: '今日參與人數', icon: '👥' }
             ];
 
-            comparisonGrid.innerHTML = metrics.map(metric => {
+            document.getElementById('comparisonGrid').innerHTML = metrics.map(metric => {
                 const felixValue = latestData.Felix ? parseNumber(latestData.Felix[metric.key]) : 0;
                 const hyunjinValue = latestData.Hyunjin ? parseNumber(latestData.Hyunjin[metric.key]) : 0;
                 const difference = felixValue - hyunjinValue;
@@ -881,71 +446,37 @@
             }).join('');
         }
 
-        function getLatestData() {
-            const latest = {};
-            globalData.forEach(row => {
-                if (!latest[row.成員] || parseDateTime(row.執行時間) > parseDateTime(latest[row.成員].執行時間)) {
-                    latest[row.成員] = row;
-                }
-            });
-            return latest;
-        }
-
         function createCharts() {
             const timePoints = [...new Set(globalData.map(row => row.執行時間))].sort((a, b) => parseDateTime(a) - parseDateTime(b));
             
-            // 銷毀舊的圖表
-            Object.values(charts).forEach(chart => {
-                if (chart) chart.destroy();
-            });
+            Object.values(charts).forEach(chart => chart && chart.destroy());
             charts = {};
 
-            if (currentPage === 'trends') {
-                createTrendCharts(timePoints);
-            } else if (currentPage === 'differences') {
-                createDifferenceCharts(timePoints);
-            }
-        }
-
-        function createTrendCharts(timePoints) {
             const metrics = [
-                { key: '總人氣值', id: 'totalPopularityChart', title: '總人氣值' },
-                { key: '總助力人數', id: 'totalSupportChart', title: '總助力人數' },
-                { key: '今日人氣值', id: 'todayPopularityChart', title: '今日人氣值' },
-                { key: '今日參與人數', id: 'todayParticipantsChart', title: '今日參與人數' },
-                { key: '今日人數', id: 'todayCountChart', title: '今日人數' }
+                { key: '總人氣值', id: 'totalPopularityChart' },
+                { key: '總助力人數', id: 'totalSupportChart' },
+                { key: '今日人氣值', id: 'todayPopularityChart' },
+                { key: '今日參與人數', id: 'todayParticipantsChart' }
             ];
 
             metrics.forEach(metric => {
-                charts[metric.id] = createTrendChart(metric.id, metric.title, timePoints, metric.key);
+                if (currentPage === 'trends') {
+                    charts[metric.id] = createTrendChart(metric.id, timePoints, metric.key);
+                } else if (currentPage === 'differences') {
+                    charts[metric.id.replace('Chart', 'DiffChart')] = createDifferenceChart(metric.id.replace('Chart', 'DiffChart'), timePoints, metric.key);
+                }
             });
         }
 
-        function createDifferenceCharts(timePoints) {
-            const metrics = [
-                { key: '總人氣值', id: 'totalPopularityDiffChart', title: '總人氣值差值' },
-                { key: '總助力人數', id: 'totalSupportDiffChart', title: '總助力人數差值' },
-                { key: '今日人氣值', id: 'todayPopularityDiffChart', title: '今日人氣值差值' },
-                { key: '今日參與人數', id: 'todayParticipantsDiffChart', title: '今日參與人數差值' },
-                { key: '今日人數', id: 'todayCountDiffChart', title: '今日人數差值' }
-            ];
-
-            metrics.forEach(metric => {
-                charts[metric.id] = createDifferenceChart(metric.id, metric.title, timePoints, metric.key);
-            });
-        }
-
-        function createTrendChart(canvasId, title, timePoints, dataKey) {
+        function createTrendChart(canvasId, timePoints, dataKey) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return null;
             
             const ctx = canvas.getContext('2d');
-            
             const felixData = timePoints.map(time => {
                 const row = globalData.find(r => r.執行時間 === time && r.成員 === 'Felix');
                 return row ? parseNumber(row[dataKey]) : null;
             });
-
             const hyunjinData = timePoints.map(time => {
                 const row = globalData.find(r => r.執行時間 === time && r.成員 === 'Hyunjin');
                 return row ? parseNumber(row[dataKey]) : null;
@@ -954,22 +485,15 @@
             return new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: timePoints.map(time => {
-                        const date = parseDateTime(time);
-                        return date.toLocaleDateString('zh-TW', { 
-                            month: 'short', 
-                            day: 'numeric', 
-                            hour: '2-digit', 
-                            minute: '2-digit' 
-                        });
-                    }),
+                    labels: timePoints.map(time => parseDateTime(time).toLocaleDateString('zh-TW', { 
+                        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+                    })),
                     datasets: [{
                         label: 'Felix',
                         data: felixData,
                         borderColor: '#64B5F6',
                         backgroundColor: 'rgba(100, 181, 246, 0.1)',
                         borderWidth: 3,
-                        fill: false,
                         tension: 0.4,
                         spanGaps: true
                     }, {
@@ -978,7 +502,6 @@
                         borderColor: '#FFB74D',
                         backgroundColor: 'rgba(255, 183, 77, 0.1)',
                         borderWidth: 3,
-                        fill: false,
                         tension: 0.4,
                         spanGaps: true
                     }]
@@ -986,161 +509,87 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    },
+                    interaction: { intersect: false, mode: 'index' },
                     scales: {
-                        y: {
+                        y: { 
                             beginAtZero: false,
-                            ticks: {
-                                color: '#b0b0b0',
-                                callback: function(value) {
-                                    return value.toLocaleString();
-                                }
-                            },
-                            grid: {
-                                color: '#404040'
-                            }
+                            ticks: { color: '#b0b0b0', callback: value => value.toLocaleString() },
+                            grid: { color: '#404040' }
                         },
-                        x: {
-                            ticks: {
-                                color: '#b0b0b0',
-                                maxRotation: 45,
-                                minRotation: 45
-                            },
-                            grid: {
-                                color: '#404040'
-                            }
+                        x: { 
+                            ticks: { color: '#b0b0b0', maxRotation: 45 },
+                            grid: { color: '#404040' }
                         }
                     },
                     plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                color: '#e0e0e0'
-                            }
-                        },
+                        legend: { position: 'top', labels: { color: '#e0e0e0' } },
                         tooltip: {
                             backgroundColor: '#2d2d2d',
                             titleColor: '#e0e0e0',
                             bodyColor: '#e0e0e0',
                             borderColor: '#64B5F6',
-                            borderWidth: 1,
-                            callbacks: {
-                                label: function(context) {
-                                    if (context.parsed.y === null) return null;
-                                    return `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`;
-                                }
-                            }
+                            borderWidth: 1
                         }
                     }
                 }
             });
         }
 
-        function createDifferenceChart(canvasId, title, timePoints, dataKey) {
+        function createDifferenceChart(canvasId, timePoints, dataKey) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return null;
             
             const ctx = canvas.getContext('2d');
-            
             const differences = timePoints.map(time => {
                 const felixRow = globalData.find(r => r.執行時間 === time && r.成員 === 'Felix');
                 const hyunjinRow = globalData.find(r => r.執行時間 === time && r.成員 === 'Hyunjin');
                 
                 if (!felixRow || !hyunjinRow) return null;
-                
-                const felixValue = parseNumber(felixRow[dataKey]);
-                const hyunjinValue = parseNumber(hyunjinRow[dataKey]);
-                return felixValue - hyunjinValue;
+                return parseNumber(felixRow[dataKey]) - parseNumber(hyunjinRow[dataKey]);
             });
 
             return new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: timePoints.map(time => {
-                        const date = parseDateTime(time);
-                        return date.toLocaleDateString('zh-TW', { 
-                            month: 'short', 
-                            day: 'numeric', 
-                            hour: '2-digit', 
-                            minute: '2-digit' 
-                        });
-                    }),
+                    labels: timePoints.map(time => parseDateTime(time).toLocaleDateString('zh-TW', { 
+                        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+                    })),
                     datasets: [{
-                        label: `${title} (Felix - Hyunjin)`,
+                        label: `${dataKey}差值 (Felix - Hyunjin)`,
                         data: differences,
                         borderColor: '#64B5F6',
                         backgroundColor: function(context) {
                             const value = context.parsed?.y;
-                            if (value === null || value === undefined) return 'transparent';
                             return value >= 0 ? 'rgba(100, 181, 246, 0.2)' : 'rgba(244, 67, 54, 0.2)';
                         },
                         borderWidth: 3,
                         fill: true,
                         tension: 0.4,
-                        spanGaps: true,
-                        pointBackgroundColor: function(context) {
-                            const value = context.parsed?.y;
-                            if (value === null || value === undefined) return 'transparent';
-                            return value >= 0 ? '#64B5F6' : '#f44336';
-                        }
+                        spanGaps: true
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    },
+                    interaction: { intersect: false, mode: 'index' },
                     scales: {
-                        y: {
-                            ticks: {
-                                color: '#b0b0b0',
-                                callback: function(value) {
-                                    return value >= 0 ? `+${value.toLocaleString()}` : value.toLocaleString();
-                                }
-                            },
-                            grid: {
-                                color: function(context) {
-                                    return context.tick.value === 0 ? '#64B5F6' : '#404040';
-                                }
-                            }
+                        y: { 
+                            ticks: { color: '#b0b0b0', callback: value => value >= 0 ? `+${value.toLocaleString()}` : value.toLocaleString() },
+                            grid: { color: context => context.tick.value === 0 ? '#64B5F6' : '#404040' }
                         },
-                        x: {
-                            ticks: {
-                                color: '#b0b0b0',
-                                maxRotation: 45,
-                                minRotation: 45
-                            },
-                            grid: {
-                                color: '#404040'
-                            }
+                        x: { 
+                            ticks: { color: '#b0b0b0', maxRotation: 45 },
+                            grid: { color: '#404040' }
                         }
                     },
                     plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                color: '#e0e0e0'
-                            }
-                        },
+                        legend: { position: 'top', labels: { color: '#e0e0e0' } },
                         tooltip: {
                             backgroundColor: '#2d2d2d',
                             titleColor: '#e0e0e0',
                             bodyColor: '#e0e0e0',
                             borderColor: '#64B5F6',
-                            borderWidth: 1,
-                            callbacks: {
-                                label: function(context) {
-                                    if (context.parsed.y === null) return null;
-                                    const value = context.parsed.y;
-                                    const sign = value >= 0 ? '+' : '';
-                                    return `差值: ${sign}${value.toLocaleString()}`;
-                                }
-                            }
+                            borderWidth: 1
                         }
                     }
                 }
@@ -1148,19 +597,8 @@
         }
 
         // 初始化
-        window.addEventListener('load', function() {
-            // 頁面載入完成後立即執行一次同步
-            setTimeout(() => {
-                manualSync();
-            }, 1000);
-        });
-
-        // 頁面關閉時清理定時器
-        window.addEventListener('beforeunload', function() {
-            if (autoSyncInterval) {
-                clearInterval(autoSyncInterval);
-            }
-        });
+        window.addEventListener('load', () => setTimeout(manualSync, 1000));
+        window.addEventListener('beforeunload', () => autoSyncInterval && clearInterval(autoSyncInterval));
     </script>
 </body>
 </html>
