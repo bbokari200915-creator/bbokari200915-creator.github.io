@@ -123,12 +123,12 @@
         .comparison-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            gap: 8px;
         }
         
         @media (min-width: 768px) {
             .comparison-grid {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
                 gap: 20px;
             }
         }
@@ -343,8 +343,8 @@
                     <div class="chart-canvas"><canvas id="todayPopularityChart"></canvas></div>
                 </div>
                 <div class="card">
-                    <div class="chart-title">💥 今日参与人数趋势</div>
-                    <div class="chart-canvas"><canvas id="todayParticipantsChart"></canvas></div>
+                    <div class="chart-title">👥 今日新注册用户趋势</div>
+                    <div class="chart-canvas"><canvas id="todayNewUsersChart"></canvas></div>
                 </div>
             </div>
         </div>
@@ -367,6 +367,10 @@
                 <div class="card">
                     <div class="chart-title">💥 今日参与人数差值</div>
                     <div class="chart-canvas"><canvas id="todayParticipantsDiffChart"></canvas></div>
+                </div>
+                <div class="card">
+                    <div class="chart-title">👥 今日新注册用户差值</div>
+                    <div class="chart-canvas"><canvas id="todayNewUsersDiffChart"></canvas></div>
                 </div>
             </div>
         </div>
@@ -517,7 +521,8 @@
                 { key: '总人气值', icon: '💖' },
                 { key: '总助力人数', icon: '🤝' },
                 { key: '今日人气值', icon: '🔥' },
-                { key: '今日参与人数', icon: '💥' }
+                { key: '今日参与人数', icon: '💥' },
+                { key: '今日人数', icon: '👥', displayName: '今日新注册用户' }
             ];
 
             document.getElementById('comparisonGrid').innerHTML = metrics.map(metric => {
@@ -525,10 +530,11 @@
                 const hyunjinValue = latestData.Hyunjin ? parseNumber(latestData.Hyunjin[metric.key]) : 0;
                 const difference = felixValue - hyunjinValue;
                 const differenceText = difference >= 0 ? `+${difference.toLocaleString()}` : difference.toLocaleString();
+                const displayName = metric.displayName || metric.key;
                 
                 return `
                     <div class="comparison-card">
-                        <h4>${metric.icon} ${metric.key}</h4>
+                        <h4>${metric.icon} ${displayName}</h4>
                         <div class="member-value">
                             <span>Felix:</span>
                             <span>${felixValue.toLocaleString()}</span>
@@ -556,7 +562,8 @@
                 { key: '总人气值', id: 'totalPopularityChart' },
                 { key: '总助力人数', id: 'totalSupportChart' },
                 { key: '今日人气值', id: 'todayPopularityChart' },
-                { key: '今日参与人数', id: 'todayParticipantsChart' }
+                { key: '今日参与人数', id: 'todayParticipantsChart' },
+                { key: '今日人数', id: 'todayNewUsersChart' }
             ];
 
             metrics.forEach(metric => {
