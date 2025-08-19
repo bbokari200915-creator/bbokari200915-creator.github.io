@@ -94,6 +94,13 @@
             width: 100%;
         }
         
+        .sync-status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        
         @media (min-width: 768px) {
             .sync-info {
                 font-size: 13px;
@@ -287,8 +294,10 @@
     <div class="container">
         <div class="controls">
             <div class="sync-info">
-                <span id="syncStatus">未连接</span>
-                <span id="lastSync"></span>
+                <div class="sync-status-row">
+                    <span id="syncStatus">未连接</span>
+                    <span id="lastSync"></span>
+                </div>
                 <span style="color: #888; font-size: 11px;">📡 数据每5分钟更新</span>
             </div>
         </div>
