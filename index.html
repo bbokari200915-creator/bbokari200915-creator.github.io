@@ -245,7 +245,7 @@
         </div>
 
         <div class="nav-tabs">
-            <button class="nav-tab active" onclick="showPage('comparison')">📊 最新数据比较</button>
+            <button class="nav-tab active" onclick="showPage('comparison')">📊 最新数据</button>
             <button class="nav-tab" onclick="showPage('trends')">📈 趋势分析</button>
             <button class="nav-tab" onclick="showPage('differences')">📊 差值分析</button>
         </div>
@@ -503,8 +503,8 @@
                         borderColor: '#64B5F6',
                         backgroundColor: 'rgba(100, 181, 246, 0.1)',
                         borderWidth: window.innerWidth < 768 ? 2 : 3,
-                        pointRadius: window.innerWidth < 768 ? 1.5 : 4,
-                        pointHoverRadius: window.innerWidth < 768 ? 3 : 6,
+                        pointRadius: window.innerWidth < 768 ? 1.5 : 2,
+                        pointHoverRadius: window.innerWidth < 768 ? 3 : 4,
                         tension: 0.4,
                         spanGaps: true
                     }, {
@@ -513,8 +513,8 @@
                         borderColor: '#FFB74D',
                         backgroundColor: 'rgba(255, 183, 77, 0.1)',
                         borderWidth: window.innerWidth < 768 ? 2 : 3,
-                        pointRadius: window.innerWidth < 768 ? 1.5 : 4,
-                        pointHoverRadius: window.innerWidth < 768 ? 3 : 6,
+                        pointRadius: window.innerWidth < 768 ? 1.5 : 2,
+                        pointHoverRadius: window.innerWidth < 768 ? 3 : 4,
                         tension: 0.4,
                         spanGaps: true
                     }]
@@ -584,8 +584,8 @@
                             return value >= 0 ? 'rgba(100, 181, 246, 0.2)' : 'rgba(244, 67, 54, 0.2)';
                         },
                         borderWidth: window.innerWidth < 768 ? 2 : 3,
-                        pointRadius: window.innerWidth < 768 ? 1.5 : 4,
-                        pointHoverRadius: window.innerWidth < 768 ? 3 : 6,
+                        pointRadius: window.innerWidth < 768 ? 1.5 : 2,
+                        pointHoverRadius: window.innerWidth < 768 ? 3 : 4,
                         fill: true,
                         tension: 0.4,
                         spanGaps: true
