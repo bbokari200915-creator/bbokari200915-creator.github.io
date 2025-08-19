@@ -479,11 +479,20 @@
                         }
 
                         newData.sort((a, b) => parseDateTime(a.执行时间) - parseDateTime(b.执行时间));
-                        globalData = newData;
-                        lastSyncTime = new Date();
                         
-                        createDashboard();
-                        updateSyncStatus('✅ 同步完成', `成功同步 ${globalData.length} 笔资料`);
+                        // 检查数据是否有变动
+                        const hasDataChanged = globalData.length !== newData.length || 
+                            JSON.stringify(globalData) !== JSON.stringify(newData);
+                        
+                        if (hasDataChanged) {
+                            globalData = newData;
+                            createDashboard();
+                            updateSyncStatus('✅ 同步完成', `数据已更新 - ${globalData.length} 笔资料`);
+                        } else {
+                            updateSyncStatus('✅ 同步完成', '数据无变化');
+                        }
+                        
+                        lastSyncTime = new Date();
                     },
                     error: function(error) {
                         updateSyncStatus('❌ 连接错误', 'CSV解析错误: ' + error.message);
