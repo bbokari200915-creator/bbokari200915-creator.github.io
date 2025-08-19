@@ -34,7 +34,7 @@
             gap: 10px;
             flex-wrap: wrap;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
         }
         
         @media (min-width: 768px) {
@@ -42,7 +42,41 @@
                 padding: 20px;
                 margin-bottom: 30px;
                 gap: 15px;
-                justify-content: flex-end;
+            }
+        }
+        
+        .date-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .date-button {
+            padding: 8px 15px;
+            background: #404040;
+            color: #e0e0e0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        .date-button.active {
+            background: #64B5F6;
+            color: #1a1a1a;
+        }
+        
+        .date-button:hover:not(.active) {
+            background: #555;
+        }
+        
+        @media (min-width: 768px) {
+            .date-button {
+                padding: 10px 20px;
+                font-size: 14px;
             }
         }
         
@@ -300,6 +334,13 @@
 <body>
     <div class="container">
         <div class="controls">
+            <div class="date-selector">
+                <span style="color: #e0e0e0; font-weight: bold;">选择日期:</span>
+                <button class="date-button" onclick="selectDate('8/18')" data-date="8/18">8/18</button>
+                <button class="date-button active" onclick="selectDate('8/19')" data-date="8/19">8/19</button>
+                <button class="date-button" onclick="selectDate('8/20')" data-date="8/20">8/20</button>
+            </div>
+            
             <div class="sync-info">
                 <div class="sync-status-row">
                     <span id="syncStatus">未连接</span>
@@ -343,7 +384,7 @@
                     <div class="chart-canvas"><canvas id="todayPopularityChart"></canvas></div>
                 </div>
                 <div class="card">
-                    <div class="chart-title">💥 今日参与人数趋势</div>
+                    <div class="chart-title">👥 今日参与人数趋势</div>
                     <div class="chart-canvas"><canvas id="todayParticipantsChart"></canvas></div>
                 </div>
                 <div class="card">
@@ -369,7 +410,7 @@
                     <div class="chart-canvas"><canvas id="todayPopularityDiffChart"></canvas></div>
                 </div>
                 <div class="card">
-                    <div class="chart-title">💥 今日参与人数差值</div>
+                    <div class="chart-title">👥 今日参与人数差值</div>
                     <div class="chart-canvas"><canvas id="todayParticipantsDiffChart"></canvas></div>
                 </div>
                 <div class="card">
@@ -384,9 +425,25 @@
         let globalData = [];
         let charts = {};
         let currentPage = 'comparison';
+        let currentDate = '8/19'; // 默认日期
         let autoSyncInterval = null;
-        let sheetsUrl = 'https://docs.google.com/spreadsheets/d/1OwdPmIuge1Bw8p6laA8QdPcFzKrWwezJQGAi2uBlR1Y/export?format=csv&gid=1642175178';
         let lastSyncTime = null;
+
+        // 不同日期对应的 Google Sheets URL
+        const sheetsUrls = {
+            '8/18': 'https://docs.google.com/spreadsheets/d/1OwdPmIuge1Bw8p6laA8QdPcFzKrWwezJQGAi2uBlR1Y/export?format=csv&gid=1150570676',
+            '8/19': 'https://docs.google.com/spreadsheets/d/1OwdPmIuge1Bw8p6laA8QdPcFzKrWwezJQGAi2uBlR1Y/export?format=csv&gid=1642175178',
+            '8/20': 'https://docs.google.com/spreadsheets/d/1OwdPmIuge1Bw8p6laA8QdPcFzKrWwezJQGAi2uBlR1Y/export?format=csv&gid=1682931576'
+        };
+
+        function selectDate(date) {
+            // 更新按钮状态
+            document.querySelectorAll('.date-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-date="${date}"]`).classList.add('active');
+            
+            currentDate = date;
+            syncFromGoogleSheets();
+        }
 
         function showStatus(message, type = 'success') {
             // 移除现有的toast
@@ -454,6 +511,12 @@
         }
 
         async function syncFromGoogleSheets() {
+            const sheetsUrl = sheetsUrls[currentDate];
+            if (!sheetsUrl) {
+                updateSyncStatus('❌ 连接错误', '无效的日期选择');
+                return;
+            }
+
             updateSyncStatus('🔄 同步中...');
             try {
                 const response = await fetch(sheetsUrl);
@@ -487,9 +550,9 @@
                         if (hasDataChanged) {
                             globalData = newData;
                             createDashboard();
-                            updateSyncStatus('✅ 同步完成', `数据已更新 - ${globalData.length} 笔资料`);
+                            updateSyncStatus('✅ 同步完成', `${currentDate} 数据已更新 - ${globalData.length} 笔资料`);
                         } else {
-                            updateSyncStatus('✅ 同步完成', '数据无变化');
+                            updateSyncStatus('✅ 同步完成', `${currentDate} 数据无变化`);
                         }
                         
                         lastSyncTime = new Date();
@@ -534,7 +597,7 @@
                 { key: '总人气值', icon: '💖' },
                 { key: '总助力人数', icon: '🤝' },
                 { key: '今日人气值', icon: '🔥' },
-                { key: '今日参与人数', icon: '💥' },
+                { key: '今日参与人数', icon: '👥' },
                 { key: '今日人数', icon: '👥', displayName: '今日新注册用户' }
             ];
 
