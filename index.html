@@ -305,6 +305,7 @@
                     <span id="syncStatus">未连接</span>
                     <div class="sync-right">
                         <span id="lastSync"></span>
+                        <span id="latestData"></span>
                         <span style="color: #888; font-size: 11px;">📡 数据每5分钟更新</span>
                     </div>
                 </div>
@@ -407,6 +408,14 @@
             if (lastSyncTime) {
                 document.getElementById('lastSync').textContent = `上次同步: ${lastSyncTime.toLocaleString('zh-CN')}`;
             }
+            
+            // 更新最新数据时间
+            if (globalData.length > 0) {
+                const latestTime = Math.max(...globalData.map(row => parseDateTime(row.执行时间)));
+                const latestDate = new Date(latestTime);
+                document.getElementById('latestData').textContent = `最新数据: ${latestDate.toLocaleString('zh-CN')}`;
+            }
+            
             if (message) showStatus(message, status.includes('错误') ? 'error' : 'success');
         }
 
