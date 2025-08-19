@@ -270,11 +270,12 @@
         
         @media (max-width: 768px) {
             .toast {
-                top: 10px;
+                top: auto;
+                bottom: 20px;
                 right: 10px;
                 left: 10px;
                 max-width: none;
-                transform: translateY(-100%);
+                transform: translateY(100%);
             }
             .toast.show {
                 transform: translateY(0);
