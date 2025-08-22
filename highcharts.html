@@ -288,8 +288,10 @@
                 <div class="time-range-selector">
                     <span style="color: #e0e0e0; font-weight: bold;">选择时间:</span>
                     <button class="time-button active" onclick="selectTimeRange('all')" data-time="all">全部时间</button>
+                    <button class="time-button" onclick="selectTimeRange('3h')" data-time="3h">最近3小时</button>
                     <button class="time-button" onclick="selectTimeRange('6h')" data-time="6h">最近6小时</button>
                     <button class="time-button" onclick="selectTimeRange('12h')" data-time="12h">最近12小时</button>
+                    <button class="time-button" onclick="selectTimeRange('24h')" data-time="24h">最近24小时</button>
                 </div>
             </div>
 
@@ -339,15 +341,6 @@
             '直拍3': '' // 需要时添加 URL
         };
 
-        // 时间格式化函数 - 统一为 M-D HH:MM 格式
-        function formatTime(date) {
-            const month = date.getMonth() + 1;
-            const day = date.getDate();
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            return `${month}-${day} ${hours}:${minutes}`;
-        }
-
         function selectDate(source) {
             // 更新按钮状态
             document.querySelectorAll('.date-button').forEach(btn => btn.classList.remove('active'));
@@ -396,20 +389,14 @@
         function updateSyncStatus(status, message = '') {
             document.getElementById('syncStatus').textContent = status;
             if (lastSyncTime) {
-                // 先用 toLocaleString，再用 formatTime
-                const lastSyncLocaleString = lastSyncTime.toLocaleString('zh-CN');
-                const lastSyncFormatted = formatTime(lastSyncTime);
-                document.getElementById('lastSync').textContent = `上次同步: ${lastSyncFormatted}`;
+                document.getElementById('lastSync').textContent = `上次同步: ${lastSyncTime.toLocaleString('zh-CN')}`;
             }
 
             // 更新最新数据时间
             if (globalData.length > 0) {
                 const latestTime = Math.max(...globalData.map(row => parseDateTime(row.更新时间)));
                 const latestDate = new Date(latestTime);
-                // 先用 toLocaleString，再用 formatTime
-                const localeString = latestDate.toLocaleString('zh-CN');
-                const formattedTime = formatTime(latestDate);
-                document.getElementById('latestData').textContent = `最新数据: ${formattedTime}`;
+                document.getElementById('latestData').textContent = `最新数据: ${latestDate.toLocaleString('zh-CN')}`;
             }
 
             if (message) showStatus(message, status.includes('错误') ? 'error' : 'success');
@@ -438,11 +425,17 @@
             let cutoffTime;
 
             switch (currentTimeRange) {
+                case '3h':
+                    cutoffTime = new Date(now.getTime() - 3 * 60 * 60 * 1000);
+                    break;
                 case '6h':
                     cutoffTime = new Date(now.getTime() - 6 * 60 * 60 * 1000);
                     break;
                 case '12h':
                     cutoffTime = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+                    break;
+                case '24h':
+                    cutoffTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
                     break;
                 default:
                     return data;
@@ -590,10 +583,23 @@
                 };
             });
 
-            // 时间标签格式化 - 统一使用 M-D HH:MM 格式
+            // 根据时间范围调整时间标签格式
             const formatTimeLabel = (time) => {
                 const date = parseDateTime(time);
-                return formatTime(date);
+                if (currentTimeRange === 'all') {
+                    return date.toLocaleString('zh-CN', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                } else {
+                    return date.toLocaleString('zh-CN', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+                }
             };
 
             return new Chart(ctx, {
