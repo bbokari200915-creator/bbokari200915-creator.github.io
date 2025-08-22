@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube数据仪表板</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.3.3/highcharts.min.js"></script>
+    <title>YouTube數據儀表板</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         * { box-sizing: border-box; }
@@ -152,10 +152,48 @@
             margin-bottom: 15px;
             color: #e0e0e0;
         }
+
+        .chart-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .chart-controls label {
+            font-size: 12px;
+            color: #b0b0b0;
+        }
+
+        .chart-controls input[type="date"] {
+            background: #404040;
+            color: #e0e0e0;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 11px;
+        }
+
+        .chart-controls input[type="date"]:focus {
+            outline: none;
+            border-color: #64B5F6;
+        }
+
+        @media (min-width: 768px) {
+            .chart-controls label {
+                font-size: 14px;
+            }
+            .chart-controls input[type="date"] {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+        }
+        
         .chart-canvas { 
             position: relative; 
-            height: 300px;
-            width: 100%;
+            height: 300px; 
         }
         
         @media (min-width: 768px) {
@@ -164,8 +202,7 @@
                 margin-bottom: 20px;
             }
             .chart-canvas { 
-                height: 400px;
-                width: 100%;
+                height: 400px; 
             }
         }
         
@@ -223,19 +260,19 @@
     <div class="container">
         <div class="controls">
             <div class="date-selector">
-                <span style="color: #e0e0e0; font-weight: bold;">选择直拍:</span>
-                <button class="date-button active" onclick="selectDate('音银 1')" data-date="音银 1">音银 1</button>
-                <button class="date-button" onclick="selectDate('音银 2')" data-date="音银 2">音银 2</button>
-                <button class="date-button" onclick="selectDate('直拍3')" data-date="直拍3">直拍3</button>
+                <span style="color: #e0e0e0; font-weight: bold;">選擇直播:</span>
+                <button class="date-button active" onclick="selectDate('音銀 1')" data-date="音銀 1">音銀 1</button>
+                <button class="date-button" onclick="selectDate('音銀 2')" data-date="音銀 2">音銀 2</button>
+                <button class="date-button" onclick="selectDate('直播3')" data-date="直播3">直播3</button>
             </div>
             
             <div class="sync-info">
                 <div class="sync-status-row">
-                    <span id="syncStatus">未连接</span>
+                    <span id="syncStatus">未連接</span>
                     <div class="sync-right">
                         <span id="lastSync"></span>
                         <span id="latestData"></span>
-                        <span style="color: #888; font-size: 11px;">📡 数据每5分钟更新</span>
+                        <span style="color: #888; font-size: 11px;">📡 數據每5分鐘更新</span>
                     </div>
                 </div>
             </div>
@@ -243,19 +280,37 @@
 
         <div id="status" class="status" style="display:none;"></div>
 
-        <!-- YouTube数据图表 -->
+        <!-- YouTube數據圖表 -->
         <div class="charts-grid">
             <div class="card">
-                <div class="chart-title">👀 观看次数</div>
-                <div class="chart-canvas" id="viewCountChart"></div>
+                <div class="chart-title">👀 觀看次數</div>
+                <div class="chart-controls">
+                    <label>From:</label>
+                    <input type="date" id="viewFromDate" onchange="updateChart('viewCountChart')">
+                    <label>To:</label>
+                    <input type="date" id="viewToDate" onchange="updateChart('viewCountChart')">
+                </div>
+                <div class="chart-canvas"><canvas id="viewCountChart"></canvas></div>
             </div>
             <div class="card">
-                <div class="chart-title">👍 点赞数</div>
-                <div class="chart-canvas" id="likeCountChart"></div>
+                <div class="chart-title">👍 點贊數</div>
+                <div class="chart-controls">
+                    <label>From:</label>
+                    <input type="date" id="likeFromDate" onchange="updateChart('likeCountChart')">
+                    <label>To:</label>
+                    <input type="date" id="likeToDate" onchange="updateChart('likeCountChart')">
+                </div>
+                <div class="chart-canvas"><canvas id="likeCountChart"></canvas></div>
             </div>
             <div class="card">
-                <div class="chart-title">💬 评论数</div>
-                <div class="chart-canvas" id="commentCountChart"></div>
+                <div class="chart-title">💬 評論數</div>
+                <div class="chart-controls">
+                    <label>From:</label>
+                    <input type="date" id="commentFromDate" onchange="updateChart('commentCountChart')">
+                    <label>To:</label>
+                    <input type="date" id="commentToDate" onchange="updateChart('commentCountChart')">
+                </div>
+                <div class="chart-canvas"><canvas id="commentCountChart"></canvas></div>
             </div>
         </div>
     </div>
@@ -263,19 +318,19 @@
     <script>
         let globalData = [];
         let charts = {};
-        let currentSource = '音银 1'; // 默认数据源
+        let currentSource = '音銀 1'; // 默認數據源
         let autoSyncInterval = null;
         let lastSyncTime = null;
 
-        // 不同数据源对应的 Google Sheets URL
+        // 不同數據源對應的 Google Sheets URL
         const sheetsUrls = {
-            '音银 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=714013901',
-            '音银 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1229040293',
-            '直拍3': ''  // 需要时添加URL
+            '音銀 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=714013901',
+            '音銀 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1229040293',
+            '直播3': ''  // 需要時添加 URL
         };
 
         function selectDate(source) {
-            // 更新按钮状态
+            // 更新按鈕狀態
             document.querySelectorAll('.date-button').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`[data-date="${source}"]`).classList.add('active');
             
@@ -284,22 +339,22 @@
         }
 
         function showStatus(message, type = 'success') {
-            // 移除现有的toast
+            // 移除現有的toast
             const existingToast = document.querySelector('.toast');
             if (existingToast) {
                 existingToast.remove();
             }
             
-            // 创建新的toast
+            // 創建新的toast
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.textContent = message;
             document.body.appendChild(toast);
             
-            // 显示toast
+            // 顯示toast
             setTimeout(() => toast.classList.add('show'), 100);
             
-            // 3秒后隐藏并移除toast
+            // 3秒後隱藏並移除toast
             setTimeout(() => {
                 toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 300);
@@ -312,14 +367,14 @@
                 document.getElementById('lastSync').textContent = `上次同步: ${lastSyncTime.toLocaleString('zh-CN')}`;
             }
             
-            // 更新最新数据时间
+            // 更新最新數據時間
             if (globalData.length > 0) {
-                const latestTime = Math.max(...globalData.map(row => parseDateTime(row.更新时间)));
+                const latestTime = Math.max(...globalData.map(row => parseDateTime(row.更新時間)));
                 const latestDate = new Date(latestTime);
-                document.getElementById('latestData').textContent = `最新数据: ${latestDate.toLocaleString('zh-CN')}`;
+                document.getElementById('latestData').textContent = `最新數據: ${latestDate.toLocaleString('zh-CN')}`;
             }
             
-            if (message) showStatus(message, status.includes('错误') ? 'error' : 'success');
+            if (message) showStatus(message, status.includes('錯誤') ? 'error' : 'success');
         }
 
         function parseNumber(value) {
@@ -336,6 +391,123 @@
             }
         }
 
+        function formatDateForInput(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function initializeDateInputs() {
+            if (globalData.length === 0) return;
+            
+            const dates = globalData.map(row => parseDateTime(row.更新時間)).sort((a, b) => a - b);
+            const minDate = dates[0];
+            const maxDate = dates[dates.length - 1];
+            
+            const dateInputs = [
+                'viewFromDate', 'viewToDate',
+                'likeFromDate', 'likeToDate', 
+                'commentFromDate', 'commentToDate'
+            ];
+            
+            dateInputs.forEach((inputId, index) => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.min = formatDateForInput(minDate);
+                    input.max = formatDateForInput(maxDate);
+                    
+                    // 設置默認值：From為最小日期，To為最大日期
+                    if (inputId.includes('From')) {
+                        input.value = formatDateForInput(minDate);
+                    } else {
+                        input.value = formatDateForInput(maxDate);
+                    }
+                }
+            });
+        }
+
+        function getFilteredData(chartId) {
+            if (globalData.length === 0) return { timePoints: [], filteredData: [] };
+            
+            let fromDateId, toDateId;
+            if (chartId === 'viewCountChart') {
+                fromDateId = 'viewFromDate';
+                toDateId = 'viewToDate';
+            } else if (chartId === 'likeCountChart') {
+                fromDateId = 'likeFromDate';
+                toDateId = 'likeToDate';
+            } else if (chartId === 'commentCountChart') {
+                fromDateId = 'commentFromDate';
+                toDateId = 'commentToDate';
+            }
+            
+            const fromDate = new Date(document.getElementById(fromDateId).value);
+            const toDate = new Date(document.getElementById(toDateId).value + 'T23:59:59');
+            
+            const filteredData = globalData.filter(row => {
+                const rowDate = parseDateTime(row.更新時間);
+                return rowDate >= fromDate && rowDate <= toDate;
+            });
+            
+            const timePoints = [...new Set(filteredData.map(row => row.更新時間))].sort((a, b) => parseDateTime(a) - parseDateTime(b));
+            
+            return { timePoints, filteredData };
+        }
+
+        function updateChart(chartId) {
+            if (!charts[chartId] || globalData.length === 0) return;
+            
+            const { timePoints, filteredData } = getFilteredData(chartId);
+            
+            if (timePoints.length === 0) {
+                return;
+            }
+            
+            const members = [...new Set(globalData.map(row => row.成員))];
+            const memberColors = {
+                [members[0]]: '#64B5F6',
+                [members[1]]: '#FFB74D',
+                [members[2]]: '#81C784',
+                [members[3]]: '#F06292',
+                [members[4]]: '#9575CD'
+            };
+            
+            let dataKey;
+            if (chartId === 'viewCountChart') dataKey = '觀看次數';
+            else if (chartId === 'likeCountChart') dataKey = '點贊數';
+            else if (chartId === 'commentCountChart') dataKey = '評論數';
+            
+            const datasets = members.map(member => {
+                const memberData = timePoints.map(time => {
+                    const row = filteredData.find(r => r.更新時間 === time && r.成員 === member);
+                    return row ? parseNumber(row[dataKey]) : null;
+                });
+
+                return {
+                    label: member,
+                    data: memberData,
+                    borderColor: memberColors[member] || '#64B5F6',
+                    backgroundColor: (memberColors[member] || '#64B5F6') + '20',
+                    borderWidth: window.innerWidth < 768 ? 2 : 3,
+                    pointRadius: window.innerWidth < 768 ? 1.5 : 2,
+                    pointHoverRadius: window.innerWidth < 768 ? 3 : 4,
+                    tension: 0.4,
+                    spanGaps: true,
+                    fill: false
+                };
+            });
+            
+            charts[chartId].data.labels = timePoints.map(time => parseDateTime(time).toLocaleString('zh-CN', { 
+                month: 'short', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            }));
+            charts[chartId].data.datasets = datasets;
+            charts[chartId].update();
+        }
+
         async function syncFromGoogleSheets() {
             const sheetsUrl = sheetsUrls[currentSource];
             if (!sheetsUrl) {
@@ -350,7 +522,7 @@
                 const csvText = await response.text();
                 
                 if (!csvText || csvText.includes('<html')) {
-                    throw new Error('获取的不是CSV资料，可能是权限问题');
+                    throw new Error('獲取的不是CSV資料，可能是權限問題');
                 }
 
                 Papa.parse(csvText, {
@@ -359,53 +531,54 @@
                     skipEmptyLines: true,
                     complete: function(results) {
                         const newData = results.data.filter(row => 
-                            row.成员 && row.视频ID && row.更新时间
+                            row.成員 && row.視頻ID && row.更新時間
                         );
                         
                         if (newData.length === 0) {
-                            updateSyncStatus('⚠ 数据为空', '未找到有效的YouTube数据');
+                            updateSyncStatus('⚠ 數據為空', '未找到有效的YouTube數據');
                             return;
                         }
 
-                        newData.sort((a, b) => parseDateTime(a.更新时间) - parseDateTime(b.更新时间));
+                        newData.sort((a, b) => parseDateTime(a.更新時間) - parseDateTime(b.更新時間));
                         
-                        // 检查数据是否有变动
+                        // 檢查數據是否有變動
                         const hasDataChanged = globalData.length !== newData.length || 
                             JSON.stringify(globalData) !== JSON.stringify(newData);
                         
                         if (hasDataChanged) {
                             globalData = newData;
+                            initializeDateInputs();
                             createCharts();
-                            updateSyncStatus('✅ 同步完成', `${currentSource} 数据已更新 - ${globalData.length} 笔资料`);
+                            updateSyncStatus('✅ 同步完成', `${currentSource} 數據已更新 - ${globalData.length} 筆資料`);
                         } else {
-                            updateSyncStatus('✅ 同步完成', `${currentSource} 数据无变化`);
+                            updateSyncStatus('✅ 同步完成', `${currentSource} 數據無變化`);
                         }
                         
                         lastSyncTime = new Date();
                     },
                     error: function(error) {
-                        updateSyncStatus('⚠ 连接错误', 'CSV解析错误: ' + error.message);
+                        updateSyncStatus('⚠ 連接錯誤', 'CSV解析錯誤: ' + error.message);
                     }
                 });
             } catch (error) {
-                updateSyncStatus('⚠ 连接错误', error.message);
+                updateSyncStatus('⚠ 連接錯誤', error.message);
             }
         }
 
         function createCharts() {
             if (globalData.length === 0) return;
 
-            // 销毁现有图表
+            // 銷毀現有圖表
             Object.values(charts).forEach(chart => chart && chart.destroy());
             charts = {};
 
-            // 获取所有成员
-            const members = [...new Set(globalData.map(row => row.成员))];
+            // 獲取所有成員
+            const members = [...new Set(globalData.map(row => row.成員))];
             
-            // 获取所有时间点
-            const timePoints = [...new Set(globalData.map(row => row.更新时间))].sort((a, b) => parseDateTime(a) - parseDateTime(b));
+            // 獲取所有時間點
+            const timePoints = [...new Set(globalData.map(row => row.更新時間))].sort((a, b) => parseDateTime(a) - parseDateTime(b));
 
-            // 生成成员颜色
+            // 生成成員顏色
             const memberColors = {
                 [members[0]]: '#64B5F6',
                 [members[1]]: '#FFB74D',
@@ -414,11 +587,11 @@
                 [members[4]]: '#9575CD'
             };
 
-            // 创建三个图表
+            // 創建三個圖表
             const metrics = [
-                { key: '观看次数', id: 'viewCountChart' },
-                { key: '点赞数', id: 'likeCountChart' },
-                { key: '评论数', id: 'commentCountChart' }
+                { key: '觀看次數', id: 'viewCountChart' },
+                { key: '點贊數', id: 'likeCountChart' },
+                { key: '評論數', id: 'commentCountChart' }
             ];
 
             metrics.forEach(metric => {
@@ -426,113 +599,100 @@
             });
         }
 
-        function createTrendChart(chartId, timePoints, dataKey, members, memberColors) {
-            const chartContainer = document.getElementById(chartId);
-            if (!chartContainer) return null;
+        function createTrendChart(canvasId, timePoints, dataKey, members, memberColors) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return null;
             
-            // 为每个成员创建数据系列
-            const series = members.map(member => {
+            const ctx = canvas.getContext('2d');
+            
+            // 為每個成員創建數據集
+            const datasets = members.map(member => {
                 const memberData = timePoints.map(time => {
-                    const row = globalData.find(r => r.更新时间 === time && r.成员 === member);
-                    const value = row ? parseNumber(row[dataKey]) : null;
-                    return [parseDateTime(time).getTime(), value];
+                    const row = globalData.find(r => r.更新時間 === time && r.成員 === member);
+                    return row ? parseNumber(row[dataKey]) : null;
                 });
 
                 return {
-                    name: member,
+                    label: member,
                     data: memberData,
-                    color: memberColors[member] || '#64B5F6',
-                    lineWidth: window.innerWidth < 768 ? 2 : 3,
-                    marker: {
-                        radius: window.innerWidth < 768 ? 3 : 4
-                    }
+                    borderColor: memberColors[member] || '#64B5F6',
+                    backgroundColor: (memberColors[member] || '#64B5F6') + '20',
+                    borderWidth: window.innerWidth < 768 ? 2 : 3,
+                    pointRadius: window.innerWidth < 768 ? 1.5 : 2,
+                    pointHoverRadius: window.innerWidth < 768 ? 3 : 4,
+                    tension: 0.4,
+                    spanGaps: true,
+                    fill: false
                 };
             });
 
-            return Highcharts.chart(chartId, {
-                chart: {
-                    type: 'line',
-                    backgroundColor: 'transparent',
-                    style: {
-                        fontFamily: 'Arial, sans-serif'
-                    }
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timePoints.map(time => parseDateTime(time).toLocaleString('zh-CN', { 
+                        month: 'short', 
+                        day: 'numeric', 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    })),
+                    datasets: datasets
                 },
-                title: {
-                    text: null
-                },
-                xAxis: {
-                    type: 'datetime',
-                    labels: {
-                        style: {
-                            color: '#b0b0b0',
-                            fontSize: window.innerWidth < 768 ? '10px' : '12px'
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { intersect: false, mode: 'index' },
+                    scales: {
+                        y: { 
+                            beginAtZero: false,
+                            ticks: { 
+                                color: '#b0b0b0', 
+                                callback: value => value.toLocaleString(),
+                                font: { size: window.innerWidth < 768 ? 10 : 12 }
+                            },
+                            grid: { color: '#404040' }
                         },
-                        formatter: function() {
-                            return Highcharts.dateFormat('%m/%d %H:%M', this.value);
+                        x: { 
+                            ticks: { 
+                                color: '#b0b0b0', 
+                                maxRotation: window.innerWidth < 768 ? 90 : 45,
+                                font: { size: window.innerWidth < 768 ? 10 : 12 }
+                            },
+                            grid: { color: '#404040' }
                         }
                     },
-                    gridLineColor: '#404040',
-                    lineColor: '#404040',
-                    tickColor: '#404040'
-                },
-                yAxis: {
-                    title: {
-                        text: null
-                    },
-                    labels: {
-                        style: {
-                            color: '#b0b0b0',
-                            fontSize: window.innerWidth < 768 ? '10px' : '12px'
+                    plugins: {
+                        legend: { 
+                            position: 'top', 
+                            labels: { 
+                                color: '#e0e0e0',
+                                usePointStyle: true,
+                                padding: 20
+                            } 
                         },
-                        formatter: function() {
-                            return this.value.toLocaleString();
-                        }
-                    },
-                    gridLineColor: '#404040'
-                },
-                legend: {
-                    itemStyle: {
-                        color: '#e0e0e0'
-                    },
-                    itemHoverStyle: {
-                        color: '#ffffff'
-                    }
-                },
-                tooltip: {
-                    backgroundColor: '#2d2d2d',
-                    borderColor: '#64B5F6',
-                    borderWidth: 1,
-                    style: {
-                        color: '#e0e0e0'
-                    },
-                    formatter: function() {
-                        return '<b>' + this.series.name + '</b><br/>' +
-                               Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) + '<br/>' +
-                               this.y.toLocaleString();
-                    }
-                },
-                plotOptions: {
-                    line: {
-                        connectNulls: false,
-                        marker: {
-                            enabled: true
+                        tooltip: {
+                            backgroundColor: '#2d2d2d',
+                            titleColor: '#e0e0e0',
+                            bodyColor: '#e0e0e0',
+                            borderColor: '#64B5F6',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`;
+                                }
+                            }
                         }
                     }
-                },
-                series: series,
-                credits: {
-                    enabled: false
                 }
             });
         }
 
-        // 初始化 - 自动开始同步
+        // 初始化 - 自動開始同步
         window.addEventListener('load', () => {
             setTimeout(() => {
                 syncFromGoogleSheets();
-                // 设置自动同步，每分钟更新一次
+                // 設置自動同步，每分鐘更新一次
                 autoSyncInterval = setInterval(syncFromGoogleSheets, 60000);
-                updateSyncStatus('🟢 已连接 - 自动同步中');
+                updateSyncStatus('🟢 已連接 - 自動同步中');
             }, 1000);
         });
         
