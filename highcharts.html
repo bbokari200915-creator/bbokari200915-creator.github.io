@@ -154,7 +154,8 @@
         }
         .chart-canvas { 
             position: relative; 
-            height: 300px; 
+            height: 300px;
+            width: 100%;
         }
         
         @media (min-width: 768px) {
@@ -163,7 +164,8 @@
                 margin-bottom: 20px;
             }
             .chart-canvas { 
-                height: 400px; 
+                height: 400px;
+                width: 100%;
             }
         }
         
@@ -221,7 +223,7 @@
     <div class="container">
         <div class="controls">
             <div class="date-selector">
-                <span style="color: #e0e0e0; font-weight: bold;">選擇直拍:</span>
+                <span style="color: #e0e0e0; font-weight: bold;">选择直拍:</span>
                 <button class="date-button active" onclick="selectDate('音银 1')" data-date="音银 1">音银 1</button>
                 <button class="date-button" onclick="selectDate('音银 2')" data-date="音银 2">音银 2</button>
                 <button class="date-button" onclick="selectDate('直拍3')" data-date="直拍3">直拍3</button>
@@ -404,7 +406,13 @@
             const timePoints = [...new Set(globalData.map(row => row.更新时间))].sort((a, b) => parseDateTime(a) - parseDateTime(b));
 
             // 生成成员颜色
-            const memberColors = ['#64B5F6', '#FFB74D', '#81C784', '#F06292', '#9575CD'];
+            const memberColors = {
+                [members[0]]: '#64B5F6',
+                [members[1]]: '#FFB74D',
+                [members[2]]: '#81C784',
+                [members[3]]: '#F06292',
+                [members[4]]: '#9575CD'
+            };
 
             // 创建三个图表
             const metrics = [
@@ -418,39 +426,36 @@
             });
         }
 
-        function createTrendChart(containerId, timePoints, dataKey, members, memberColors) {
-            const container = document.getElementById(containerId);
-            if (!container) return null;
+        function createTrendChart(chartId, timePoints, dataKey, members, memberColors) {
+            const chartContainer = document.getElementById(chartId);
+            if (!chartContainer) return null;
             
             // 为每个成员创建数据系列
-            const series = members.map((member, index) => {
+            const series = members.map(member => {
                 const memberData = timePoints.map(time => {
                     const row = globalData.find(r => r.更新时间 === time && r.成员 === member);
-                    return [parseDateTime(time).getTime(), row ? parseNumber(row[dataKey]) : null];
+                    const value = row ? parseNumber(row[dataKey]) : null;
+                    return [parseDateTime(time).getTime(), value];
                 });
 
                 return {
                     name: member,
                     data: memberData,
-                    color: memberColors[index] || '#64B5F6',
-                    connectNulls: false,
-                    lineWidth: 3,
+                    color: memberColors[member] || '#64B5F6',
+                    lineWidth: window.innerWidth < 768 ? 2 : 3,
                     marker: {
-                        radius: 4,
-                        symbol: 'circle'
+                        radius: window.innerWidth < 768 ? 3 : 4
                     }
                 };
             });
 
-            // 配置Highcharts主题
-            const chartOptions = {
+            return Highcharts.chart(chartId, {
                 chart: {
                     type: 'line',
                     backgroundColor: 'transparent',
                     style: {
                         fontFamily: 'Arial, sans-serif'
-                    },
-                    height: window.innerWidth < 768 ? 300 : 400
+                    }
                 },
                 title: {
                     text: null
@@ -462,7 +467,9 @@
                             color: '#b0b0b0',
                             fontSize: window.innerWidth < 768 ? '10px' : '12px'
                         },
-                        rotation: window.innerWidth < 768 ? -45 : 0
+                        formatter: function() {
+                            return Highcharts.dateFormat('%m/%d %H:%M', this.value);
+                        }
                     },
                     gridLineColor: '#404040',
                     lineColor: '#404040',
@@ -483,23 +490,9 @@
                     },
                     gridLineColor: '#404040'
                 },
-                plotOptions: {
-                    line: {
-                        animation: {
-                            duration: 1000
-                        },
-                        marker: {
-                            enabled: true,
-                            radius: window.innerWidth < 768 ? 2 : 4
-                        }
-                    }
-                },
                 legend: {
-                    align: 'center',
-                    verticalAlign: 'top',
                     itemStyle: {
-                        color: '#e0e0e0',
-                        fontSize: window.innerWidth < 768 ? '12px' : '14px'
+                        color: '#e0e0e0'
                     },
                     itemHoverStyle: {
                         color: '#ffffff'
@@ -513,32 +506,24 @@
                         color: '#e0e0e0'
                     },
                     formatter: function() {
-                        return `<b>${this.series.name}</b><br/>` +
-                               `时间: ${Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x)}<br/>` +
-                               `${dataKey}: ${this.y.toLocaleString()}`;
+                        return '<b>' + this.series.name + '</b><br/>' +
+                               Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x) + '<br/>' +
+                               this.y.toLocaleString();
                     }
                 },
-                credits: {
-                    enabled: false
+                plotOptions: {
+                    line: {
+                        connectNulls: false,
+                        marker: {
+                            enabled: true
+                        }
+                    }
                 },
                 series: series,
-                responsive: {
-                    rules: [{
-                        condition: {
-                            maxWidth: 768
-                        },
-                        chartOptions: {
-                            legend: {
-                                layout: 'horizontal',
-                                align: 'center',
-                                verticalAlign: 'bottom'
-                            }
-                        }
-                    }]
+                credits: {
+                    enabled: false
                 }
-            };
-
-            return Highcharts.chart(containerId, chartOptions);
+            });
         }
 
         // 初始化 - 自动开始同步
