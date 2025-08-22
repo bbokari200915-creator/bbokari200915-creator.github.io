@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube数据仪表板</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.2.0/highcharts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         * {
@@ -195,9 +195,9 @@
             color: #e0e0e0;
         }
 
-        .chart-container {
+        .chart-canvas {
+            position: relative;
             height: 300px;
-            width: 100%;
         }
 
         @media (min-width: 768px) {
@@ -206,7 +206,7 @@
                 margin-bottom: 20px;
             }
 
-            .chart-container {
+            .chart-canvas {
                 height: 400px;
             }
         }
@@ -271,44 +271,6 @@
                 transform: translateY(0);
             }
         }
-
-        /* Highcharts 深色主题样式 */
-        .highcharts-background {
-            fill: #2d2d2d;
-        }
-
-        .highcharts-plot-background {
-            fill: #2d2d2d;
-        }
-
-        .highcharts-grid-line {
-            stroke: #404040;
-        }
-
-        .highcharts-axis-line {
-            stroke: #404040;
-        }
-
-        .highcharts-tick {
-            stroke: #404040;
-        }
-
-        .highcharts-axis-labels text {
-            fill: #b0b0b0;
-        }
-
-        .highcharts-legend-item text {
-            fill: #e0e0e0 !important;
-        }
-
-        .highcharts-title {
-            fill: #e0e0e0;
-        }
-
-        .highcharts-tooltip-box {
-            fill: #2d2d2d;
-            stroke: #64B5F6;
-        }
     </style>
 </head>
 
@@ -349,15 +311,15 @@
         <div class="charts-grid">
             <div class="card">
                 <div class="chart-title">👀 观看数</div>
-                <div id="viewCountChart" class="chart-container"></div>
+                <div class="chart-canvas"><canvas id="viewCountChart"></canvas></div>
             </div>
             <div class="card">
                 <div class="chart-title">👍 点赞数</div>
-                <div id="likeCountChart" class="chart-container"></div>
+                <div class="chart-canvas"><canvas id="likeCountChart"></canvas></div>
             </div>
             <div class="card">
                 <div class="chart-title">💬 评论数</div>
-                <div id="commentCountChart" class="chart-container"></div>
+                <div class="chart-canvas"><canvas id="commentCountChart"></canvas></div>
             </div>
         </div>
     </div>
@@ -377,83 +339,14 @@
             '直拍3': '' // 需要时添加 URL
         };
 
-        // Highcharts 全局配置
-        Highcharts.setOptions({
-            colors: ['#64B5F6', '#FFB74D', '#81C784', '#F06292', '#9575CD', '#4DD0E1', '#AED581'],
-            chart: {
-                backgroundColor: '#2d2d2d',
-                plotBackgroundColor: '#2d2d2d',
-                plotBorderColor: '#404040',
-                style: {
-                    fontFamily: 'Arial, sans-serif',
-                    color: '#e0e0e0'
-                }
-            },
-            title: {
-                style: {
-                    color: '#e0e0e0'
-                }
-            },
-            xAxis: {
-                gridLineColor: '#404040',
-                lineColor: '#404040',
-                tickColor: '#404040',
-                labels: {
-                    style: {
-                        color: '#b0b0b0'
-                    }
-                },
-                title: {
-                    style: {
-                        color: '#b0b0b0'
-                    }
-                }
-            },
-            yAxis: {
-                gridLineColor: '#404040',
-                lineColor: '#404040',
-                tickColor: '#404040',
-                labels: {
-                    style: {
-                        color: '#b0b0b0'
-                    }
-                },
-                title: {
-                    style: {
-                        color: '#b0b0b0'
-                    }
-                }
-            },
-            tooltip: {
-                backgroundColor: '#2d2d2d',
-                borderColor: '#64B5F6',
-                style: {
-                    color: '#e0e0e0'
-                }
-            },
-            legend: {
-                itemStyle: {
-                    color: '#e0e0e0'
-                },
-                itemHoverStyle: {
-                    color: '#64B5F6'
-                }
-            },
-            plotOptions: {
-                spline: {
-                    marker: {
-                        enabled: true,
-                        radius: 3
-                    },
-                    lineWidth: 3,
-                    states: {
-                        hover: {
-                            lineWidth: 4
-                        }
-                    }
-                }
-            }
-        });
+        // 时间格式化函数 - 统一为 M-D HH:MM 格式
+        function formatTime(date) {
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${month}-${day} ${hours}:${minutes}`;
+        }
 
         function selectDate(source) {
             // 更新按钮状态
@@ -503,14 +396,20 @@
         function updateSyncStatus(status, message = '') {
             document.getElementById('syncStatus').textContent = status;
             if (lastSyncTime) {
-                document.getElementById('lastSync').textContent = `上次同步: ${lastSyncTime.toLocaleString('zh-CN')}`;
+                // 先用 toLocaleString，再用 formatTime
+                const lastSyncLocaleString = lastSyncTime.toLocaleString('zh-CN');
+                const lastSyncFormatted = formatTime(lastSyncTime);
+                document.getElementById('lastSync').textContent = `上次同步: ${lastSyncFormatted}`;
             }
 
             // 更新最新数据时间
             if (globalData.length > 0) {
                 const latestTime = Math.max(...globalData.map(row => parseDateTime(row.更新时间)));
                 const latestDate = new Date(latestTime);
-                document.getElementById('latestData').textContent = `最新数据: ${latestDate.toLocaleString('zh-CN')}`;
+                // 先用 toLocaleString，再用 formatTime
+                const localeString = latestDate.toLocaleString('zh-CN');
+                const formattedTime = formatTime(latestDate);
+                document.getElementById('latestData').textContent = `最新数据: ${formattedTime}`;
             }
 
             if (message) showStatus(message, status.includes('错误') ? 'error' : 'success');
@@ -630,172 +529,138 @@
             // 获取所有成员
             const members = [...new Set(filteredData.map(row => row.成员))];
 
-            // 获取所有时间点并排序
+            // 获取所有时间点
             const timePoints = [...new Set(filteredData.map(row => row.更新时间))].sort((a, b) => parseDateTime(a) -
                 parseDateTime(b));
 
+            // 生成成员颜色
+            const memberColors = {
+                [members[0]]: '#64B5F6',
+                [members[1]]: '#FFB74D',
+                [members[2]]: '#81C784',
+                [members[3]]: '#F06292',
+                [members[4]]: '#9575CD'
+            };
+
             // 创建三个图表
             const metrics = [{
-                    key: '观看数',
-                    id: 'viewCountChart',
-                    title: '观看数趋势'
+                    key: '观看次数',
+                    id: 'viewCountChart'
                 },
                 {
                     key: '点赞数',
-                    id: 'likeCountChart',
-                    title: '点赞数趋势'
+                    id: 'likeCountChart'
                 },
                 {
                     key: '评论数',
-                    id: 'commentCountChart',
-                    title: '评论数趋势'
+                    id: 'commentCountChart'
                 }
             ];
 
             metrics.forEach(metric => {
-                charts[metric.id] = createSplineChart(metric.id, timePoints, metric.key, metric.title, members,
+                charts[metric.id] = createTrendChart(metric.id, timePoints, metric.key, members, memberColors,
                     filteredData);
             });
         }
 
-        function createSplineChart(containerId, timePoints, dataKey, chartTitle, members, data) {
-            // 为每个成员创建数据系列
-            const series = members.map(member => {
+        function createTrendChart(canvasId, timePoints, dataKey, members, memberColors, data) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return null;
+
+            const ctx = canvas.getContext('2d');
+
+            // 为每个成员创建数据集
+            const datasets = members.map(member => {
                 const memberData = timePoints.map(time => {
                     const row = data.find(r => r.更新时间 === time && r.成员 === member);
-                    if (row) {
-                        return [parseDateTime(time).getTime(), parseNumber(row[dataKey])];
-                    }
-                    return null;
-                }).filter(point => point !== null);
+                    return row ? parseNumber(row[dataKey]) : null;
+                });
 
                 return {
-                    name: member,
+                    label: member,
                     data: memberData,
-                    type: 'spline'
+                    borderColor: memberColors[member] || '#64B5F6',
+                    backgroundColor: (memberColors[member] || '#64B5F6') + '20',
+                    borderWidth: window.innerWidth < 768 ? 2 : 3,
+                    pointRadius: window.innerWidth < 768 ? 1.5 : 2,
+                    pointHoverRadius: window.innerWidth < 768 ? 3 : 4,
+                    tension: 0.4,
+                    spanGaps: true,
+                    fill: false
                 };
             });
 
-            // 根据时间范围调整时间格式
-            const getDateFormat = () => {
-                if (currentTimeRange === 'all') {
-                    return '{value:%m-%d %H:%M}';
-                } else {
-                    return '{value:%H:%M:%S}';
-                }
+            // 时间标签格式化 - 统一使用 M-D HH:MM 格式
+            const formatTimeLabel = (time) => {
+                const date = parseDateTime(time);
+                return formatTime(date);
             };
 
-            charts[containerId] = Highcharts.chart(containerId, {
-                chart: {
-                    type: 'spline',
-                    backgroundColor: '#2d2d2d',
-                    height: window.innerWidth < 768 ? 300 : 400
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timePoints.map(formatTimeLabel),
+                    datasets: datasets
                 },
-                title: {
-                    text: chartTitle,
-                    style: {
-                        color: '#e0e0e0',
-                        fontSize: '16px'
-                    }
-                },
-                xAxis: {
-                    type: 'datetime',
-                    labels: {
-                        format: getDateFormat(),
-                        style: {
-                            color: '#b0b0b0',
-                            fontSize: window.innerWidth < 768 ? '10px' : '12px'
-                        },
-                        rotation: window.innerWidth < 768 ? -45 : 0
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
                     },
-                    gridLineColor: '#404040',
-                    lineColor: '#404040',
-                    tickColor: '#404040'
-                },
-                yAxis: {
-                    title: {
-                        text: dataKey,
-                        style: {
-                            color: '#b0b0b0'
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                color: '#b0b0b0',
+                                callback: value => value.toLocaleString(),
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
+                            },
+                            grid: {
+                                color: '#404040'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#b0b0b0',
+                                maxRotation: window.innerWidth < 768 ? 90 : 45,
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
+                            },
+                            grid: {
+                                color: '#404040'
+                            }
                         }
                     },
-                    labels: {
-                        style: {
-                            color: '#b0b0b0',
-                            fontSize: window.innerWidth < 768 ? '10px' : '12px'
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#e0e0e0',
+                                usePointStyle: true,
+                                padding: 20
+                            }
                         },
-                        formatter: function () {
-                            return this.value.toLocaleString();
-                        }
-                    },
-                    gridLineColor: '#404040',
-                    lineColor: '#404040',
-                    tickColor: '#404040'
-                },
-                tooltip: {
-                    backgroundColor: '#2d2d2d',
-                    borderColor: '#64B5F6',
-                    borderWidth: 1,
-                    style: {
-                        color: '#e0e0e0'
-                    },
-                    formatter: function () {
-                        const date = new Date(this.x);
-                        return `<b>${this.series.name}</b><br/>` +
-                            `时间: ${date.toLocaleString('zh-CN')}<br/>` +
-                            `${dataKey}: ${this.y.toLocaleString()}`;
-                    }
-                },
-                legend: {
-                    itemStyle: {
-                        color: '#e0e0e0'
-                    },
-                    itemHoverStyle: {
-                        color: '#64B5F6'
-                    }
-                },
-                plotOptions: {
-                    spline: {
-                        marker: {
-                            enabled: true,
-                            radius: window.innerWidth < 768 ? 2 : 3
-                        },
-                        lineWidth: window.innerWidth < 768 ? 2 : 3,
-                        states: {
-                            hover: {
-                                lineWidth: window.innerWidth < 768 ? 3 : 4
+                        tooltip: {
+                            backgroundColor: '#2d2d2d',
+                            titleColor: '#e0e0e0',
+                            bodyColor: '#e0e0e0',
+                            borderColor: '#64B5F6',
+                            borderWidth: 1,
+                            callbacks: {
+                                label: function (context) {
+                                    return `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`;
+                                }
                             }
                         }
                     }
-                },
-                series: series,
-                responsive: {
-                    rules: [{
-                        condition: {
-                            maxWidth: 768
-                        },
-                        chartOptions: {
-                            legend: {
-                                layout: 'horizontal',
-                                align: 'center',
-                                verticalAlign: 'bottom'
-                            }
-                        }
-                    }]
                 }
             });
-
-            return charts[containerId];
         }
-
-        // 窗口大小改变时重新渲染图表
-        window.addEventListener('resize', function () {
-            Object.values(charts).forEach(chart => {
-                if (chart) {
-                    chart.reflow();
-                }
-            });
-        });
 
         // 初始化 - 自动开始同步
         window.addEventListener('load', () => {
