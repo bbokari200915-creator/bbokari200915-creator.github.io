@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -16,14 +20,18 @@
             color: #e0e0e0;
             min-height: 100vh;
         }
-        
+
         @media (min-width: 768px) {
             body {
                 padding: 20px;
             }
         }
-        .container { max-width: 1400px; margin: 0 auto; }
-        
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
         .controls {
             background: #2d2d2d;
             border-radius: 10px;
@@ -36,7 +44,7 @@
             align-items: center;
             justify-content: space-between;
         }
-        
+
         @media (min-width: 768px) {
             .controls {
                 padding: 20px;
@@ -44,14 +52,14 @@
                 gap: 15px;
             }
         }
-        
+
         .date-selector {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
             align-items: center;
         }
-        
+
         .date-button {
             padding: 8px 15px;
             background: #404040;
@@ -63,23 +71,23 @@
             transition: all 0.3s;
             white-space: nowrap;
         }
-        
+
         .date-button.active {
             background: #64B5F6;
             color: #1a1a1a;
         }
-        
+
         .date-button:hover:not(.active) {
             background: #555;
         }
-        
+
         @media (min-width: 768px) {
             .date-button {
                 padding: 10px 20px;
                 font-size: 14px;
             }
         }
-        
+
         .sync-info {
             font-size: 12px;
             color: #b0b0b0;
@@ -89,21 +97,21 @@
             text-align: center;
             width: 100%;
         }
-        
+
         .sync-status-row {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             width: 100%;
         }
-        
+
         .sync-right {
             display: flex;
             flex-direction: column;
             align-items: flex-end;
             gap: 2px;
         }
-        
+
         @media (min-width: 768px) {
             .sync-info {
                 font-size: 13px;
@@ -112,114 +120,20 @@
                 width: auto;
             }
         }
-        
-        /* 时间选择器样式 */
-        .time-selector-container {
-            background: #2d2d2d;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #404040;
-        }
-        
-        .time-selector-title {
-            color: #e0e0e0;
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        .time-slider-container {
-            position: relative;
-            height: 60px;
-            background: #404040;
-            border-radius: 8px;
-            margin: 10px 0;
-            padding: 10px;
-        }
-        
-        .time-axis {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 20px;
-            position: relative;
-            margin-bottom: 10px;
-        }
-        
-        .time-tick {
-            color: #b0b0b0;
-            font-size: 11px;
-            position: absolute;
-            transform: translateX(-50%);
-            white-space: nowrap;
-        }
-        
-        .slider-track {
-            position: relative;
-            height: 6px;
-            background: #555;
-            border-radius: 3px;
-            margin: 5px 0;
-        }
-        
-        .slider-range {
-            position: absolute;
-            height: 100%;
-            background: linear-gradient(90deg, #64B5F6, #81C784);
-            border-radius: 3px;
-            transition: all 0.2s ease;
-        }
-        
-        .slider-handle {
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            background: #64B5F6;
-            border: 2px solid #fff;
-            border-radius: 50%;
-            cursor: grab;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-        }
-        
-        .slider-handle:hover {
-            transform: translate(-50%, -50%) scale(1.2);
-            box-shadow: 0 3px 8px rgba(100, 181, 246, 0.4);
-        }
-        
-        .slider-handle:active {
-            cursor: grabbing;
-        }
-        
-        .slider-handle.end {
-            background: #81C784;
-        }
-        
-        .time-display {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            font-size: 12px;
-            color: #b0b0b0;
-        }
-        
+
         .charts-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 20px;
         }
-        
+
         @media (min-width: 768px) {
             .charts-grid {
                 grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
                 gap: 30px;
             }
         }
-        
+
         .card {
             background: #2d2d2d;
             border-radius: 10px;
@@ -227,18 +141,18 @@
             border: 1px solid #404040;
             transition: transform 0.2s;
         }
-        
+
         @media (min-width: 768px) {
             .card {
                 padding: 25px;
             }
         }
-        
+
         .card:hover {
             transform: translateY(-3px);
             border-color: #64B5F6;
         }
-        
+
         .chart-title {
             text-align: center;
             font-size: 1.2rem;
@@ -246,30 +160,40 @@
             margin-bottom: 15px;
             color: #e0e0e0;
         }
-        .chart-canvas { 
-            position: relative; 
-            height: 300px; 
+
+        .chart-canvas {
+            position: relative;
+            height: 300px;
         }
-        
+
         @media (min-width: 768px) {
             .chart-title {
                 font-size: 1.4rem;
                 margin-bottom: 20px;
             }
-            .chart-canvas { 
-                height: 400px; 
+
+            .chart-canvas {
+                height: 400px;
             }
         }
-        
+
         .status {
             padding: 15px;
             border-radius: 10px;
             margin: 15px 0;
             font-weight: bold;
         }
-        .status.success { background: #1B5E20; color: #C8E6C9; }
-        .status.error { background: #B71C1C; color: #FFCDD2; }
-        
+
+        .status.success {
+            background: #1B5E20;
+            color: #C8E6C9;
+        }
+
+        .status.error {
+            background: #B71C1C;
+            color: #FFCDD2;
+        }
+
         .toast {
             position: fixed;
             top: 20px;
@@ -282,20 +206,23 @@
             transform: translateX(100%);
             transition: transform 0.3s ease-in-out;
             max-width: 300px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
+
         .toast.show {
             transform: translateX(0);
         }
-        .toast.success { 
-            background: #4CAF50; 
-            color: white; 
+
+        .toast.success {
+            background: #4CAF50;
+            color: white;
         }
-        .toast.error { 
-            background: #f44336; 
-            color: white; 
+
+        .toast.error {
+            background: #f44336;
+            color: white;
         }
-        
+
         @media (max-width: 768px) {
             .toast {
                 top: auto;
@@ -305,22 +232,24 @@
                 max-width: none;
                 transform: translateY(100%);
             }
+
             .toast.show {
                 transform: translateY(0);
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="controls">
             <div class="date-selector">
-                <span style="color: #e0e0e0; font-weight: bold;">选择直播:</span>
+                <span style="color: #e0e0e0; font-weight: bold;">选择直拍:</span>
                 <button class="date-button active" onclick="selectDate('音银 1')" data-date="音银 1">音银 1</button>
                 <button class="date-button" onclick="selectDate('音银 2')" data-date="音银 2">音银 2</button>
-                <button class="date-button" onclick="selectDate('直播3')" data-date="直播3">直播3</button>
+                <button class="date-button" onclick="selectDate('直拍3')" data-date="直拍3">直拍3</button>
             </div>
-            
+
             <div class="sync-info">
                 <div class="sync-status-row">
                     <span id="syncStatus">未连接</span>
@@ -329,23 +258,6 @@
                         <span id="latestData"></span>
                         <span style="color: #888; font-size: 11px;">📡 数据每5分钟更新</span>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 时间选择器 -->
-        <div class="time-selector-container">
-            <div class="time-selector-title">📅 选择显示时间范围</div>
-            <div class="time-slider-container">
-                <div class="time-axis" id="timeAxis"></div>
-                <div class="slider-track">
-                    <div class="slider-range" id="sliderRange"></div>
-                    <div class="slider-handle" id="startHandle"></div>
-                    <div class="slider-handle end" id="endHandle"></div>
-                </div>
-                <div class="time-display">
-                    <span id="startTime">开始时间</span>
-                    <span id="endTime">结束时间</span>
                 </div>
             </div>
         </div>
@@ -372,44 +284,43 @@
     <script>
         let globalData = [];
         let charts = {};
-        let currentSource = '音银 1';
+        let currentSource = '音银 1'; // 默认数据源
         let autoSyncInterval = null;
         let lastSyncTime = null;
-        
-        // 时间选择器相关变量
-        let timePoints = [];
-        let selectedTimeRange = { start: 0, end: 0 };
-        let isDragging = false;
-        let dragTarget = null;
 
         // 不同数据源对应的 Google Sheets URL
         const sheetsUrls = {
             '音银 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=714013901',
             '音银 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1229040293',
-            '直播3': ''  // 需要时添加 URL
+            '直拍3': '' // 需要时添加URL
         };
 
         function selectDate(source) {
+            // 更新按钮状态
             document.querySelectorAll('.date-button').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`[data-date="${source}"]`).classList.add('active');
-            
+
             currentSource = source;
             syncFromGoogleSheets();
         }
 
         function showStatus(message, type = 'success') {
+            // 移除现有的toast
             const existingToast = document.querySelector('.toast');
             if (existingToast) {
                 existingToast.remove();
             }
-            
+
+            // 创建新的toast
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.textContent = message;
             document.body.appendChild(toast);
-            
+
+            // 显示toast
             setTimeout(() => toast.classList.add('show'), 100);
-            
+
+            // 3秒后隐藏并移除toast
             setTimeout(() => {
                 toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 300);
@@ -421,13 +332,14 @@
             if (lastSyncTime) {
                 document.getElementById('lastSync').textContent = `上次同步: ${lastSyncTime.toLocaleString('zh-CN')}`;
             }
-            
+
+            // 更新最新数据时间
             if (globalData.length > 0) {
                 const latestTime = Math.max(...globalData.map(row => parseDateTime(row.更新时间)));
                 const latestDate = new Date(latestTime);
                 document.getElementById('latestData').textContent = `最新数据: ${latestDate.toLocaleString('zh-CN')}`;
             }
-            
+
             if (message) showStatus(message, status.includes('错误') ? 'error' : 'success');
         }
 
@@ -445,123 +357,6 @@
             }
         }
 
-        // 时间选择器相关函数
-        function initTimeSlider() {
-            if (timePoints.length === 0) return;
-            
-            selectedTimeRange = { start: 0, end: timePoints.length - 1 };
-            updateTimeAxis();
-            updateSliderPosition();
-            setupSliderEvents();
-        }
-        
-        function updateTimeAxis() {
-            const timeAxis = document.getElementById('timeAxis');
-            timeAxis.innerHTML = '';
-            
-            const tickCount = Math.min(5, timePoints.length);
-            const step = Math.floor((timePoints.length - 1) / (tickCount - 1));
-            
-            for (let i = 0; i < tickCount; i++) {
-                const index = i === tickCount - 1 ? timePoints.length - 1 : i * step;
-                const tick = document.createElement('div');
-                tick.className = 'time-tick';
-                tick.textContent = formatTimeForAxis(timePoints[index]);
-                tick.style.left = `${(index / (timePoints.length - 1)) * 100}%`;
-                timeAxis.appendChild(tick);
-            }
-        }
-        
-        function formatTimeForAxis(timeStr) {
-            const date = parseDateTime(timeStr);
-            return date.toLocaleString('zh-CN', { 
-                month: 'short', 
-                day: 'numeric', 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
-        }
-        
-        function updateSliderPosition() {
-            const startPercent = (selectedTimeRange.start / (timePoints.length - 1)) * 100;
-            const endPercent = (selectedTimeRange.end / (timePoints.length - 1)) * 100;
-            
-            const startHandle = document.getElementById('startHandle');
-            const endHandle = document.getElementById('endHandle');
-            const sliderRange = document.getElementById('sliderRange');
-            
-            startHandle.style.left = `${startPercent}%`;
-            endHandle.style.left = `${endPercent}%`;
-            sliderRange.style.left = `${startPercent}%`;
-            sliderRange.style.width = `${endPercent - startPercent}%`;
-            
-            // 更新时间显示
-            document.getElementById('startTime').textContent = formatTimeForAxis(timePoints[selectedTimeRange.start]);
-            document.getElementById('endTime').textContent = formatTimeForAxis(timePoints[selectedTimeRange.end]);
-        }
-        
-        function setupSliderEvents() {
-            const startHandle = document.getElementById('startHandle');
-            const endHandle = document.getElementById('endHandle');
-            const sliderTrack = document.querySelector('.slider-track');
-            
-            function getPositionFromEvent(e, rect) {
-                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-                return Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-            }
-            
-            function startDrag(target, e) {
-                isDragging = true;
-                dragTarget = target;
-                e.preventDefault();
-            }
-            
-            function handleDrag(e) {
-                if (!isDragging || !dragTarget) return;
-                
-                const rect = sliderTrack.getBoundingClientRect();
-                const position = getPositionFromEvent(e, rect);
-                const index = Math.round(position * (timePoints.length - 1));
-                
-                if (dragTarget === 'start') {
-                    selectedTimeRange.start = Math.max(0, Math.min(index, selectedTimeRange.end - 1));
-                } else if (dragTarget === 'end') {
-                    selectedTimeRange.end = Math.min(timePoints.length - 1, Math.max(index, selectedTimeRange.start + 1));
-                }
-                
-                updateSliderPosition();
-                updateChartsWithTimeFilter();
-            }
-            
-            function stopDrag() {
-                isDragging = false;
-                dragTarget = null;
-            }
-            
-            // 鼠标事件
-            startHandle.addEventListener('mousedown', (e) => startDrag('start', e));
-            endHandle.addEventListener('mousedown', (e) => startDrag('end', e));
-            document.addEventListener('mousemove', handleDrag);
-            document.addEventListener('mouseup', stopDrag);
-            
-            // 触摸事件
-            startHandle.addEventListener('touchstart', (e) => startDrag('start', e));
-            endHandle.addEventListener('touchstart', (e) => startDrag('end', e));
-            document.addEventListener('touchmove', handleDrag);
-            document.addEventListener('touchend', stopDrag);
-        }
-        
-        function updateChartsWithTimeFilter() {
-            if (timePoints.length === 0) return;
-            
-            const filteredTimePoints = timePoints.slice(selectedTimeRange.start, selectedTimeRange.end + 1);
-            const filteredData = globalData.filter(row => 
-                filteredTimePoints.includes(row.更新时间)
-            );
-            
-            createChartsWithData(filteredData, filteredTimePoints);
-        }
-
         async function syncFromGoogleSheets() {
             const sheetsUrl = sheetsUrls[currentSource];
             if (!sheetsUrl) {
@@ -574,7 +369,7 @@
                 const response = await fetch(sheetsUrl);
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const csvText = await response.text();
-                
+
                 if (!csvText || csvText.includes('<html')) {
                     throw new Error('获取的不是CSV资料，可能是权限问题');
                 }
@@ -583,34 +378,34 @@
                     header: true,
                     dynamicTyping: false,
                     skipEmptyLines: true,
-                    complete: function(results) {
-                        const newData = results.data.filter(row => 
+                    complete: function (results) {
+                        const newData = results.data.filter(row =>
                             row.成员 && row.视频ID && row.更新时间
                         );
-                        
+
                         if (newData.length === 0) {
                             updateSyncStatus('⚠ 数据为空', '未找到有效的YouTube数据');
                             return;
                         }
 
                         newData.sort((a, b) => parseDateTime(a.更新时间) - parseDateTime(b.更新时间));
-                        
-                        const hasDataChanged = globalData.length !== newData.length || 
+
+                        // 检查数据是否有变动
+                        const hasDataChanged = globalData.length !== newData.length ||
                             JSON.stringify(globalData) !== JSON.stringify(newData);
-                        
+
                         if (hasDataChanged) {
                             globalData = newData;
-                            timePoints = [...new Set(globalData.map(row => row.更新时间))].sort((a, b) => parseDateTime(a) - parseDateTime(b));
-                            initTimeSlider();
                             createCharts();
-                            updateSyncStatus('✅ 同步完成', `${currentSource} 数据已更新 - ${globalData.length} 笔资料`);
+                            updateSyncStatus('✅ 同步完成',
+                                `${currentSource} 数据已更新 - ${globalData.length} 笔资料`);
                         } else {
                             updateSyncStatus('✅ 同步完成', `${currentSource} 数据无变化`);
                         }
-                        
+
                         lastSyncTime = new Date();
                     },
-                    error: function(error) {
+                    error: function (error) {
                         updateSyncStatus('⚠ 连接错误', 'CSV解析错误: ' + error.message);
                     }
                 });
@@ -621,17 +416,18 @@
 
         function createCharts() {
             if (globalData.length === 0) return;
-            createChartsWithData(globalData, timePoints);
-        }
-        
-        function createChartsWithData(data, timePointsToShow) {
+
             // 销毁现有图表
             Object.values(charts).forEach(chart => chart && chart.destroy());
             charts = {};
 
             // 获取所有成员
-            const members = [...new Set(data.map(row => row.成员))];
-            
+            const members = [...new Set(globalData.map(row => row.成员))];
+
+            // 获取所有时间点
+            const timePoints = [...new Set(globalData.map(row => row.更新时间))].sort((a, b) => parseDateTime(a) -
+                parseDateTime(b));
+
             // 生成成员颜色
             const memberColors = {
                 [members[0]]: '#64B5F6',
@@ -642,27 +438,35 @@
             };
 
             // 创建三个图表
-            const metrics = [
-                { key: '观看次数', id: 'viewCountChart' },
-                { key: '点赞数', id: 'likeCountChart' },
-                { key: '评论数', id: 'commentCountChart' }
+            const metrics = [{
+                    key: '观看次数',
+                    id: 'viewCountChart'
+                },
+                {
+                    key: '点赞数',
+                    id: 'likeCountChart'
+                },
+                {
+                    key: '评论数',
+                    id: 'commentCountChart'
+                }
             ];
 
             metrics.forEach(metric => {
-                charts[metric.id] = createTrendChart(metric.id, timePointsToShow, metric.key, members, memberColors, data);
+                charts[metric.id] = createTrendChart(metric.id, timePoints, metric.key, members, memberColors);
             });
         }
 
-        function createTrendChart(canvasId, timePointsToShow, dataKey, members, memberColors, data) {
+        function createTrendChart(canvasId, timePoints, dataKey, members, memberColors) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return null;
-            
+
             const ctx = canvas.getContext('2d');
-            
+
             // 为每个成员创建数据集
             const datasets = members.map(member => {
-                const memberData = timePointsToShow.map(time => {
-                    const row = data.find(r => r.更新时间 === time && r.成员 === member);
+                const memberData = timePoints.map(time => {
+                    const row = globalData.find(r => r.更新时间 === time && r.成员 === member);
                     return row ? parseNumber(row[dataKey]) : null;
                 });
 
@@ -683,45 +487,56 @@
             return new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: timePointsToShow.map(time => parseDateTime(time).toLocaleString('zh-CN', { 
-                        month: 'short', 
-                        day: 'numeric', 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
+                    labels: timePoints.map(time => parseDateTime(time).toLocaleString('zh-CN', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
                     })),
                     datasets: datasets
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: { intersect: false, mode: 'index' },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
                     scales: {
-                        y: { 
+                        y: {
                             beginAtZero: false,
-                            ticks: { 
-                                color: '#b0b0b0', 
+                            ticks: {
+                                color: '#b0b0b0',
                                 callback: value => value.toLocaleString(),
-                                font: { size: window.innerWidth < 768 ? 10 : 12 }
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
                             },
-                            grid: { color: '#404040' }
+                            grid: {
+                                color: '#404040'
+                            }
                         },
-                        x: { 
-                            ticks: { 
-                                color: '#b0b0b0', 
+                        x: {
+                            ticks: {
+                                color: '#b0b0b0',
                                 maxRotation: window.innerWidth < 768 ? 90 : 45,
-                                font: { size: window.innerWidth < 768 ? 10 : 12 }
+                                font: {
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
                             },
-                            grid: { color: '#404040' }
+                            grid: {
+                                color: '#404040'
+                            }
                         }
                     },
                     plugins: {
-                        legend: { 
-                            position: 'top', 
-                            labels: { 
+                        legend: {
+                            position: 'top',
+                            labels: {
                                 color: '#e0e0e0',
                                 usePointStyle: true,
                                 padding: 20
-                            } 
+                            }
                         },
                         tooltip: {
                             backgroundColor: '#2d2d2d',
@@ -730,7 +545,7 @@
                             borderColor: '#64B5F6',
                             borderWidth: 1,
                             callbacks: {
-                                label: function(context) {
+                                label: function (context) {
                                     return `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`;
                                 }
                             }
@@ -749,8 +564,9 @@
                 updateSyncStatus('🟢 已连接 - 自动同步中');
             }, 1000);
         });
-        
+
         window.addEventListener('beforeunload', () => autoSyncInterval && clearInterval(autoSyncInterval));
     </script>
 </body>
+
 </html>
