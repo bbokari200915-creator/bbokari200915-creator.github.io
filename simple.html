@@ -188,12 +188,11 @@
         }
 
         .chart-title {
-            text-align: left;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: #f0f0f0;
-            padding-left: 5px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #e0e0e0;
         }
 
         .chart-canvas {
@@ -203,12 +202,12 @@
 
         @media (min-width: 768px) {
             .chart-title {
-                font-size: 1.2rem;
-                margin-bottom: 25px;
+                font-size: 1.4rem;
+                margin-bottom: 20px;
             }
 
             .chart-canvas {
-                height: 350px;
+                height: 400px;
             }
         }
 
@@ -574,32 +573,31 @@
                     label: member,
                     data: memberData,
                     borderColor: memberColors[member] || '#64B5F6',
-                    backgroundColor: 'transparent',
-                    borderWidth: 2,
-                    pointRadius: 0,
-                    pointHoverRadius: 4,
-                    pointBackgroundColor: memberColors[member] || '#64B5F6',
-                    pointBorderColor: '#1a1a1a',
-                    pointBorderWidth: 1,
-                    tension: 0.1,
+                    backgroundColor: (memberColors[member] || '#64B5F6') + '20',
+                    borderWidth: window.innerWidth < 768 ? 2 : 3,
+                    pointRadius: window.innerWidth < 768 ? 1.5 : 2,
+                    pointHoverRadius: window.innerWidth < 768 ? 3 : 4,
+                    tension: 0.4,
                     spanGaps: true,
                     fill: false
                 };
             });
 
-            // 简化时间标签格式
+            // 根据时间范围调整时间标签格式
             const formatTimeLabel = (time) => {
                 const date = parseDateTime(time);
                 if (currentTimeRange === 'all') {
                     return date.toLocaleString('zh-CN', {
                         month: 'short',
                         day: 'numeric',
-                        hour: '2-digit'
+                        hour: '2-digit',
+                        minute: '2-digit'
                     });
                 } else {
                     return date.toLocaleString('zh-CN', {
                         hour: '2-digit',
-                        minute: '2-digit'
+                        minute: '2-digit',
+                        second: '2-digit'
                     });
                 }
             };
@@ -617,99 +615,54 @@
                         intersect: false,
                         mode: 'index'
                     },
-                    layout: {
-                        padding: {
-                            top: 10,
-                            bottom: 10
-                        }
-                    },
                     scales: {
                         y: {
                             beginAtZero: false,
                             ticks: {
-                                color: '#999',
-                                callback: value => {
-                                    if (value >= 1000000) {
-                                        return (value / 1000000).toFixed(1) + 'M';
-                                    } else if (value >= 1000) {
-                                        return (value / 1000).toFixed(1) + 'K';
-                                    }
-                                    return value.toLocaleString();
-                                },
+                                color: '#b0b0b0',
+                                callback: value => value.toLocaleString(),
                                 font: {
-                                    size: 11
-                                },
-                                maxTicksLimit: 6
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
                             },
                             grid: {
-                                color: '#333',
-                                drawBorder: false
-                            },
-                            border: {
-                                display: false
+                                color: '#404040'
                             }
                         },
                         x: {
                             ticks: {
-                                color: '#999',
-                                maxRotation: 0,
+                                color: '#b0b0b0',
+                                maxRotation: window.innerWidth < 768 ? 90 : 45,
                                 font: {
-                                    size: 11
-                                },
-                                maxTicksLimit: 8
+                                    size: window.innerWidth < 768 ? 10 : 12
+                                }
                             },
                             grid: {
-                                display: false
-                            },
-                            border: {
-                                display: false
+                                color: '#404040'
                             }
                         }
                     },
                     plugins: {
                         legend: {
                             position: 'top',
-                            align: 'start',
                             labels: {
                                 color: '#e0e0e0',
                                 usePointStyle: true,
                                 pointStyle: 'circle',
-                                padding: 15,
-                                font: {
-                                    size: 12,
-                                    weight: '500'
-                                }
+                                padding: 20
                             }
                         },
                         tooltip: {
-                            backgroundColor: '#1a1a1a',
+                            backgroundColor: '#2d2d2d',
                             titleColor: '#e0e0e0',
                             bodyColor: '#e0e0e0',
-                            borderColor: '#444',
+                            borderColor: '#64B5F6',
                             borderWidth: 1,
-                            cornerRadius: 6,
-                            displayColors: true,
                             callbacks: {
-                                title: function (context) {
-                                    return context[0].label;
-                                },
                                 label: function (context) {
-                                    let value = context.parsed.y;
-                                    if (value >= 1000000) {
-                                        value = (value / 1000000).toFixed(2) + 'M';
-                                    } else if (value >= 1000) {
-                                        value = (value / 1000).toFixed(1) + 'K';
-                                    } else {
-                                        value = value.toLocaleString();
-                                    }
-                                    return `${context.dataset.label}: ${value}`;
+                                    return `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`;
                                 }
                             }
-                        }
-                    },
-                    elements: {
-                        point: {
-                            hoverBorderWidth: 2
                         }
                     }
                 }
