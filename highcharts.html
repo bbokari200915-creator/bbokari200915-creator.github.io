@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube數據儀表板</title>
+    <title>YouTube数据仪表板</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
@@ -113,6 +113,100 @@
             }
         }
         
+        /* 时间选择器样式 */
+        .time-selector-container {
+            background: #2d2d2d;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #404040;
+        }
+        
+        .time-selector-title {
+            color: #e0e0e0;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .time-slider-container {
+            position: relative;
+            height: 60px;
+            background: #404040;
+            border-radius: 8px;
+            margin: 10px 0;
+            padding: 10px;
+        }
+        
+        .time-axis {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 20px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+        
+        .time-tick {
+            color: #b0b0b0;
+            font-size: 11px;
+            position: absolute;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+        
+        .slider-track {
+            position: relative;
+            height: 6px;
+            background: #555;
+            border-radius: 3px;
+            margin: 5px 0;
+        }
+        
+        .slider-range {
+            position: absolute;
+            height: 100%;
+            background: linear-gradient(90deg, #64B5F6, #81C784);
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+        
+        .slider-handle {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #64B5F6;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            cursor: grab;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        
+        .slider-handle:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+            box-shadow: 0 3px 8px rgba(100, 181, 246, 0.4);
+        }
+        
+        .slider-handle:active {
+            cursor: grabbing;
+        }
+        
+        .slider-handle.end {
+            background: #81C784;
+        }
+        
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #b0b0b0;
+        }
+        
         .charts-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -152,45 +246,6 @@
             margin-bottom: 15px;
             color: #e0e0e0;
         }
-
-        .chart-controls {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
-
-        .chart-controls label {
-            font-size: 12px;
-            color: #b0b0b0;
-        }
-
-        .chart-controls input[type="date"] {
-            background: #404040;
-            color: #e0e0e0;
-            border: 1px solid #555;
-            border-radius: 4px;
-            padding: 4px 8px;
-            font-size: 11px;
-        }
-
-        .chart-controls input[type="date"]:focus {
-            outline: none;
-            border-color: #64B5F6;
-        }
-
-        @media (min-width: 768px) {
-            .chart-controls label {
-                font-size: 14px;
-            }
-            .chart-controls input[type="date"] {
-                padding: 6px 10px;
-                font-size: 12px;
-            }
-        }
-        
         .chart-canvas { 
             position: relative; 
             height: 300px; 
@@ -260,56 +315,55 @@
     <div class="container">
         <div class="controls">
             <div class="date-selector">
-                <span style="color: #e0e0e0; font-weight: bold;">選擇直播:</span>
-                <button class="date-button active" onclick="selectDate('音銀 1')" data-date="音銀 1">音銀 1</button>
-                <button class="date-button" onclick="selectDate('音銀 2')" data-date="音銀 2">音銀 2</button>
+                <span style="color: #e0e0e0; font-weight: bold;">选择直播:</span>
+                <button class="date-button active" onclick="selectDate('音银 1')" data-date="音银 1">音银 1</button>
+                <button class="date-button" onclick="selectDate('音银 2')" data-date="音银 2">音银 2</button>
                 <button class="date-button" onclick="selectDate('直播3')" data-date="直播3">直播3</button>
             </div>
             
             <div class="sync-info">
                 <div class="sync-status-row">
-                    <span id="syncStatus">未連接</span>
+                    <span id="syncStatus">未连接</span>
                     <div class="sync-right">
                         <span id="lastSync"></span>
                         <span id="latestData"></span>
-                        <span style="color: #888; font-size: 11px;">📡 數據每5分鐘更新</span>
+                        <span style="color: #888; font-size: 11px;">📡 数据每5分钟更新</span>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 时间选择器 -->
+        <div class="time-selector-container">
+            <div class="time-selector-title">📅 选择显示时间范围</div>
+            <div class="time-slider-container">
+                <div class="time-axis" id="timeAxis"></div>
+                <div class="slider-track">
+                    <div class="slider-range" id="sliderRange"></div>
+                    <div class="slider-handle" id="startHandle"></div>
+                    <div class="slider-handle end" id="endHandle"></div>
+                </div>
+                <div class="time-display">
+                    <span id="startTime">开始时间</span>
+                    <span id="endTime">结束时间</span>
                 </div>
             </div>
         </div>
 
         <div id="status" class="status" style="display:none;"></div>
 
-        <!-- YouTube數據圖表 -->
+        <!-- YouTube数据图表 -->
         <div class="charts-grid">
             <div class="card">
-                <div class="chart-title">👀 觀看次數</div>
-                <div class="chart-controls">
-                    <label>From:</label>
-                    <input type="date" id="viewFromDate" onchange="updateChart('viewCountChart')">
-                    <label>To:</label>
-                    <input type="date" id="viewToDate" onchange="updateChart('viewCountChart')">
-                </div>
+                <div class="chart-title">👀 观看次数</div>
                 <div class="chart-canvas"><canvas id="viewCountChart"></canvas></div>
             </div>
             <div class="card">
-                <div class="chart-title">👍 點贊數</div>
-                <div class="chart-controls">
-                    <label>From:</label>
-                    <input type="date" id="likeFromDate" onchange="updateChart('likeCountChart')">
-                    <label>To:</label>
-                    <input type="date" id="likeToDate" onchange="updateChart('likeCountChart')">
-                </div>
+                <div class="chart-title">👍 点赞数</div>
                 <div class="chart-canvas"><canvas id="likeCountChart"></canvas></div>
             </div>
             <div class="card">
-                <div class="chart-title">💬 評論數</div>
-                <div class="chart-controls">
-                    <label>From:</label>
-                    <input type="date" id="commentFromDate" onchange="updateChart('commentCountChart')">
-                    <label>To:</label>
-                    <input type="date" id="commentToDate" onchange="updateChart('commentCountChart')">
-                </div>
+                <div class="chart-title">💬 评论数</div>
                 <div class="chart-canvas"><canvas id="commentCountChart"></canvas></div>
             </div>
         </div>
@@ -318,19 +372,24 @@
     <script>
         let globalData = [];
         let charts = {};
-        let currentSource = '音銀 1'; // 默認數據源
+        let currentSource = '音银 1';
         let autoSyncInterval = null;
         let lastSyncTime = null;
+        
+        // 时间选择器相关变量
+        let timePoints = [];
+        let selectedTimeRange = { start: 0, end: 0 };
+        let isDragging = false;
+        let dragTarget = null;
 
-        // 不同數據源對應的 Google Sheets URL
+        // 不同数据源对应的 Google Sheets URL
         const sheetsUrls = {
-            '音銀 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=714013901',
-            '音銀 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1229040293',
-            '直播3': ''  // 需要時添加 URL
+            '音银 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=714013901',
+            '音银 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1229040293',
+            '直播3': ''  // 需要时添加 URL
         };
 
         function selectDate(source) {
-            // 更新按鈕狀態
             document.querySelectorAll('.date-button').forEach(btn => btn.classList.remove('active'));
             document.querySelector(`[data-date="${source}"]`).classList.add('active');
             
@@ -339,22 +398,18 @@
         }
 
         function showStatus(message, type = 'success') {
-            // 移除現有的toast
             const existingToast = document.querySelector('.toast');
             if (existingToast) {
                 existingToast.remove();
             }
             
-            // 創建新的toast
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             toast.textContent = message;
             document.body.appendChild(toast);
             
-            // 顯示toast
             setTimeout(() => toast.classList.add('show'), 100);
             
-            // 3秒後隱藏並移除toast
             setTimeout(() => {
                 toast.classList.remove('show');
                 setTimeout(() => toast.remove(), 300);
@@ -367,14 +422,13 @@
                 document.getElementById('lastSync').textContent = `上次同步: ${lastSyncTime.toLocaleString('zh-CN')}`;
             }
             
-            // 更新最新數據時間
             if (globalData.length > 0) {
-                const latestTime = Math.max(...globalData.map(row => parseDateTime(row.更新時間)));
+                const latestTime = Math.max(...globalData.map(row => parseDateTime(row.更新时间)));
                 const latestDate = new Date(latestTime);
-                document.getElementById('latestData').textContent = `最新數據: ${latestDate.toLocaleString('zh-CN')}`;
+                document.getElementById('latestData').textContent = `最新数据: ${latestDate.toLocaleString('zh-CN')}`;
             }
             
-            if (message) showStatus(message, status.includes('錯誤') ? 'error' : 'success');
+            if (message) showStatus(message, status.includes('错误') ? 'error' : 'success');
         }
 
         function parseNumber(value) {
@@ -391,121 +445,121 @@
             }
         }
 
-        function formatDateForInput(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
+        // 时间选择器相关函数
+        function initTimeSlider() {
+            if (timePoints.length === 0) return;
+            
+            selectedTimeRange = { start: 0, end: timePoints.length - 1 };
+            updateTimeAxis();
+            updateSliderPosition();
+            setupSliderEvents();
         }
-
-        function initializeDateInputs() {
-            if (globalData.length === 0) return;
+        
+        function updateTimeAxis() {
+            const timeAxis = document.getElementById('timeAxis');
+            timeAxis.innerHTML = '';
             
-            const dates = globalData.map(row => parseDateTime(row.更新時間)).sort((a, b) => a - b);
-            const minDate = dates[0];
-            const maxDate = dates[dates.length - 1];
+            const tickCount = Math.min(5, timePoints.length);
+            const step = Math.floor((timePoints.length - 1) / (tickCount - 1));
             
-            const dateInputs = [
-                'viewFromDate', 'viewToDate',
-                'likeFromDate', 'likeToDate', 
-                'commentFromDate', 'commentToDate'
-            ];
-            
-            dateInputs.forEach((inputId, index) => {
-                const input = document.getElementById(inputId);
-                if (input) {
-                    input.min = formatDateForInput(minDate);
-                    input.max = formatDateForInput(maxDate);
-                    
-                    // 設置默認值：From為最小日期，To為最大日期
-                    if (inputId.includes('From')) {
-                        input.value = formatDateForInput(minDate);
-                    } else {
-                        input.value = formatDateForInput(maxDate);
-                    }
-                }
-            });
-        }
-
-        function getFilteredData(chartId) {
-            if (globalData.length === 0) return { timePoints: [], filteredData: [] };
-            
-            let fromDateId, toDateId;
-            if (chartId === 'viewCountChart') {
-                fromDateId = 'viewFromDate';
-                toDateId = 'viewToDate';
-            } else if (chartId === 'likeCountChart') {
-                fromDateId = 'likeFromDate';
-                toDateId = 'likeToDate';
-            } else if (chartId === 'commentCountChart') {
-                fromDateId = 'commentFromDate';
-                toDateId = 'commentToDate';
+            for (let i = 0; i < tickCount; i++) {
+                const index = i === tickCount - 1 ? timePoints.length - 1 : i * step;
+                const tick = document.createElement('div');
+                tick.className = 'time-tick';
+                tick.textContent = formatTimeForAxis(timePoints[index]);
+                tick.style.left = `${(index / (timePoints.length - 1)) * 100}%`;
+                timeAxis.appendChild(tick);
             }
-            
-            const fromDate = new Date(document.getElementById(fromDateId).value);
-            const toDate = new Date(document.getElementById(toDateId).value + 'T23:59:59');
-            
-            const filteredData = globalData.filter(row => {
-                const rowDate = parseDateTime(row.更新時間);
-                return rowDate >= fromDate && rowDate <= toDate;
-            });
-            
-            const timePoints = [...new Set(filteredData.map(row => row.更新時間))].sort((a, b) => parseDateTime(a) - parseDateTime(b));
-            
-            return { timePoints, filteredData };
         }
-
-        function updateChart(chartId) {
-            if (!charts[chartId] || globalData.length === 0) return;
-            
-            const { timePoints, filteredData } = getFilteredData(chartId);
-            
-            if (timePoints.length === 0) {
-                return;
-            }
-            
-            const members = [...new Set(globalData.map(row => row.成員))];
-            const memberColors = {
-                [members[0]]: '#64B5F6',
-                [members[1]]: '#FFB74D',
-                [members[2]]: '#81C784',
-                [members[3]]: '#F06292',
-                [members[4]]: '#9575CD'
-            };
-            
-            let dataKey;
-            if (chartId === 'viewCountChart') dataKey = '觀看次數';
-            else if (chartId === 'likeCountChart') dataKey = '點贊數';
-            else if (chartId === 'commentCountChart') dataKey = '評論數';
-            
-            const datasets = members.map(member => {
-                const memberData = timePoints.map(time => {
-                    const row = filteredData.find(r => r.更新時間 === time && r.成員 === member);
-                    return row ? parseNumber(row[dataKey]) : null;
-                });
-
-                return {
-                    label: member,
-                    data: memberData,
-                    borderColor: memberColors[member] || '#64B5F6',
-                    backgroundColor: (memberColors[member] || '#64B5F6') + '20',
-                    borderWidth: window.innerWidth < 768 ? 2 : 3,
-                    pointRadius: window.innerWidth < 768 ? 1.5 : 2,
-                    pointHoverRadius: window.innerWidth < 768 ? 3 : 4,
-                    tension: 0.4,
-                    spanGaps: true,
-                    fill: false
-                };
-            });
-            
-            charts[chartId].data.labels = timePoints.map(time => parseDateTime(time).toLocaleString('zh-CN', { 
+        
+        function formatTimeForAxis(timeStr) {
+            const date = parseDateTime(timeStr);
+            return date.toLocaleString('zh-CN', { 
                 month: 'short', 
                 day: 'numeric', 
                 hour: '2-digit', 
                 minute: '2-digit' 
-            }));
-            charts[chartId].data.datasets = datasets;
-            charts[chartId].update();
+            });
+        }
+        
+        function updateSliderPosition() {
+            const startPercent = (selectedTimeRange.start / (timePoints.length - 1)) * 100;
+            const endPercent = (selectedTimeRange.end / (timePoints.length - 1)) * 100;
+            
+            const startHandle = document.getElementById('startHandle');
+            const endHandle = document.getElementById('endHandle');
+            const sliderRange = document.getElementById('sliderRange');
+            
+            startHandle.style.left = `${startPercent}%`;
+            endHandle.style.left = `${endPercent}%`;
+            sliderRange.style.left = `${startPercent}%`;
+            sliderRange.style.width = `${endPercent - startPercent}%`;
+            
+            // 更新时间显示
+            document.getElementById('startTime').textContent = formatTimeForAxis(timePoints[selectedTimeRange.start]);
+            document.getElementById('endTime').textContent = formatTimeForAxis(timePoints[selectedTimeRange.end]);
+        }
+        
+        function setupSliderEvents() {
+            const startHandle = document.getElementById('startHandle');
+            const endHandle = document.getElementById('endHandle');
+            const sliderTrack = document.querySelector('.slider-track');
+            
+            function getPositionFromEvent(e, rect) {
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                return Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+            }
+            
+            function startDrag(target, e) {
+                isDragging = true;
+                dragTarget = target;
+                e.preventDefault();
+            }
+            
+            function handleDrag(e) {
+                if (!isDragging || !dragTarget) return;
+                
+                const rect = sliderTrack.getBoundingClientRect();
+                const position = getPositionFromEvent(e, rect);
+                const index = Math.round(position * (timePoints.length - 1));
+                
+                if (dragTarget === 'start') {
+                    selectedTimeRange.start = Math.max(0, Math.min(index, selectedTimeRange.end - 1));
+                } else if (dragTarget === 'end') {
+                    selectedTimeRange.end = Math.min(timePoints.length - 1, Math.max(index, selectedTimeRange.start + 1));
+                }
+                
+                updateSliderPosition();
+                updateChartsWithTimeFilter();
+            }
+            
+            function stopDrag() {
+                isDragging = false;
+                dragTarget = null;
+            }
+            
+            // 鼠标事件
+            startHandle.addEventListener('mousedown', (e) => startDrag('start', e));
+            endHandle.addEventListener('mousedown', (e) => startDrag('end', e));
+            document.addEventListener('mousemove', handleDrag);
+            document.addEventListener('mouseup', stopDrag);
+            
+            // 触摸事件
+            startHandle.addEventListener('touchstart', (e) => startDrag('start', e));
+            endHandle.addEventListener('touchstart', (e) => startDrag('end', e));
+            document.addEventListener('touchmove', handleDrag);
+            document.addEventListener('touchend', stopDrag);
+        }
+        
+        function updateChartsWithTimeFilter() {
+            if (timePoints.length === 0) return;
+            
+            const filteredTimePoints = timePoints.slice(selectedTimeRange.start, selectedTimeRange.end + 1);
+            const filteredData = globalData.filter(row => 
+                filteredTimePoints.includes(row.更新时间)
+            );
+            
+            createChartsWithData(filteredData, filteredTimePoints);
         }
 
         async function syncFromGoogleSheets() {
@@ -522,7 +576,7 @@
                 const csvText = await response.text();
                 
                 if (!csvText || csvText.includes('<html')) {
-                    throw new Error('獲取的不是CSV資料，可能是權限問題');
+                    throw new Error('获取的不是CSV资料，可能是权限问题');
                 }
 
                 Papa.parse(csvText, {
@@ -531,54 +585,54 @@
                     skipEmptyLines: true,
                     complete: function(results) {
                         const newData = results.data.filter(row => 
-                            row.成員 && row.視頻ID && row.更新時間
+                            row.成员 && row.视频ID && row.更新时间
                         );
                         
                         if (newData.length === 0) {
-                            updateSyncStatus('⚠ 數據為空', '未找到有效的YouTube數據');
+                            updateSyncStatus('⚠ 数据为空', '未找到有效的YouTube数据');
                             return;
                         }
 
-                        newData.sort((a, b) => parseDateTime(a.更新時間) - parseDateTime(b.更新時間));
+                        newData.sort((a, b) => parseDateTime(a.更新时间) - parseDateTime(b.更新时间));
                         
-                        // 檢查數據是否有變動
                         const hasDataChanged = globalData.length !== newData.length || 
                             JSON.stringify(globalData) !== JSON.stringify(newData);
                         
                         if (hasDataChanged) {
                             globalData = newData;
-                            initializeDateInputs();
+                            timePoints = [...new Set(globalData.map(row => row.更新时间))].sort((a, b) => parseDateTime(a) - parseDateTime(b));
+                            initTimeSlider();
                             createCharts();
-                            updateSyncStatus('✅ 同步完成', `${currentSource} 數據已更新 - ${globalData.length} 筆資料`);
+                            updateSyncStatus('✅ 同步完成', `${currentSource} 数据已更新 - ${globalData.length} 笔资料`);
                         } else {
-                            updateSyncStatus('✅ 同步完成', `${currentSource} 數據無變化`);
+                            updateSyncStatus('✅ 同步完成', `${currentSource} 数据无变化`);
                         }
                         
                         lastSyncTime = new Date();
                     },
                     error: function(error) {
-                        updateSyncStatus('⚠ 連接錯誤', 'CSV解析錯誤: ' + error.message);
+                        updateSyncStatus('⚠ 连接错误', 'CSV解析错误: ' + error.message);
                     }
                 });
             } catch (error) {
-                updateSyncStatus('⚠ 連接錯誤', error.message);
+                updateSyncStatus('⚠ 连接错误', error.message);
             }
         }
 
         function createCharts() {
             if (globalData.length === 0) return;
-
-            // 銷毀現有圖表
+            createChartsWithData(globalData, timePoints);
+        }
+        
+        function createChartsWithData(data, timePointsToShow) {
+            // 销毁现有图表
             Object.values(charts).forEach(chart => chart && chart.destroy());
             charts = {};
 
-            // 獲取所有成員
-            const members = [...new Set(globalData.map(row => row.成員))];
+            // 获取所有成员
+            const members = [...new Set(data.map(row => row.成员))];
             
-            // 獲取所有時間點
-            const timePoints = [...new Set(globalData.map(row => row.更新時間))].sort((a, b) => parseDateTime(a) - parseDateTime(b));
-
-            // 生成成員顏色
+            // 生成成员颜色
             const memberColors = {
                 [members[0]]: '#64B5F6',
                 [members[1]]: '#FFB74D',
@@ -587,28 +641,28 @@
                 [members[4]]: '#9575CD'
             };
 
-            // 創建三個圖表
+            // 创建三个图表
             const metrics = [
-                { key: '觀看次數', id: 'viewCountChart' },
-                { key: '點贊數', id: 'likeCountChart' },
-                { key: '評論數', id: 'commentCountChart' }
+                { key: '观看次数', id: 'viewCountChart' },
+                { key: '点赞数', id: 'likeCountChart' },
+                { key: '评论数', id: 'commentCountChart' }
             ];
 
             metrics.forEach(metric => {
-                charts[metric.id] = createTrendChart(metric.id, timePoints, metric.key, members, memberColors);
+                charts[metric.id] = createTrendChart(metric.id, timePointsToShow, metric.key, members, memberColors, data);
             });
         }
 
-        function createTrendChart(canvasId, timePoints, dataKey, members, memberColors) {
+        function createTrendChart(canvasId, timePointsToShow, dataKey, members, memberColors, data) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return null;
             
             const ctx = canvas.getContext('2d');
             
-            // 為每個成員創建數據集
+            // 为每个成员创建数据集
             const datasets = members.map(member => {
-                const memberData = timePoints.map(time => {
-                    const row = globalData.find(r => r.更新時間 === time && r.成員 === member);
+                const memberData = timePointsToShow.map(time => {
+                    const row = data.find(r => r.更新时间 === time && r.成员 === member);
                     return row ? parseNumber(row[dataKey]) : null;
                 });
 
@@ -629,7 +683,7 @@
             return new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: timePoints.map(time => parseDateTime(time).toLocaleString('zh-CN', { 
+                    labels: timePointsToShow.map(time => parseDateTime(time).toLocaleString('zh-CN', { 
                         month: 'short', 
                         day: 'numeric', 
                         hour: '2-digit', 
@@ -686,13 +740,13 @@
             });
         }
 
-        // 初始化 - 自動開始同步
+        // 初始化 - 自动开始同步
         window.addEventListener('load', () => {
             setTimeout(() => {
                 syncFromGoogleSheets();
-                // 設置自動同步，每分鐘更新一次
+                // 设置自动同步，每分钟更新一次
                 autoSyncInterval = setInterval(syncFromGoogleSheets, 60000);
-                updateSyncStatus('🟢 已連接 - 自動同步中');
+                updateSyncStatus('🟢 已连接 - 自动同步中');
             }, 1000);
         });
         
