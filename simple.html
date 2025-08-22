@@ -53,31 +53,14 @@
             }
         }
 
-        .date-selector,
-        .time-range-selector {
+        .date-selector {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
             align-items: center;
         }
 
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-        }
-
-        @media (min-width: 768px) {
-            .control-group {
-                flex-direction: row;
-                width: auto;
-                gap: 20px;
-            }
-        }
-
-        .date-button,
-        .time-button {
+        .date-button {
             padding: 8px 15px;
             background: #404040;
             color: #e0e0e0;
@@ -89,37 +72,69 @@
             white-space: nowrap;
         }
 
-        .date-button.active,
-        .time-button.active {
+        .date-button.active {
             background: #64B5F6;
             color: #1a1a1a;
         }
 
-        .date-button:hover:not(.active),
-        .time-button:hover:not(.active) {
+        .date-button:hover:not(.active) {
             background: #555;
         }
 
-        .time-button {
-            background: #2d5a2d;
-        }
-
-        .time-button.active {
-            background: #81C784;
-            color: #1a1a1a;
-        }
-
-        .time-button:hover:not(.active) {
-            background: #3d6a3d;
+        .date-button:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
         }
 
         @media (min-width: 768px) {
-
-            .date-button,
-            .time-button {
+            .date-button {
                 padding: 10px 20px;
                 font-size: 14px;
             }
+        }
+
+        .file-upload {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #333;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px dashed #555;
+            margin-bottom: 20px;
+        }
+
+        .file-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .file-input-label {
+            font-size: 14px;
+            color: #b0b0b0;
+            font-weight: bold;
+        }
+
+        .file-input {
+            background: #404040;
+            color: #e0e0e0;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 8px;
+            font-size: 13px;
+        }
+
+        .file-input::file-selector-button {
+            background: #64B5F6;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            margin-right: 10px;
+            cursor: pointer;
+            font-size: 12px;
         }
 
         .sync-info {
@@ -277,22 +292,11 @@
 <body>
     <div class="container">
         <div class="controls">
-            <div class="control-group">
-                <div class="date-selector">
-                    <span style="color: #e0e0e0; font-weight: bold;">选择直播:</span>
-                    <button class="date-button active" onclick="selectDate('音银 1')" data-date="音银 1">音银 1</button>
-                    <button class="date-button" onclick="selectDate('音银 2')" data-date="音银 2">音银 2</button>
-                    <button class="date-button" onclick="selectDate('直播3')" data-date="直播3">直播3</button>
-                </div>
-
-                <div class="time-range-selector">
-                    <span style="color: #e0e0e0; font-weight: bold;">选择时间:</span>
-                    <button class="time-button active" onclick="selectTimeRange('all')" data-time="all">全部时间</button>
-                    <button class="time-button" onclick="selectTimeRange('3h')" data-time="3h">最近3小时</button>
-                    <button class="time-button" onclick="selectTimeRange('6h')" data-time="6h">最近6小时</button>
-                    <button class="time-button" onclick="selectTimeRange('12h')" data-time="12h">最近12小时</button>
-                    <button class="time-button" onclick="selectTimeRange('24h')" data-time="24h">最近24小时</button>
-                </div>
+            <div class="date-selector">
+                <span style="color: #e0e0e0; font-weight: bold;">选择直播:</span>
+                <button class="date-button active" onclick="selectDate('音银 1')" data-date="音银 1">音银 1</button>
+                <button class="date-button" onclick="selectDate('音银 2')" data-date="音银 2">音银 2</button>
+                <button class="date-button" onclick="selectDate('直播3')" data-date="直播3">直播3</button>
             </div>
 
             <div class="sync-info">
@@ -303,6 +307,28 @@
                         <span id="latestData"></span>
                         <span style="color: #888; font-size: 11px;">📡 数据每5分钟更新</span>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文件上传区域 -->
+        <div class="file-upload" id="fileUploadSection" style="display: none;">
+            <div style="text-align: center; margin-bottom: 10px;">
+                <strong style="color: #64B5F6;">📁 本机CSV文件上传</strong>
+                <p style="margin: 5px 0; color: #b0b0b0; font-size: 12px;">为每个直播源选择对应的CSV文件</p>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                <div class="file-input-group">
+                    <label class="file-input-label">音银 1 CSV文件:</label>
+                    <input type="file" accept=".csv" class="file-input" onchange="handleFileUpload(this, '音银 1')">
+                </div>
+                <div class="file-input-group">
+                    <label class="file-input-label">音银 2 CSV文件:</label>
+                    <input type="file" accept=".csv" class="file-input" onchange="handleFileUpload(this, '音银 2')">
+                </div>
+                <div class="file-input-group">
+                    <label class="file-input-label">直播3 CSV文件:</label>
+                    <input type="file" accept=".csv" class="file-input" onchange="handleFileUpload(this, '直播3')">
                 </div>
             </div>
         </div>
@@ -327,14 +353,23 @@
     </div>
 
     <script>
+        // 功能开关 - 设置为 true 启用本机CSV文件上传功能
+        const ENABLE_LOCAL_FILE_UPLOAD = false;
+
         let globalData = [];
         let charts = {};
         let currentSource = '音银 1'; // 默认数据源
-        let currentTimeRange = 'all'; // 默认时间范围
         let autoSyncInterval = null;
         let lastSyncTime = null;
 
-        // 不同数据源对应的 Google Sheets URL
+        // 存储本地文件数据
+        let localFileData = {
+            '音银 1': null,
+            '音银 2': null,
+            '直播3': null
+        };
+
+        // 不同数据源对应的 Google Sheets URL（保留原功能）
         const sheetsUrls = {
             '音银 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=714013901',
             '音银 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1229040293',
@@ -347,20 +382,79 @@
             document.querySelector(`[data-date="${source}"]`).classList.add('active');
 
             currentSource = source;
-            syncFromGoogleSheets();
+            loadData();
         }
 
-        function selectTimeRange(range) {
-            // 更新按钮状态
-            document.querySelectorAll('.time-button').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[data-time="${range}"]`).classList.add('active');
+        function handleFileUpload(input, source) {
+            const file = input.files[0];
+            if (!file) return;
 
-            currentTimeRange = range;
-
-            // 如果已有数据，重新创建图表以应用时间筛选
-            if (globalData.length > 0) {
-                createCharts();
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                showStatus('请选择CSV格式的文件', 'error');
+                input.value = '';
+                return;
             }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const csvText = e.target.result;
+
+                Papa.parse(csvText, {
+                    header: true,
+                    dynamicTyping: false,
+                    skipEmptyLines: true,
+                    complete: function (results) {
+                        const newData = results.data.filter(row =>
+                            row.成员 && row.视频ID && row.更新时间
+                        );
+
+                        if (newData.length === 0) {
+                            showStatus(`${source} CSV文件中未找到有效数据`, 'error');
+                            input.value = '';
+                            return;
+                        }
+
+                        localFileData[source] = newData;
+                        showStatus(`${source} CSV文件上传成功 - ${newData.length} 条数据`, 'success');
+
+                        // 如果当前选中的就是这个数据源，立即更新图表
+                        if (currentSource === source) {
+                            loadData();
+                        }
+
+                        // 更新按钮状态，显示已有数据的源
+                        updateButtonStates();
+                    },
+                    error: function (error) {
+                        showStatus(`${source} CSV解析错误: ${error.message}`, 'error');
+                        input.value = '';
+                    }
+                });
+            };
+
+            reader.onerror = function () {
+                showStatus(`读取 ${source} 文件失败`, 'error');
+                input.value = '';
+            };
+
+            reader.readAsText(file, 'UTF-8');
+        }
+
+        function updateButtonStates() {
+            document.querySelectorAll('.date-button').forEach(btn => {
+                const source = btn.getAttribute('data-date');
+                const hasLocalData = ENABLE_LOCAL_FILE_UPLOAD && localFileData[source] && localFileData[source]
+                    .length > 0;
+                const hasSheetUrl = sheetsUrls[source] && sheetsUrls[source] !== '';
+
+                if (hasLocalData || hasSheetUrl) {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                } else {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.5';
+                }
+            });
         }
 
         function showStatus(message, type = 'success') {
@@ -416,41 +510,29 @@
             }
         }
 
-        function filterDataByTimeRange(data) {
-            if (currentTimeRange === 'all') {
-                return data;
+        async function loadData() {
+            // 如果启用本地文件功能且有本地文件数据，优先使用
+            if (ENABLE_LOCAL_FILE_UPLOAD && localFileData[currentSource] && localFileData[currentSource].length >
+                0) {
+                updateSyncStatus('📁 本地文件');
+                const newData = [...localFileData[currentSource]];
+
+                newData.sort((a, b) => parseDateTime(a.更新时间) - parseDateTime(b.更新时间));
+                globalData = newData;
+                createCharts();
+                updateSyncStatus('✅ 本地文件已加载', `${currentSource} - ${globalData.length} 条资料`);
+                lastSyncTime = new Date();
+                return;
             }
 
-            const now = new Date();
-            let cutoffTime;
-
-            switch (currentTimeRange) {
-                case '3h':
-                    cutoffTime = new Date(now.getTime() - 3 * 60 * 60 * 1000);
-                    break;
-                case '6h':
-                    cutoffTime = new Date(now.getTime() - 6 * 60 * 60 * 1000);
-                    break;
-                case '12h':
-                    cutoffTime = new Date(now.getTime() - 12 * 60 * 60 * 1000);
-                    break;
-                case '24h':
-                    cutoffTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-                    break;
-                default:
-                    return data;
-            }
-
-            return data.filter(row => {
-                const dataTime = parseDateTime(row.更新时间);
-                return dataTime >= cutoffTime;
-            });
+            // 如果没有本地文件或功能被禁用，尝试从Google Sheets获取
+            await syncFromGoogleSheets();
         }
 
         async function syncFromGoogleSheets() {
             const sheetsUrl = sheetsUrls[currentSource];
             if (!sheetsUrl) {
-                updateSyncStatus('⚠ 待配置', `${currentSource} 的URL尚未配置`);
+                updateSyncStatus('⚠ 待配置', `${currentSource} 的URL尚未配置且无本地文件`);
                 return;
             }
 
@@ -511,19 +593,11 @@
             Object.values(charts).forEach(chart => chart && chart.destroy());
             charts = {};
 
-            // 应用时间筛选
-            const filteredData = filterDataByTimeRange(globalData);
-
-            if (filteredData.length === 0) {
-                showStatus('选择的时间范围内没有数据', 'error');
-                return;
-            }
-
             // 获取所有成员
-            const members = [...new Set(filteredData.map(row => row.成员))];
+            const members = [...new Set(globalData.map(row => row.成员))];
 
             // 获取所有时间点
-            const timePoints = [...new Set(filteredData.map(row => row.更新时间))].sort((a, b) => parseDateTime(a) -
+            const timePoints = [...new Set(globalData.map(row => row.更新时间))].sort((a, b) => parseDateTime(a) -
                 parseDateTime(b));
 
             // 生成成员颜色
@@ -551,12 +625,11 @@
             ];
 
             metrics.forEach(metric => {
-                charts[metric.id] = createTrendChart(metric.id, timePoints, metric.key, members, memberColors,
-                    filteredData);
+                charts[metric.id] = createTrendChart(metric.id, timePoints, metric.key, members, memberColors);
             });
         }
 
-        function createTrendChart(canvasId, timePoints, dataKey, members, memberColors, data) {
+        function createTrendChart(canvasId, timePoints, dataKey, members, memberColors) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return null;
 
@@ -565,7 +638,7 @@
             // 为每个成员创建数据集
             const datasets = members.map(member => {
                 const memberData = timePoints.map(time => {
-                    const row = data.find(r => r.更新时间 === time && r.成员 === member);
+                    const row = globalData.find(r => r.更新时间 === time && r.成员 === member);
                     return row ? parseNumber(row[dataKey]) : null;
                 });
 
@@ -583,29 +656,15 @@
                 };
             });
 
-            // 根据时间范围调整时间标签格式
-            const formatTimeLabel = (time) => {
-                const date = parseDateTime(time);
-                if (currentTimeRange === 'all') {
-                    return date.toLocaleString('zh-CN', {
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timePoints.map(time => parseDateTime(time).toLocaleString('zh-CN', {
                         month: 'short',
                         day: 'numeric',
                         hour: '2-digit',
                         minute: '2-digit'
-                    });
-                } else {
-                    return date.toLocaleString('zh-CN', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit'
-                    });
-                }
-            };
-
-            return new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: timePoints.map(formatTimeLabel),
+                    })),
                     datasets: datasets
                 },
                 options: {
@@ -649,7 +708,21 @@
                                 color: '#e0e0e0',
                                 usePointStyle: true,
                                 pointStyle: 'circle',
-                                padding: 20
+                                padding: 20,
+                                boxWidth: 15,
+                                boxHeight: 15,
+                                generateLabels: function (chart) {
+                                    const original = Chart.defaults.plugins.legend.labels.generateLabels;
+                                    const labels = original.call(this, chart);
+
+                                    labels.forEach(label => {
+                                        label.pointStyle = 'circle';
+                                        label.fillStyle = label.strokeStyle;
+                                        label.text = ' ' + label.text; // 在文本前添加空格
+                                    });
+
+                                    return labels;
+                                }
                             }
                         },
                         tooltip: {
@@ -658,9 +731,18 @@
                             bodyColor: '#e0e0e0',
                             borderColor: '#64B5F6',
                             borderWidth: 1,
+                            usePointStyle: true,
                             callbacks: {
                                 label: function (context) {
-                                    return `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`;
+                                    return ` ${context.dataset.label}: ${context.parsed.y.toLocaleString()}`;
+                                },
+                                labelColor: function (context) {
+                                    return {
+                                        borderColor: context.dataset.borderColor,
+                                        backgroundColor: context.dataset.borderColor,
+                                        borderWidth: 0,
+                                        borderRadius: 0
+                                    };
                                 }
                             }
                         }
@@ -671,10 +753,22 @@
 
         // 初始化 - 自动开始同步
         window.addEventListener('load', () => {
+            // 根据功能开关显示/隐藏文件上传区域
+            if (ENABLE_LOCAL_FILE_UPLOAD) {
+                document.getElementById('fileUploadSection').style.display = 'block';
+            }
+
+            updateButtonStates();
             setTimeout(() => {
-                syncFromGoogleSheets();
-                // 设置自动同步，每分钟更新一次
-                autoSyncInterval = setInterval(syncFromGoogleSheets, 60000);
+                loadData();
+                // 设置自动同步，每分钟更新一次（只对Google Sheets有效）
+                autoSyncInterval = setInterval(() => {
+                    // 只有在使用Google Sheets数据且没有本地文件时才自动同步
+                    if (!ENABLE_LOCAL_FILE_UPLOAD || !localFileData[currentSource] ||
+                        localFileData[currentSource].length === 0) {
+                        syncFromGoogleSheets();
+                    }
+                }, 60000);
                 updateSyncStatus('🟢 已连接 - 自动同步中');
             }, 1000);
         });
