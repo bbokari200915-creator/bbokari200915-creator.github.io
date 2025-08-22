@@ -193,19 +193,6 @@
             font-weight: bold;
             margin-bottom: 15px;
             color: #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .chart-title .time-filter-info {
-            font-size: 0.8rem;
-            color: #81C784;
-            background: #2d5a2d;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: normal;
         }
 
         .chart-canvas {
@@ -323,24 +310,15 @@
         <!-- YouTube数据图表 -->
         <div class="charts-grid">
             <div class="card">
-                <div class="chart-title">
-                    👀 观看次数
-                    <span class="time-filter-info" id="viewCountFilter">全部时间</span>
-                </div>
+                <div class="chart-title">👀 观看数</div>
                 <div class="chart-canvas"><canvas id="viewCountChart"></canvas></div>
             </div>
             <div class="card">
-                <div class="chart-title">
-                    👍 点赞数
-                    <span class="time-filter-info" id="likeCountFilter">全部时间</span>
-                </div>
+                <div class="chart-title">👍 点赞数</div>
                 <div class="chart-canvas"><canvas id="likeCountChart"></canvas></div>
             </div>
             <div class="card">
-                <div class="chart-title">
-                    💬 评论数
-                    <span class="time-filter-info" id="commentCountFilter">全部时间</span>
-                </div>
+                <div class="chart-title">💬 评论数</div>
                 <div class="chart-canvas"><canvas id="commentCountChart"></canvas></div>
             </div>
         </div>
@@ -376,17 +354,6 @@
             document.querySelector(`[data-time="${range}"]`).classList.add('active');
 
             currentTimeRange = range;
-
-            // 更新图表标题的时间筛选信息
-            const timeRangeText = {
-                'all': '全部时间',
-                '6h': '最近6小时',
-                '12h': '最近12小时'
-            };
-
-            document.getElementById('viewCountFilter').textContent = timeRangeText[range];
-            document.getElementById('likeCountFilter').textContent = timeRangeText[range];
-            document.getElementById('commentCountFilter').textContent = timeRangeText[range];
 
             // 如果已有数据，重新创建图表以应用时间筛选
             if (globalData.length > 0) {
