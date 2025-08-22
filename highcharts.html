@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube数据仪表板</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.2.0/highcharts.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
         * {
@@ -311,7 +311,9 @@
         <div class="charts-grid">
             <div class="card">
                 <div class="chart-title">👀 观看数</div>
-                <div class="chart-canvas"><canvas id="viewCountChart"></canvas></div>
+                <div class="chart-canvas">
+                    <div id="viewCountChart"></div>
+                </div>
             </div>
             <div class="card">
                 <div class="chart-title">👍 点赞数</div>
@@ -499,10 +501,6 @@
         function createCharts() {
             if (globalData.length === 0) return;
 
-            // 销毁现有图表
-            Object.values(charts).forEach(chart => chart && chart.destroy());
-            charts = {};
-
             // 应用时间筛选
             const filteredData = filterDataByTimeRange(globalData);
 
@@ -519,17 +517,11 @@
                 parseDateTime(b));
 
             // 生成成员颜色
-            const memberColors = {
-                [members[0]]: '#64B5F6',
-                [members[1]]: '#FFB74D',
-                [members[2]]: '#81C784',
-                [members[3]]: '#F06292',
-                [members[4]]: '#9575CD'
-            };
+            const memberColors = ['#64B5F6', '#FFB74D', '#81C784', '#F06292', '#9575CD'];
 
             // 创建三个图表
             const metrics = [{
-                    key: '观看次数',
+                    key: '观看数',
                     id: 'viewCountChart'
                 },
                 {
@@ -543,119 +535,145 @@
             ];
 
             metrics.forEach(metric => {
-                charts[metric.id] = createTrendChart(metric.id, timePoints, metric.key, members, memberColors,
-                    filteredData);
+                createTrendChart(metric.id, timePoints, metric.key, members, memberColors, filteredData);
             });
         }
 
-        function createTrendChart(canvasId, timePoints, dataKey, members, memberColors, data) {
-            const canvas = document.getElementById(canvasId);
-            if (!canvas) return null;
+        function createTrendChart(chartId, timePoints, dataKey, members, memberColors, data) {
+            const container = document.getElementById(chartId);
+            if (!container) return null;
 
-            const ctx = canvas.getContext('2d');
+            // 销毁现有图表
+            if (charts[chartId]) {
+                charts[chartId].destroy();
+            }
 
-            // 为每个成员创建数据集
-            const datasets = members.map(member => {
+            // 为每个成员创建数据系列
+            const series = members.map((member, index) => {
                 const memberData = timePoints.map(time => {
                     const row = data.find(r => r.更新时间 === time && r.成员 === member);
-                    return row ? parseNumber(row[dataKey]) : null;
+                    const timestamp = parseDateTime(time).getTime();
+                    const value = row ? parseNumber(row[dataKey]) : null;
+                    return [timestamp, value];
                 });
 
                 return {
-                    label: member,
+                    name: member,
                     data: memberData,
-                    borderColor: memberColors[member] || '#64B5F6',
-                    backgroundColor: (memberColors[member] || '#64B5F6') + '20',
-                    borderWidth: window.innerWidth < 768 ? 2 : 3,
-                    pointRadius: window.innerWidth < 768 ? 1.5 : 2,
-                    pointHoverRadius: window.innerWidth < 768 ? 3 : 4,
-                    tension: 0.4,
-                    spanGaps: true,
-                    fill: false
+                    color: memberColors[index] || '#64B5F6',
+                    lineWidth: 3,
+                    marker: {
+                        radius: 4,
+                        symbol: 'circle'
+                    },
+                    connectNulls: false
                 };
             });
 
-            // 根据时间范围调整时间标签格式
-            const formatTimeLabel = (time) => {
-                const date = parseDateTime(time);
-                if (currentTimeRange === 'all') {
-                    return date.toLocaleString('zh-CN', {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                } else {
-                    return date.toLocaleString('zh-CN', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit'
-                    });
-                }
-            };
-
-            return new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: timePoints.map(formatTimeLabel),
-                    datasets: datasets
+            // 创建Highcharts图表
+            charts[chartId] = Highcharts.chart(chartId, {
+                chart: {
+                    type: 'line',
+                    backgroundColor: 'transparent',
+                    style: {
+                        fontFamily: 'Arial, sans-serif'
+                    },
+                    height: window.innerWidth < 768 ? 300 : 400
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
+                title: {
+                    text: null
+                },
+                xAxis: {
+                    type: 'datetime',
+                    dateTimeLabelFormats: {
+                        hour: '%H:%M',
+                        day: '%m/%d %H:%M'
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            ticks: {
-                                color: '#b0b0b0',
-                                callback: value => value.toLocaleString(),
-                                font: {
-                                    size: window.innerWidth < 768 ? 10 : 12
-                                }
-                            },
-                            grid: {
-                                color: '#404040'
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                color: '#b0b0b0',
-                                maxRotation: window.innerWidth < 768 ? 90 : 45,
-                                font: {
-                                    size: window.innerWidth < 768 ? 10 : 12
-                                }
-                            },
-                            grid: {
-                                color: '#404040'
-                            }
+                    gridLineColor: '#404040',
+                    lineColor: '#404040',
+                    tickColor: '#404040',
+                    labels: {
+                        style: {
+                            color: '#b0b0b0',
+                            fontSize: window.innerWidth < 768 ? '10px' : '12px'
                         }
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: null
                     },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                color: '#e0e0e0',
-                                usePointStyle: true,
-                                padding: 20
-                            }
+                    gridLineColor: '#404040',
+                    labels: {
+                        style: {
+                            color: '#b0b0b0',
+                            fontSize: window.innerWidth < 768 ? '10px' : '12px'
                         },
-                        tooltip: {
-                            backgroundColor: '#2d2d2d',
-                            titleColor: '#e0e0e0',
-                            bodyColor: '#e0e0e0',
-                            borderColor: '#64B5F6',
-                            borderWidth: 1,
-                            callbacks: {
-                                label: function (context) {
-                                    return `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`;
-                                }
+                        formatter: function () {
+                            return this.value.toLocaleString();
+                        }
+                    }
+                },
+                legend: {
+                    itemStyle: {
+                        color: '#e0e0e0'
+                    },
+                    itemHoverStyle: {
+                        color: '#ffffff'
+                    },
+                    symbolRadius: 0,
+                    symbolWidth: 16,
+                    symbolHeight: 12
+                },
+                tooltip: {
+                    backgroundColor: '#2d2d2d',
+                    borderColor: '#64B5F6',
+                    borderWidth: 1,
+                    style: {
+                        color: '#e0e0e0'
+                    },
+                    formatter: function () {
+                        const date = new Date(this.x);
+                        let tooltip = `<b>${date.toLocaleString('zh-CN')}</b><br/>`;
+                        this.points.forEach(point => {
+                            tooltip +=
+                                `<span style="color:${point.color}">●</span> ${point.series.name}: <b>${point.y ? point.y.toLocaleString() : 'N/A'}</b><br/>`;
+                        });
+                        return tooltip;
+                    },
+                    shared: true
+                },
+                plotOptions: {
+                    line: {
+                        marker: {
+                            enabled: true,
+                            radius: window.innerWidth < 768 ? 2 : 3
+                        },
+                        lineWidth: window.innerWidth < 768 ? 2 : 3,
+                        states: {
+                            hover: {
+                                lineWidth: 4
                             }
                         }
                     }
+                },
+                series: series,
+                credits: {
+                    enabled: false
+                },
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 768
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
                 }
             });
         }
