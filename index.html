@@ -291,7 +291,7 @@
                 <span style="color: #e0e0e0; font-weight: bold;">选择直拍:</span>
                 <button class="date-button active" onclick="selectDate('音银 1')" data-date="音银 1">音银 1</button>
                 <button class="date-button" onclick="selectDate('音银 2')" data-date="音银 2">音银 2</button>
-                <button class="date-button" onclick="selectDate('直拍3')" data-date="直拍3">直拍3</button>
+                <button class="date-button" onclick="selectDate('直拍 3')" data-date="直拍 3">直拍 3</button>
             </div>
             <div class="section-divider"></div>
             <div class="time-range-selector">
@@ -313,7 +313,7 @@
             </div>
         </div>
 
-        <div class="file-upload" id="fileUploadSection">
+        <div class="file-upload" id="fileUploadSection" style="display: block;">
             <div style="text-align: center; margin-bottom: 10px;">
                 <strong style="color: #64B5F6;">📁 本机CSV文件上传</strong>
                 <p style="margin: 5px 0; color: #b0b0b0; font-size: 12px;">为每个直播源选择对应的CSV文件</p>
@@ -361,12 +361,12 @@
         let localFileData = {
             '音银 1': null,
             '音银 2': null,
-            '直拍3': null
+            '直拍 3': null
         };
         const sheetsUrls = {
             '音银 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=714013901',
             '音银 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1229040293',
-            '直拍3': ''
+            '直拍 3': ''
         };
 
         function selectDate(source) {
@@ -428,7 +428,8 @@
         function updateButtonStates() {
             document.querySelectorAll('.date-button').forEach(btn => {
                 const source = btn.getAttribute('data-date');
-                const hasData = (ENABLE_LOCAL_FILE_UPLOAD && localFileData[source] ? .length > 0) ||
+                const hasData = (ENABLE_LOCAL_FILE_UPLOAD && localFileData[source] && localFileData[source]
+                        .length > 0) ||
                     (sheetsUrls[source] && sheetsUrls[source] !== '');
                 btn.disabled = !hasData;
                 btn.style.opacity = hasData ? '1' : '0.5';
@@ -507,7 +508,8 @@
         }
 
         async function loadData() {
-            if (ENABLE_LOCAL_FILE_UPLOAD && localFileData[currentSource] ? .length > 0) {
+            if (ENABLE_LOCAL_FILE_UPLOAD && localFileData[currentSource] && localFileData[currentSource].length >
+                0) {
                 updateSyncStatus('📁 本地文件');
                 const newData = [...localFileData[currentSource]];
                 newData.sort((a, b) => parseDateTime(a.更新时间) - parseDateTime(b.更新时间));
@@ -570,7 +572,7 @@
 
         function createCharts() {
             if (globalData.length === 0) return;
-            Object.values(charts).forEach(chart => chart ? .destroy());
+            Object.values(charts).forEach(chart => chart && chart.destroy());
             charts = {};
 
             const filteredData = filterDataByTimeRange(globalData);
@@ -723,14 +725,24 @@
         }
 
         window.addEventListener('load', () => {
+            console.log(`ENABLE_LOCAL_FILE_UPLOAD: ${ENABLE_LOCAL_FILE_UPLOAD}`);
+
+            // 显示或隐藏文件上传区域
+            const fileUploadSection = document.getElementById('fileUploadSection');
             if (ENABLE_LOCAL_FILE_UPLOAD) {
-                document.getElementById('fileUploadSection').style.display = 'block';
+                fileUploadSection.style.display = 'block';
+                console.log('文件上传区域已显示');
+            } else {
+                fileUploadSection.style.display = 'none';
+                console.log('文件上传区域已隐藏');
             }
+
             updateButtonStates();
             setTimeout(() => {
                 loadData();
                 autoSyncInterval = setInterval(() => {
-                    if (!ENABLE_LOCAL_FILE_UPLOAD || !localFileData[currentSource] ? .length) {
+                    if (!ENABLE_LOCAL_FILE_UPLOAD || !localFileData[currentSource] ||
+                        localFileData[currentSource].length === 0) {
                         syncFromGoogleSheets();
                     }
                 }, 60000);
