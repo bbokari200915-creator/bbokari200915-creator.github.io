@@ -221,9 +221,9 @@
     <div class="container">
         <div class="controls">
             <div class="date-selector">
-                <span style="color: #e0e0e0; font-weight: bold;">选择数据源:</span>
-                <button class="date-button active" onclick="selectDate('直拍1')" data-date="直拍1">直拍1</button>
-                <button class="date-button" onclick="selectDate('直拍2')" data-date="直拍2">直拍2</button>
+                <span style="color: #e0e0e0; font-weight: bold;">選擇直拍:</span>
+                <button class="date-button active" onclick="selectDate('音银 1')" data-date="音银 1">音银 1</button>
+                <button class="date-button" onclick="selectDate('音银 2')" data-date="音银 2">音银 2</button>
                 <button class="date-button" onclick="selectDate('直拍3')" data-date="直拍3">直拍3</button>
             </div>
             
@@ -244,15 +244,15 @@
         <!-- YouTube数据图表 -->
         <div class="charts-grid">
             <div class="card">
-                <div class="chart-title">👀 观看次数趋势</div>
+                <div class="chart-title">👀 观看次数</div>
                 <div class="chart-canvas"><canvas id="viewCountChart"></canvas></div>
             </div>
             <div class="card">
-                <div class="chart-title">👍 点赞数趋势</div>
+                <div class="chart-title">👍 点赞数</div>
                 <div class="chart-canvas"><canvas id="likeCountChart"></canvas></div>
             </div>
             <div class="card">
-                <div class="chart-title">💬 评论数趋势</div>
+                <div class="chart-title">💬 评论数</div>
                 <div class="chart-canvas"><canvas id="commentCountChart"></canvas></div>
             </div>
         </div>
@@ -261,14 +261,14 @@
     <script>
         let globalData = [];
         let charts = {};
-        let currentSource = '直拍1'; // 默认数据源
+        let currentSource = '音银 1'; // 默认数据源
         let autoSyncInterval = null;
         let lastSyncTime = null;
 
         // 不同数据源对应的 Google Sheets URL
         const sheetsUrls = {
-            '直拍1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=714013901',
-            '直拍2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1229040293',
+            '音银 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=714013901',
+            '音银 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1229040293',
             '直拍3': ''  // 需要时添加URL
         };
 
