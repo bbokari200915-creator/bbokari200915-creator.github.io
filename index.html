@@ -291,7 +291,10 @@
                 <span style="color: #e0e0e0; font-weight: bold;">选择直拍:</span>
                 <button class="date-button active" onclick="selectDate('音银 1')" data-date="音银 1">音银 1</button>
                 <button class="date-button" onclick="selectDate('音银 2')" data-date="音银 2">音银 2</button>
-                <button class="date-button" onclick="selectDate('直拍 3')" data-date="直拍 3">直拍 3</button>
+                <button class="date-button" onclick="selectDate('音中 1')" data-date="音中 1">音中 1</button>
+                <button class="date-button" onclick="selectDate('音中 2')" data-date="音中 2">音中 2</button>
+                <button class="date-button" onclick="selectDate('人歌 1')" data-date="人歌 1">人歌 1</button>
+                <button class="date-button" onclick="selectDate('人歌 2')" data-date="人歌 2">人歌 2</button>
             </div>
             <div class="section-divider"></div>
             <div class="time-range-selector">
@@ -318,18 +321,10 @@
                 <strong style="color: #64B5F6;">📁 本机CSV文件上传</strong>
                 <p style="margin: 5px 0; color: #b0b0b0; font-size: 12px;">为每个直播源选择对应的CSV文件</p>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                 <div class="file-input-group">
                     <label class="file-input-label">音银 1 CSV文件:</label>
                     <input type="file" accept=".csv" class="file-input" onchange="handleFileUpload(this, '音银 1')">
-                </div>
-                <div class="file-input-group">
-                    <label class="file-input-label">音银 2 CSV文件:</label>
-                    <input type="file" accept=".csv" class="file-input" onchange="handleFileUpload(this, '音银 2')">
-                </div>
-                <div class="file-input-group">
-                    <label class="file-input-label">直播3 CSV文件:</label>
-                    <input type="file" accept=".csv" class="file-input" onchange="handleFileUpload(this, '直播3')">
                 </div>
             </div>
         </div>
@@ -361,12 +356,18 @@
         let localFileData = {
             '音银 1': null,
             '音银 2': null,
-            '直拍 3': null
+            '音中 1': null,
+            '音中 2': null,
+            '人歌 1': null,
+            '人歌 2': null
         };
         const sheetsUrls = {
             '音银 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=714013901',
             '音银 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1229040293',
-            '直拍 3': ''
+            '音中 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1677477366',
+            '音中 2': '',
+            '人歌 1': '',
+            '人歌 2': ''
         };
 
         function selectDate(source) {
