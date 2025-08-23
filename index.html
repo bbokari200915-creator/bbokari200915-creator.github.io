@@ -45,6 +45,12 @@
             justify-content: space-between;
         }
 
+        @media (max-width: 767px) {
+            .controls {
+                gap: 5px;
+            }
+        }
+
         @media (min-width: 768px) {
             .controls {
                 padding: 20px;
@@ -54,15 +60,28 @@
         }
 
         .date-selector,
-        .time-range-selector {
+        .time-range-selector,
+        .member-selector {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
             align-items: center;
         }
 
+        /* 手机版时间范围和成员选择左对齐 */
+        @media (max-width: 767px) {
+
+            .time-range-selector,
+            .member-selector {
+                align-items: flex-start;
+                justify-content: flex-start;
+                width: 100%;
+            }
+        }
+
         .date-button,
-        .time-button {
+        .time-button,
+        .member-button {
             padding: 8px 15px;
             background: #404040;
             color: #e0e0e0;
@@ -75,18 +94,21 @@
         }
 
         .date-button.active,
-        .time-button.active {
+        .time-button.active,
+        .member-button.active {
             background: #64B5F6;
             color: #1a1a1a;
         }
 
         .date-button:hover:not(.active),
-        .time-button:hover:not(.active) {
+        .time-button:hover:not(.active),
+        .member-button:hover:not(.active) {
             background: #555;
         }
 
         .date-button:disabled,
-        .time-button:disabled {
+        .time-button:disabled,
+        .member-button:disabled {
             background: #333;
             color: #666;
             cursor: not-allowed;
@@ -95,7 +117,8 @@
         @media (min-width: 768px) {
 
             .date-button,
-            .time-button {
+            .time-button,
+            .member-button {
                 padding: 10px 20px;
                 font-size: 14px;
             }
@@ -281,6 +304,12 @@
             border-top: 1px solid #404040;
             margin: 15px 0;
         }
+
+        @media (max-width: 767px) {
+            .section-divider {
+                margin: 5px 0;
+            }
+        }
     </style>
 </head>
 
@@ -303,6 +332,16 @@
                 <button class="time-button" onclick="selectTimeRange('6h')" data-range="6h">6小时</button>
                 <button class="time-button" onclick="selectTimeRange('12h')" data-range="12h">12小时</button>
                 <button class="time-button" onclick="selectTimeRange('1d')" data-range="1d">1天</button>
+            </div>
+            <div class="section-divider"></div>
+            <div class="member-selector">
+                <span style="color: #e0e0e0; font-weight: bold;">选择成员:</span>
+                <button class="member-button active" onclick="toggleMember('Felix')" data-member="Felix">Felix</button>
+                <button class="member-button active" onclick="toggleMember('Hyunjin')"
+                    data-member="Hyunjin">Hyunjin</button>
+                <button class="member-button active" onclick="toggleMember('LeeKnow')"
+                    data-member="LeeKnow">LeeKnow</button>
+                <button class="member-button active" onclick="toggleMember('Han')" data-member="Han">Han</button>
             </div>
             <div class="sync-info">
                 <div class="sync-status-row">
@@ -353,6 +392,7 @@
             currentTimeRange = 'all';
         let autoSyncInterval = null,
             lastSyncTime = null;
+        let selectedMembers = new Set(['Felix', 'Hyunjin', 'LeeKnow', 'Han']); // 初始全选
         let localFileData = {
             '音银 1': null,
             '音银 2': null,
@@ -386,6 +426,22 @@
             if (globalData.length > 0) {
                 createCharts();
                 showStatus(`时间范围已切换到: ${range === 'all' ? '全部' : range}`, 'success');
+            }
+        }
+
+        function toggleMember(member) {
+            if (selectedMembers.has(member)) {
+                selectedMembers.delete(member);
+                document.querySelector(`[data-member="${member}"]`).classList.remove('active');
+            } else {
+                selectedMembers.add(member);
+                document.querySelector(`[data-member="${member}"]`).classList.add('active');
+            }
+
+            if (globalData.length > 0) {
+                createCharts();
+                const selectedList = Array.from(selectedMembers).join(', ');
+                showStatus(`已选择成员: ${selectedList || '无'}`, 'success');
             }
         }
 
@@ -508,6 +564,10 @@
             return filtered;
         }
 
+        function filterDataByMembers(data) {
+            return data.filter(row => selectedMembers.has(row.成员));
+        }
+
         async function loadData() {
             if (ENABLE_LOCAL_FILE_UPLOAD && localFileData[currentSource] && localFileData[currentSource].length >
                 0) {
@@ -576,18 +636,26 @@
             Object.values(charts).forEach(chart => chart && chart.destroy());
             charts = {};
 
-            const filteredData = filterDataByTimeRange(globalData);
-            if (filteredData.length === 0) return;
+            const timeFilteredData = filterDataByTimeRange(globalData);
+            const filteredData = filterDataByMembers(timeFilteredData);
 
-            const members = [...new Set(filteredData.map(row => row.成员))];
+            if (filteredData.length === 0) {
+                console.log('过滤后无数据');
+                return;
+            }
+
+            const members = [...selectedMembers].filter(member =>
+                filteredData.some(row => row.成员 === member)
+            );
+
             const timePoints = [...new Set(filteredData.map(row => row.更新时间))].sort((a, b) => parseDateTime(a) -
                 parseDateTime(b));
+
             const memberColors = {
-                [members[0]]: '#64B5F6',
-                [members[1]]: '#FFB74D',
-                [members[2]]: '#81C784',
-                [members[3]]: '#F06292',
-                [members[4]]: '#9575CD'
+                'Felix': '#64B5F6',
+                'Hyunjin': '#FFB74D',
+                'LeeKnow': '#81C784',
+                'Han': '#F06292'
             };
 
             const metrics = [{
