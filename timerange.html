@@ -731,7 +731,7 @@
           lineColor: '#404040',
           tickColor: '#404040',
           tickAmount: 10,
-          minTickInterval: 3600000
+          minTickInterval: 600000
         },
         yAxis: {
           title: {
@@ -743,7 +743,7 @@
               fontSize: window.innerWidth < 768 ? '10px' : '12px'
             },
             formatter: function () {
-              return this.value.toLocaleString();
+              return Math.round(this.value).toLocaleString();
             }
           },
           gridLineColor: '#404040',
