@@ -227,11 +227,6 @@
       }
     }
 
-    .card:hover {
-      transform: translateY(-3px);
-      border-color: #64B5F6;
-    }
-
     .chart-title {
       text-align: center;
       font-size: 1.2rem;
@@ -317,7 +312,7 @@
   <div class="container">
     <div class="controls">
       <div class="date-selector">
-        <span style="color: #e0e0e0; font-weight: bold;">选择直拍:</span>
+        <span style="color: #e0e0e0; font-weight: bold;">直拍:</span>
         <button class="date-button active" onclick="selectDate('音银 1')" data-date="音银 1">音银 1</button>
         <button class="date-button" onclick="selectDate('音银 2')" data-date="音银 2">音银 2</button>
         <button class="date-button" onclick="selectDate('音中 1')" data-date="音中 1">音中 1</button>
@@ -327,7 +322,7 @@
       </div>
       <div class="section-divider"></div>
       <div class="time-range-selector">
-        <span style="color: #e0e0e0; font-weight: bold;">时间范围:</span>
+        <span style="color: #e0e0e0; font-weight: bold;">时间:</span>
         <button class="time-button active" onclick="selectTimeRange('all')" data-range="all">全部</button>
         <button class="time-button" onclick="selectTimeRange('6h')" data-range="6h">6小时</button>
         <button class="time-button" onclick="selectTimeRange('12h')" data-range="12h">12小时</button>
@@ -335,11 +330,11 @@
       </div>
       <div class="section-divider"></div>
       <div class="member-selector">
-        <span style="color: #e0e0e0; font-weight: bold;">选择成员:</span>
+        <span style="color: #e0e0e0; font-weight: bold;">成员:</span>
         <button class="member-button active" onclick="toggleMember('Felix')" data-member="Felix">Felix</button>
         <button class="member-button active" onclick="toggleMember('Hyunjin')" data-member="Hyunjin">Hyunjin</button>
         <button class="member-button active" onclick="toggleMember('LeeKnow')" data-member="LeeKnow">LeeKnow</button>
-        <button class="member-button active" onclick="toggleMember('Han')" data-member="Han">Han</button>
+        <button class="member-button" onclick="toggleMember('Han')" data-member="Han">Han</button>
       </div>
       <div class="sync-info">
         <div class="sync-status-row">
@@ -390,7 +385,7 @@
       currentTimeRange = 'all';
     let autoSyncInterval = null,
       lastSyncTime = null;
-    let selectedMembers = new Set(['Felix', 'Hyunjin', 'LeeKnow', 'Han']); // 初始全选
+    let selectedMembers = new Set(['Felix', 'Hyunjin', 'LeeKnow']); // 初始选择（不包括Han）
     let localFileData = {
       '音银 1': null,
       '音银 2': null,
