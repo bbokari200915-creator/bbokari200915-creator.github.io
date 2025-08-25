@@ -2,684 +2,908 @@
 <html lang="zh-CN">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube数据仪表板</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube数据仪表板</title>
+  <script src="https://code.highcharts.com/stock/highstock.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 10px;
-            background: #1a1a1a;
-            color: #e0e0e0;
-            min-height: 100vh;
-        }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 10px;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
 
-        @media (min-width: 768px) {
-            body {
-                padding: 20px;
-            }
-        }
+    @media (min-width: 768px) {
+      body {
+        padding: 20px;
+      }
+    }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
 
-        .controls {
-            background: #2d2d2d;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #404040;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-        }
+    .controls {
+      background: #2d2d2d;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      border: 1px solid #404040;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-        @media (min-width: 768px) {
-            .controls {
-                padding: 20px;
-                margin-bottom: 30px;
-                gap: 15px;
-            }
-        }
+    @media (max-width: 767px) {
+      .controls {
+        gap: 5px;
+      }
+    }
 
-        .date-selector,
-        .time-range-selector {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
+    @media (min-width: 768px) {
+      .controls {
+        padding: 20px;
+        margin-bottom: 30px;
+        gap: 15px;
+      }
+    }
 
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-        }
+    .date-selector,
+    .time-range-selector,
+    .member-selector {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
 
-        @media (min-width: 768px) {
-            .control-group {
-                flex-direction: row;
-                width: auto;
-                gap: 20px;
-            }
-        }
+    /* 手机版时间范围和成员选择左对齐 */
+    @media (max-width: 767px) {
 
-        .date-button,
-        .time-button {
-            padding: 8px 15px;
-            background: #404040;
-            color: #e0e0e0;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.3s;
-            white-space: nowrap;
-        }
+      .time-range-selector,
+      .member-selector {
+        align-items: flex-start;
+        justify-content: flex-start;
+        width: 100%;
+      }
+    }
 
-        .date-button.active,
-        .time-button.active {
-            background: #64B5F6;
-            color: #1a1a1a;
-        }
+    .date-button,
+    .time-button,
+    .member-button {
+      padding: 8px 15px;
+      background: #404040;
+      color: #e0e0e0;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
 
-        .date-button:hover:not(.active),
-        .time-button:hover:not(.active) {
-            background: #555;
-        }
+    .date-button.active,
+    .time-button.active,
+    .member-button.active {
+      background: #64B5F6;
+      color: #1a1a1a;
+    }
 
-        .time-button {
-            background: #2d5a2d;
-        }
+    .date-button:hover:not(.active),
+    .time-button:hover:not(.active),
+    .member-button:hover:not(.active) {
+      background: #555;
+    }
 
-        .time-button.active {
-            background: #81C784;
-            color: #1a1a1a;
-        }
+    .date-button:disabled,
+    .time-button:disabled,
+    .member-button:disabled {
+      background: #333;
+      color: #666;
+      cursor: not-allowed;
+    }
 
-        .time-button:hover:not(.active) {
-            background: #3d6a3d;
-        }
+    @media (min-width: 768px) {
 
-        @media (min-width: 768px) {
+      .date-button,
+      .time-button,
+      .member-button {
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+    }
 
-            .date-button,
-            .time-button {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
-        }
+    .file-upload {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #333;
+      padding: 15px;
+      border-radius: 8px;
+      border: 2px dashed #555;
+      margin-bottom: 20px;
+    }
 
-        .sync-info {
-            font-size: 12px;
-            color: #b0b0b0;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            text-align: center;
-            width: 100%;
-        }
+    .file-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
 
-        .sync-status-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            width: 100%;
-        }
+    .file-input-label {
+      font-size: 14px;
+      color: #b0b0b0;
+      font-weight: bold;
+    }
 
-        .sync-right {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 2px;
-        }
+    .file-input {
+      background: #404040;
+      color: #e0e0e0;
+      border: 1px solid #555;
+      border-radius: 5px;
+      padding: 8px;
+      font-size: 13px;
+    }
 
-        @media (min-width: 768px) {
-            .sync-info {
-                font-size: 13px;
-                gap: 5px;
-                text-align: left;
-                width: auto;
-            }
-        }
+    .file-input::file-selector-button {
+      background: #64B5F6;
+      color: #1a1a1a;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      margin-right: 10px;
+      cursor: pointer;
+      font-size: 12px;
+    }
 
-        .charts-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
+    .sync-info {
+      font-size: 12px;
+      color: #b0b0b0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      text-align: center;
+      width: 100%;
+    }
 
-        @media (min-width: 768px) {
-            .charts-grid {
-                grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
-                gap: 30px;
-            }
-        }
+    .sync-status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      width: 100%;
+    }
 
-        .card {
-            background: #2d2d2d;
-            border-radius: 10px;
-            padding: 15px;
-            border: 1px solid #404040;
-            transition: transform 0.2s;
-        }
+    .sync-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
 
-        @media (min-width: 768px) {
-            .card {
-                padding: 25px;
-            }
-        }
+    @media (min-width: 768px) {
+      .sync-info {
+        font-size: 13px;
+        gap: 5px;
+        text-align: left;
+        width: auto;
+      }
+    }
 
-        .card:hover {
-            transform: translateY(-3px);
-            border-color: #64B5F6;
-        }
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
 
-        .chart-title {
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #e0e0e0;
-        }
+    @media (min-width: 768px) {
+      .charts-grid {
+        grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+        gap: 30px;
+      }
+    }
 
-        .chart-canvas {
-            position: relative;
-            height: 300px;
-        }
+    .card {
+      background: #2d2d2d;
+      border-radius: 10px;
+      padding: 15px;
+      border: 1px solid #404040;
+      transition: transform 0.2s;
+    }
 
-        @media (min-width: 768px) {
-            .chart-title {
-                font-size: 1.4rem;
-                margin-bottom: 20px;
-            }
+    @media (min-width: 768px) {
+      .card {
+        padding: 25px;
+      }
+    }
 
-            .chart-canvas {
-                height: 400px;
-            }
-        }
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: #64B5F6;
+    }
 
-        .status {
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            font-weight: bold;
-        }
+    .chart-title {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #e0e0e0;
+    }
 
-        .status.success {
-            background: #1B5E20;
-            color: #C8E6C9;
-        }
+    .chart-container {
+      position: relative;
+      height: 300px;
+      width: 100%;
+    }
 
-        .status.error {
-            background: #B71C1C;
-            color: #FFCDD2;
-        }
+    @media (min-width: 768px) {
+      .chart-title {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+      }
 
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 14px;
-            z-index: 1000;
-            transform: translateX(100%);
-            transition: transform 0.3s ease-in-out;
-            max-width: 300px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
+      .chart-container {
+        height: 400px;
+      }
+    }
 
-        .toast.show {
-            transform: translateX(0);
-        }
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 14px;
+      z-index: 1000;
+      transform: translateX(100%);
+      transition: transform 0.3s ease-in-out;
+      max-width: 300px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
 
-        .toast.success {
-            background: #4CAF50;
-            color: white;
-        }
+    .toast.show {
+      transform: translateX(0);
+    }
 
-        .toast.error {
-            background: #f44336;
-            color: white;
-        }
+    .toast.success {
+      background: #4CAF50;
+      color: white;
+    }
 
-        @media (max-width: 768px) {
-            .toast {
-                top: auto;
-                bottom: 20px;
-                right: 10px;
-                left: 10px;
-                max-width: none;
-                transform: translateY(100%);
-            }
+    .toast.error {
+      background: #f44336;
+      color: white;
+    }
 
-            .toast.show {
-                transform: translateY(0);
-            }
-        }
-    </style>
+    @media (max-width: 768px) {
+      .toast {
+        top: auto;
+        bottom: 20px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        transform: translateY(100%);
+      }
+
+      .toast.show {
+        transform: translateY(0);
+      }
+    }
+
+    .section-divider {
+      border-top: 1px solid #404040;
+      margin: 15px 0;
+    }
+
+    @media (max-width: 767px) {
+      .section-divider {
+        margin: 5px 0;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <div class="container">
-        <div class="controls">
-            <div class="control-group">
-                <div class="date-selector">
-                    <span style="color: #e0e0e0; font-weight: bold;">选择直拍:</span>
-                    <button class="date-button active" onclick="selectDate('音银 1')" data-date="音银 1">音银 1</button>
-                    <button class="date-button" onclick="selectDate('音银 2')" data-date="音银 2">音银 2</button>
-                    <button class="date-button" onclick="selectDate('直拍3')" data-date="直拍3">直拍3</button>
-                </div>
-
-                <div class="time-range-selector">
-                    <span style="color: #e0e0e0; font-weight: bold;">选择时间:</span>
-                    <button class="time-button active" onclick="selectTimeRange('all')" data-time="all">全部时间</button>
-                    <button class="time-button" onclick="selectTimeRange('3h')" data-time="3h">最近3小时</button>
-                    <button class="time-button" onclick="selectTimeRange('6h')" data-time="6h">最近6小时</button>
-                    <button class="time-button" onclick="selectTimeRange('12h')" data-time="12h">最近12小时</button>
-                    <button class="time-button" onclick="selectTimeRange('24h')" data-time="24h">最近24小时</button>
-                </div>
-            </div>
-
-            <div class="sync-info">
-                <div class="sync-status-row">
-                    <span id="syncStatus">未连接</span>
-                    <div class="sync-right">
-                        <span id="lastSync"></span>
-                        <span id="latestData"></span>
-                        <span style="color: #888; font-size: 11px;">📡 数据每5分钟更新</span>
-                    </div>
-                </div>
-            </div>
+  <div class="container">
+    <div class="controls">
+      <div class="date-selector">
+        <span style="color: #e0e0e0; font-weight: bold;">直拍:</span>
+        <button class="date-button active" onclick="selectDate('音银 1')" data-date="音银 1">音银 1</button>
+        <button class="date-button" onclick="selectDate('音银 2')" data-date="音银 2">音银 2</button>
+        <button class="date-button" onclick="selectDate('音中 1')" data-date="音中 1">音中 1</button>
+        <button class="date-button" onclick="selectDate('音中 2')" data-date="音中 2">音中 2</button>
+        <button class="date-button" onclick="selectDate('人歌 1')" data-date="人歌 1">人歌 1</button>
+        <button class="date-button" onclick="selectDate('人歌 2')" data-date="人歌 2">人歌 2</button>
+      </div>
+      <div class="section-divider"></div>
+      <div class="time-range-selector">
+        <span style="color: #e0e0e0; font-weight: bold;">时间:</span>
+        <button class="time-button active" onclick="selectTimeRange('all')" data-range="all">全部</button>
+        <button class="time-button" onclick="selectTimeRange('6h')" data-range="6h">6小时</button>
+        <button class="time-button" onclick="selectTimeRange('12h')" data-range="12h">12小时</button>
+        <button class="time-button" onclick="selectTimeRange('1d')" data-range="1d">1天</button>
+      </div>
+      <div class="section-divider"></div>
+      <div class="member-selector">
+        <span style="color: #e0e0e0; font-weight: bold;">成员:</span>
+        <button class="member-button active" onclick="toggleMember('Felix')" data-member="Felix">Felix</button>
+        <button class="member-button active" onclick="toggleMember('Hyunjin')" data-member="Hyunjin">Hyunjin</button>
+        <button class="member-button active" onclick="toggleMember('LeeKnow')" data-member="LeeKnow">LeeKnow</button>
+        <button class="member-button" onclick="toggleMember('Han')" data-member="Han">Han</button>
+      </div>
+      <div class="sync-info">
+        <div class="sync-status-row">
+          <span id="syncStatus">未连接</span>
+          <div class="sync-right">
+            <span id="lastSync"></span>
+            <span id="latestData"></span>
+            <span style="color: #888; font-size: 11px;">📡 数据每5分钟更新</span>
+          </div>
         </div>
-
-        <div id="status" class="status" style="display:none;"></div>
-
-        <!-- YouTube数据图表 -->
-        <div class="charts-grid">
-            <div class="card">
-                <div class="chart-title">👀 观看数</div>
-                <div class="chart-canvas"><canvas id="viewCountChart"></canvas></div>
-            </div>
-            <div class="card">
-                <div class="chart-title">👍 点赞数</div>
-                <div class="chart-canvas"><canvas id="likeCountChart"></canvas></div>
-            </div>
-            <div class="card">
-                <div class="chart-title">💬 评论数</div>
-                <div class="chart-canvas"><canvas id="commentCountChart"></canvas></div>
-            </div>
-        </div>
+      </div>
     </div>
 
-    <script>
-        let globalData = [];
-        let charts = {};
-        let currentSource = '音银 1'; // 默认数据源
-        let currentTimeRange = 'all'; // 默认时间范围
-        let autoSyncInterval = null;
-        let lastSyncTime = null;
+    <div class="file-upload" id="fileUploadSection" style="display: block;">
+      <div style="text-align: center; margin-bottom: 10px;">
+        <strong style="color: #64B5F6;">📁 本机CSV文件上传</strong>
+        <p style="margin: 5px 0; color: #b0b0b0; font-size: 12px;">为每个直播源选择对应的CSV文件</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <div class="file-input-group">
+          <label class="file-input-label">音银 1 CSV文件:</label>
+          <input type="file" accept=".csv" class="file-input" onchange="handleFileUpload(this, '音银 1')">
+        </div>
+      </div>
+    </div>
 
-        // 不同数据源对应的 Google Sheets URL
-        const sheetsUrls = {
-            '音银 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=714013901',
-            '音银 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1229040293',
-            '直拍3': '' // 需要时添加 URL
-        };
+    <div class="charts-grid">
+      <div class="card">
+        <div class="chart-title">👀 观看数</div>
+        <div class="chart-container" id="viewCountChart"></div>
+      </div>
+      <div class="card">
+        <div class="chart-title">👍 点赞数</div>
+        <div class="chart-container" id="likeCountChart"></div>
+      </div>
+      <div class="card">
+        <div class="chart-title">💬 评论数</div>
+        <div class="chart-container" id="commentCountChart"></div>
+      </div>
+    </div>
+  </div>
 
-        function selectDate(source) {
-            // 更新按钮状态
-            document.querySelectorAll('.date-button').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[data-date="${source}"]`).classList.add('active');
+  <script>
+    const ENABLE_LOCAL_FILE_UPLOAD = false;
+    let globalData = [],
+      charts = {},
+      currentSource = '音银 1',
+      currentTimeRange = 'all';
+    let autoSyncInterval = null,
+      lastSyncTime = null;
+    let selectedMembers = new Set(['Felix', 'Hyunjin', 'LeeKnow']); // 初始选择
+    let localFileData = {
+      '音银 1': null,
+      '音银 2': null,
+      '音中 1': null,
+      '音中 2': null,
+      '人歌 1': null,
+      '人歌 2': null
+    };
+    const sheetsUrls = {
+      '音银 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=714013901',
+      '音银 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1229040293',
+      '音中 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1677477366',
+      '音中 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1834153764',
+      '人歌 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=812478534',
+      '人歌 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1360746050'
+    };
 
-            currentSource = source;
-            syncFromGoogleSheets();
-        }
+    function selectDate(source) {
+      document.querySelectorAll('.date-button').forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`[data-date="${source}"]`).classList.add('active');
+      currentSource = source;
+      loadData();
+    }
 
-        function selectTimeRange(range) {
-            // 更新按钮状态
-            document.querySelectorAll('.time-button').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[data-time="${range}"]`).classList.add('active');
+    function selectTimeRange(range) {
+      console.log(`选择时间范围: ${range}`);
+      document.querySelectorAll('.time-button').forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`[data-range="${range}"]`).classList.add('active');
+      currentTimeRange = range;
+      console.log(`当前时间范围设置为: ${currentTimeRange}`);
+      if (globalData.length > 0) {
+        createCharts();
+        showStatus(`时间范围已切换到: ${range === 'all' ? '全部' : range}`, 'success');
+      }
+    }
 
-            currentTimeRange = range;
+    function toggleMember(member) {
+      if (selectedMembers.has(member)) {
+        selectedMembers.delete(member);
+        document.querySelector(`[data-member="${member}"]`).classList.remove('active');
+      } else {
+        selectedMembers.add(member);
+        document.querySelector(`[data-member="${member}"]`).classList.add('active');
+      }
 
-            // 如果已有数据，重新创建图表以应用时间筛选
-            if (globalData.length > 0) {
-                createCharts();
+      if (globalData.length > 0) {
+        createCharts();
+        const selectedList = Array.from(selectedMembers).join(', ');
+        showStatus(`已选择成员: ${selectedList || '无'}`, 'success');
+      }
+    }
+
+    function handleFileUpload(input, source) {
+      const file = input.files[0];
+      if (!file) return;
+      if (!file.name.toLowerCase().endsWith('.csv')) {
+        showStatus('请选择CSV格式的文件', 'error');
+        input.value = '';
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        Papa.parse(e.target.result, {
+          header: true,
+          dynamicTyping: false,
+          skipEmptyLines: true,
+          complete: function (results) {
+            const newData = results.data.filter(row => row.成员 && row.视频ID && row.更新时间);
+            if (newData.length === 0) {
+              showStatus(`${source} CSV文件中未找到有效数据`, 'error');
+              input.value = '';
+              return;
             }
-        }
-
-        function showStatus(message, type = 'success') {
-            // 移除现有的toast
-            const existingToast = document.querySelector('.toast');
-            if (existingToast) {
-                existingToast.remove();
-            }
-
-            // 创建新的toast
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-
-            // 显示toast
-            setTimeout(() => toast.classList.add('show'), 100);
-
-            // 3秒后隐藏并移除toast
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        function updateSyncStatus(status, message = '') {
-            document.getElementById('syncStatus').textContent = status;
-            if (lastSyncTime) {
-                document.getElementById('lastSync').textContent = `上次同步: ${lastSyncTime.toLocaleString('zh-CN')}`;
-            }
-
-            // 更新最新数据时间
-            if (globalData.length > 0) {
-                const latestTime = Math.max(...globalData.map(row => parseDateTime(row.更新时间)));
-                const latestDate = new Date(latestTime);
-                document.getElementById('latestData').textContent = `最新数据: ${latestDate.toLocaleString('zh-CN')}`;
-            }
-
-            if (message) showStatus(message, status.includes('错误') ? 'error' : 'success');
-        }
-
-        function parseNumber(value) {
-            if (typeof value === 'number') return value;
-            return parseInt(String(value).replace(/,/g, '')) || 0;
-        }
-
-        function parseDateTime(dateTimeStr) {
-            if (!dateTimeStr) return new Date();
-            try {
-                return new Date(dateTimeStr);
-            } catch {
-                return new Date();
-            }
-        }
-
-        function filterDataByTimeRange(data) {
-            if (currentTimeRange === 'all') {
-                return data;
-            }
-
-            const now = new Date();
-            let cutoffTime;
-
-            switch (currentTimeRange) {
-                case '3h':
-                    cutoffTime = new Date(now.getTime() - 3 * 60 * 60 * 1000);
-                    break;
-                case '6h':
-                    cutoffTime = new Date(now.getTime() - 6 * 60 * 60 * 1000);
-                    break;
-                case '12h':
-                    cutoffTime = new Date(now.getTime() - 12 * 60 * 60 * 1000);
-                    break;
-                case '24h':
-                    cutoffTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-                    break;
-                default:
-                    return data;
-            }
-
-            return data.filter(row => {
-                const dataTime = parseDateTime(row.更新时间);
-                return dataTime >= cutoffTime;
-            });
-        }
-
-        async function syncFromGoogleSheets() {
-            const sheetsUrl = sheetsUrls[currentSource];
-            if (!sheetsUrl) {
-                updateSyncStatus('⚠ 待配置', `${currentSource} 的URL尚未配置`);
-                return;
-            }
-
-            updateSyncStatus('🔄 同步中...');
-            try {
-                const response = await fetch(sheetsUrl);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const csvText = await response.text();
-
-                if (!csvText || csvText.includes('<html')) {
-                    throw new Error('获取的不是CSV资料，可能是权限问题');
-                }
-
-                Papa.parse(csvText, {
-                    header: true,
-                    dynamicTyping: false,
-                    skipEmptyLines: true,
-                    complete: function (results) {
-                        const newData = results.data.filter(row =>
-                            row.成员 && row.视频ID && row.更新时间
-                        );
-
-                        if (newData.length === 0) {
-                            updateSyncStatus('⚠ 数据为空', '未找到有效的YouTube数据');
-                            return;
-                        }
-
-                        newData.sort((a, b) => parseDateTime(a.更新时间) - parseDateTime(b.更新时间));
-
-                        // 检查数据是否有变动
-                        const hasDataChanged = globalData.length !== newData.length ||
-                            JSON.stringify(globalData) !== JSON.stringify(newData);
-
-                        if (hasDataChanged) {
-                            globalData = newData;
-                            createCharts();
-                            updateSyncStatus('✅ 同步完成',
-                                `${currentSource} 数据已更新 - ${globalData.length} 笔资料`);
-                        } else {
-                            updateSyncStatus('✅ 同步完成', `${currentSource} 数据无变化`);
-                        }
-
-                        lastSyncTime = new Date();
-                    },
-                    error: function (error) {
-                        updateSyncStatus('⚠ 连接错误', 'CSV解析错误: ' + error.message);
-                    }
-                });
-            } catch (error) {
-                updateSyncStatus('⚠ 连接错误', error.message);
-            }
-        }
-
-        function createCharts() {
-            if (globalData.length === 0) return;
-
-            // 销毁现有图表
-            Object.values(charts).forEach(chart => chart && chart.destroy());
-            charts = {};
-
-            // 应用时间筛选
-            const filteredData = filterDataByTimeRange(globalData);
-
-            if (filteredData.length === 0) {
-                showStatus('选择的时间范围内没有数据', 'error');
-                return;
-            }
-
-            // 获取所有成员
-            const members = [...new Set(filteredData.map(row => row.成员))];
-
-            // 获取所有时间点
-            const timePoints = [...new Set(filteredData.map(row => row.更新时间))].sort((a, b) => parseDateTime(a) -
-                parseDateTime(b));
-
-            // 生成成员颜色
-            const memberColors = {
-                [members[0]]: '#64B5F6',
-                [members[1]]: '#FFB74D',
-                [members[2]]: '#81C784',
-                [members[3]]: '#F06292',
-                [members[4]]: '#9575CD'
-            };
-
-            // 创建三个图表
-            const metrics = [{
-                    key: '观看次数',
-                    id: 'viewCountChart'
-                },
-                {
-                    key: '点赞数',
-                    id: 'likeCountChart'
-                },
-                {
-                    key: '评论数',
-                    id: 'commentCountChart'
-                }
-            ];
-
-            metrics.forEach(metric => {
-                charts[metric.id] = createTrendChart(metric.id, timePoints, metric.key, members, memberColors,
-                    filteredData);
-            });
-        }
-
-        function createTrendChart(canvasId, timePoints, dataKey, members, memberColors, data) {
-            const canvas = document.getElementById(canvasId);
-            if (!canvas) return null;
-
-            const ctx = canvas.getContext('2d');
-
-            // 为每个成员创建数据集
-            const datasets = members.map(member => {
-                const memberData = timePoints.map(time => {
-                    const row = data.find(r => r.更新时间 === time && r.成员 === member);
-                    return row ? parseNumber(row[dataKey]) : null;
-                });
-
-                return {
-                    label: member,
-                    data: memberData,
-                    borderColor: memberColors[member] || '#64B5F6',
-                    backgroundColor: (memberColors[member] || '#64B5F6') + '20',
-                    borderWidth: window.innerWidth < 768 ? 2 : 3,
-                    pointRadius: window.innerWidth < 768 ? 1.5 : 2,
-                    pointHoverRadius: window.innerWidth < 768 ? 3 : 4,
-                    tension: 0.4,
-                    spanGaps: true,
-                    fill: false
-                };
-            });
-
-            // 根据时间范围调整时间标签格式
-            const formatTimeLabel = (time) => {
-                const date = parseDateTime(time);
-                if (currentTimeRange === 'all') {
-                    return date.toLocaleString('zh-CN', {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                } else {
-                    return date.toLocaleString('zh-CN', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit'
-                    });
-                }
-            };
-
-            return new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: timePoints.map(formatTimeLabel),
-                    datasets: datasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            ticks: {
-                                color: '#b0b0b0',
-                                callback: value => value.toLocaleString(),
-                                font: {
-                                    size: window.innerWidth < 768 ? 10 : 12
-                                }
-                            },
-                            grid: {
-                                color: '#404040'
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                color: '#b0b0b0',
-                                maxRotation: window.innerWidth < 768 ? 90 : 45,
-                                font: {
-                                    size: window.innerWidth < 768 ? 10 : 12
-                                }
-                            },
-                            grid: {
-                                color: '#404040'
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                color: '#e0e0e0',
-                                usePointStyle: true,
-                                padding: 20
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: '#2d2d2d',
-                            titleColor: '#e0e0e0',
-                            bodyColor: '#e0e0e0',
-                            borderColor: '#64B5F6',
-                            borderWidth: 1,
-                            callbacks: {
-                                label: function (context) {
-                                    return `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // 初始化 - 自动开始同步
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                syncFromGoogleSheets();
-                // 设置自动同步，每分钟更新一次
-                autoSyncInterval = setInterval(syncFromGoogleSheets, 60000);
-                updateSyncStatus('🟢 已连接 - 自动同步中');
-            }, 1000);
+            localFileData[source] = newData;
+            showStatus(`${source} CSV文件上传成功 - ${newData.length} 条数据`, 'success');
+            if (currentSource === source) loadData();
+            updateButtonStates();
+          },
+          error: function (error) {
+            showStatus(`${source} CSV解析错误: ${error.message}`, 'error');
+            input.value = '';
+          }
         });
+      };
+      reader.onerror = () => showStatus(`读取 ${source} 文件失败`, 'error');
+      reader.readAsText(file, 'UTF-8');
+    }
 
-        window.addEventListener('beforeunload', () => autoSyncInterval && clearInterval(autoSyncInterval));
-    </script>
+    function updateButtonStates() {
+      document.querySelectorAll('.date-button').forEach(btn => {
+        const source = btn.getAttribute('data-date');
+        const hasData = (ENABLE_LOCAL_FILE_UPLOAD && localFileData[source] && localFileData[source]
+            .length > 0) ||
+          (sheetsUrls[source] && sheetsUrls[source] !== '');
+        btn.disabled = !hasData;
+        btn.style.opacity = hasData ? '1' : '0.5';
+      });
+    }
+
+    function showStatus(message, type = 'success') {
+      const existingToast = document.querySelector('.toast');
+      if (existingToast) existingToast.remove();
+
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+
+      setTimeout(() => toast.classList.add('show'), 100);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function updateSyncStatus(status, message = '') {
+      document.getElementById('syncStatus').textContent = status;
+      if (lastSyncTime) {
+        document.getElementById('lastSync').textContent = `上次同步: ${lastSyncTime.toLocaleString('zh-CN')}`;
+      }
+      if (globalData.length > 0) {
+        const latestTime = Math.max(...globalData.map(row => parseDateTime(row.更新时间)));
+        document.getElementById('latestData').textContent =
+          `最新数据: ${new Date(latestTime).toLocaleString('zh-CN')}`;
+      }
+      if (message) showStatus(message, status.includes('错误') ? 'error' : 'success');
+    }
+
+    function parseNumber(value) {
+      return parseInt(String(value || 0).replace(/,/g, '')) || 0;
+    }
+
+    function parseDateTime(dateTimeStr) {
+      try {
+        return new Date(dateTimeStr || new Date());
+      } catch {
+        return new Date();
+      }
+    }
+
+    function filterDataByTimeRange(data) {
+      if (currentTimeRange === 'all') return data;
+
+      const now = new Date();
+      let cutoffTime = new Date();
+
+      switch (currentTimeRange) {
+        case '6h':
+          cutoffTime = new Date(now.getTime() - 6 * 60 * 60 * 1000);
+          break;
+        case '12h':
+          cutoffTime = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+          break;
+        case '1d':
+          cutoffTime = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+          break;
+        default:
+          return data;
+      }
+
+      console.log(
+        `过滤时间范围: ${currentTimeRange}, 截止时间: ${cutoffTime.toLocaleString()}, 当前时间: ${now.toLocaleString()}`);
+      const filtered = data.filter(row => {
+        const rowTime = parseDateTime(row.更新时间);
+        return rowTime >= cutoffTime;
+      });
+      console.log(`原始数据: ${data.length} 条, 过滤后: ${filtered.length} 条`);
+      return filtered;
+    }
+
+    function filterDataByMembers(data) {
+      return data.filter(row => selectedMembers.has(row.成员));
+    }
+
+    async function loadData() {
+      if (ENABLE_LOCAL_FILE_UPLOAD && localFileData[currentSource] && localFileData[currentSource].length >
+        0) {
+        updateSyncStatus('📁 本地文件');
+        const newData = [...localFileData[currentSource]];
+        newData.sort((a, b) => parseDateTime(a.更新时间) - parseDateTime(b.更新时间));
+        globalData = newData;
+        createCharts();
+        updateSyncStatus('✅ 本地文件已加载', `${currentSource} - ${globalData.length} 条资料`);
+        lastSyncTime = new Date();
+        return;
+      }
+      await syncFromGoogleSheets();
+    }
+
+    async function syncFromGoogleSheets() {
+      const sheetsUrl = sheetsUrls[currentSource];
+      if (!sheetsUrl) {
+        updateSyncStatus('⚠ 待配置', `${currentSource} 的URL尚未配置且无本地文件`);
+        return;
+      }
+
+      updateSyncStatus('🔄 同步中...');
+      try {
+        const response = await fetch(sheetsUrl);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const csvText = await response.text();
+        if (!csvText || csvText.includes('<html')) {
+          throw new Error('获取的不是CSV资料，可能是权限问题');
+        }
+
+        Papa.parse(csvText, {
+          header: true,
+          dynamicTyping: false,
+          skipEmptyLines: true,
+          complete: function (results) {
+            const newData = results.data.filter(row => row.成员 && row.视频ID && row.更新时间);
+            if (newData.length === 0) {
+              updateSyncStatus('⚠ 数据为空', '未找到有效的YouTube数据');
+              return;
+            }
+            newData.sort((a, b) => parseDateTime(a.更新时间) - parseDateTime(b.更新时间));
+            const hasDataChanged = globalData.length !== newData.length ||
+              JSON.stringify(globalData) !== JSON.stringify(newData);
+            if (hasDataChanged) {
+              globalData = newData;
+              createCharts();
+              updateSyncStatus('✅ 同步完成',
+                `${currentSource} 数据已更新 - ${globalData.length} 笔资料`);
+            } else {
+              updateSyncStatus('✅ 同步完成', `${currentSource} 数据无变化`);
+            }
+            lastSyncTime = new Date();
+          },
+          error: function (error) {
+            updateSyncStatus('⚠ 连接错误', 'CSV解析错误: ' + error.message);
+          }
+        });
+      } catch (error) {
+        updateSyncStatus('⚠ 连接错误', error.message);
+      }
+    }
+
+    function createCharts() {
+      if (globalData.length === 0) return;
+      Object.values(charts).forEach(chart => chart && chart.destroy());
+      charts = {};
+
+      const timeFilteredData = filterDataByTimeRange(globalData);
+      const filteredData = filterDataByMembers(timeFilteredData);
+
+      if (filteredData.length === 0) {
+        console.log('过滤后无数据');
+        return;
+      }
+
+      const members = [...selectedMembers].filter(member =>
+        filteredData.some(row => row.成员 === member)
+      );
+
+      const memberColors = {
+        'Felix': '#64B5F6',
+        'Hyunjin': '#FFB74D',
+        'LeeKnow': '#81C784',
+        'Han': '#F06292'
+      };
+
+      const metrics = [{
+          key: '观看次数',
+          id: 'viewCountChart',
+          title: '👀 观看数'
+        },
+        {
+          key: '点赞数',
+          id: 'likeCountChart',
+          title: '👍 点赞数'
+        },
+        {
+          key: '评论数',
+          id: 'commentCountChart',
+          title: '💬 评论数'
+        }
+      ];
+
+      metrics.forEach(metric => {
+        charts[metric.id] = createHighChart(metric.id, metric.key, metric.title, members, memberColors,
+          filteredData);
+      });
+    }
+
+    function createHighChart(containerId, dataKey, title, members, memberColors, data) {
+      const container = document.getElementById(containerId);
+      if (!container) return null;
+
+      // Prepare data for Highcharts
+      const series = members.map(member => {
+        const memberData = data
+          .filter(row => row.成员 === member)
+          .map(row => [
+            parseDateTime(row.更新时间).getTime(),
+            parseNumber(row[dataKey])
+          ])
+          .sort((a, b) => a[0] - b[0]);
+
+        return {
+          name: member,
+          data: memberData,
+          color: memberColors[member] || '#64B5F6',
+          lineWidth: 2,
+          marker: {
+            radius: 3,
+            symbol: 'circle'
+          }
+        };
+      });
+
+      // Configure Highcharts with Navigator
+      const chartConfig = {
+        chart: {
+          type: 'line',
+          backgroundColor: 'transparent',
+          style: {
+            fontFamily: 'Arial, sans-serif'
+          },
+          height: window.innerWidth < 768 ? 300 : 400
+        },
+        title: {
+          text: null
+        },
+        xAxis: {
+          type: 'datetime',
+          labels: {
+            style: {
+              color: '#b0b0b0',
+              fontSize: window.innerWidth < 768 ? '10px' : '12px'
+            },
+            formatter: function () {
+              return new Date(this.value).toLocaleString('zh-CN', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+            }
+          },
+          gridLineColor: '#404040',
+          lineColor: '#404040',
+          tickColor: '#404040'
+        },
+        yAxis: {
+          title: {
+            text: null
+          },
+          labels: {
+            style: {
+              color: '#b0b0b0',
+              fontSize: window.innerWidth < 768 ? '10px' : '12px'
+            },
+            formatter: function () {
+              return this.value.toLocaleString();
+            }
+          },
+          gridLineColor: '#404040',
+          opposite: false,
+          tickAmount: 8,
+          minTickInterval: 1
+        },
+        legend: {
+          enabled: true,
+          align: 'center',
+          verticalAlign: 'top',
+          itemStyle: {
+            color: '#e0e0e0',
+            fontSize: window.innerWidth < 768 ? '11px' : '12px'
+          },
+          itemHoverStyle: {
+            color: '#64B5F6'
+          }
+        },
+        tooltip: {
+          backgroundColor: '#2d2d2d',
+          borderColor: '#64B5F6',
+          borderWidth: 1,
+          style: {
+            color: '#e0e0e0'
+          },
+          formatter: function () {
+            let tooltip = `<b>${Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x)}</b><br/>`;
+            this.points.forEach(point => {
+              tooltip +=
+                `<span style="color:${point.color}">●</span> ${point.series.name}: <b>${point.y.toLocaleString()}</b><br/>`;
+            });
+            return tooltip;
+          },
+          shared: true
+        },
+        plotOptions: {
+          line: {
+            marker: {
+              enabled: true,
+              radius: 2
+            },
+            lineWidth: 2,
+            states: {
+              hover: {
+                lineWidth: 3
+              }
+            },
+            dataLabels: {
+              enabled: false
+            }
+          },
+          series: {
+            dataLabels: {
+              enabled: true,
+              style: {
+                color: '#e0e0e0',
+                fontSize: '10px',
+                fontWeight: 'normal'
+              },
+              formatter: function () {
+                return this.series.name;
+              },
+              x: 5,
+              y: -5
+            }
+          }
+        },
+        navigator: {
+          enabled: true,
+          height: 40,
+          margin: 10,
+          maskFill: 'rgba(100, 181, 246, 0.1)',
+          outlineColor: '#64B5F6',
+          outlineWidth: 1,
+          handles: {
+            backgroundColor: '#64B5F6',
+            borderColor: '#404040'
+          },
+          xAxis: {
+            labels: {
+              style: {
+                color: '#b0b0b0',
+                fontSize: '10px'
+              },
+              formatter: function () {
+                return new Date(this.value).toLocaleString('zh-CN', {
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                });
+              }
+            },
+            gridLineColor: '#404040',
+          },
+          series: {
+            color: '#64B5F6',
+            lineWidth: 1
+          }
+        },
+        scrollbar: {
+          enabled: true,
+          barBackgroundColor: '#404040',
+          barBorderColor: '#404040',
+          buttonBackgroundColor: '#64B5F6',
+          buttonBorderColor: '#404040',
+          rifleColor: '#e0e0e0',
+          trackBackgroundColor: '#2d2d2d',
+          trackBorderColor: '#404040'
+        },
+        rangeSelector: {
+          enabled: false
+        },
+        accessibility: {
+          enabled: false
+        },
+        credits: {
+          enabled: false
+        },
+        exporting: {
+          enabled: false
+        },
+        series: series
+      };
+
+      return Highcharts.stockChart(containerId, chartConfig);
+    }
+
+    window.addEventListener('load', () => {
+      console.log(`ENABLE_LOCAL_FILE_UPLOAD: ${ENABLE_LOCAL_FILE_UPLOAD}`);
+
+      // 显示或隐藏文件上传区域
+      const fileUploadSection = document.getElementById('fileUploadSection');
+      if (ENABLE_LOCAL_FILE_UPLOAD) {
+        fileUploadSection.style.display = 'block';
+        console.log('文件上传区域已显示');
+      } else {
+        fileUploadSection.style.display = 'none';
+        console.log('文件上传区域已隐藏');
+      }
+
+      updateButtonStates();
+      setTimeout(() => {
+        loadData();
+        autoSyncInterval = setInterval(() => {
+          if (!ENABLE_LOCAL_FILE_UPLOAD || !localFileData[currentSource] ||
+            localFileData[currentSource].length === 0) {
+            syncFromGoogleSheets();
+          }
+        }, 60000);
+        updateSyncStatus('🟢 已连接 - 自动同步中');
+      }, 1000);
+    });
+
+    window.addEventListener('beforeunload', () => autoSyncInterval && clearInterval(autoSyncInterval));
+  </script>
 </body>
 
 </html>
