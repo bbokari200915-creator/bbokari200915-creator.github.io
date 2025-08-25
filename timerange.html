@@ -218,18 +218,12 @@
       border-radius: 10px;
       padding: 15px;
       border: 1px solid #404040;
-      transition: transform 0.2s;
     }
 
     @media (min-width: 768px) {
       .card {
         padding: 25px;
       }
-    }
-
-    .card:hover {
-      transform: translateY(-3px);
-      border-color: #64B5F6;
     }
 
     .chart-title {
@@ -733,8 +727,11 @@
             }
           },
           gridLineColor: '#404040',
+          gridLineWidth: 1,
           lineColor: '#404040',
-          tickColor: '#404040'
+          tickColor: '#404040',
+          tickAmount: 10,
+          minTickInterval: 3600000
         },
         yAxis: {
           title: {
@@ -774,7 +771,13 @@
             color: '#e0e0e0'
           },
           formatter: function () {
-            let tooltip = `<b>${Highcharts.dateFormat('%Y-%m-%d %H:%M', this.x)}</b><br/>`;
+            let tooltip = `<b>${new Date(this.x).toLocaleString('zh-CN', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })}</b><br/>`;
             this.points.forEach(point => {
               tooltip +=
                 `<span style="color:${point.color}">●</span> ${point.series.name}: <b>${point.y.toLocaleString()}</b><br/>`;
