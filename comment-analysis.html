@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube 留言分析报告</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: linear-gradient(to bottom right, #f8fafc, #e2e8f0);
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 1536px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .header h1 {
+      font-size: 30px;
+      font-weight: bold;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+
+    .header p {
+      color: #6b7280;
+    }
+
+    .member-info h2 {
+      font-size: 24px;
+      font-weight: bold;
+      color: #1f2937;
+    }
+
+    .member-info p {
+      color: #6b7280;
+    }
+
+    .member-info a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .member-info a:hover {
+      text-decoration: underline;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .metric-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+    }
+
+    .metric-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .metric-value {
+      font-size: 30px;
+      font-weight: bold;
+      color: #1f2937;
+    }
+
+    .metric-label {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .metric-value.red {
+      color: #ef4444;
+    }
+
+    .icon {
+      width: 40px;
+      height: 40px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: #1f2937;
+      margin-bottom: 16px;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 400px;
+    }
+
+    .pie-chart-container {
+      position: relative;
+      height: 300px;
+    }
+
+    .rankings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+
+    .ranking-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .ranking-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .rank-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+    }
+
+    .rank-1 {
+      background-color: #eab308;
+    }
+
+    .rank-2 {
+      background-color: #9ca3af;
+    }
+
+    .rank-3 {
+      background-color: #f97316;
+    }
+
+    .username {
+      font-weight: 500;
+      color: #1f2937;
+    }
+
+    .count-badge {
+      padding: 4px 8px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .purple-badge {
+      background-color: #e9d5ff;
+      color: #7c3aed;
+    }
+
+    .pink-badge {
+      background-color: #fce7f3;
+      color: #ec4899;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      text-align: left;
+      padding: 12px;
+      font-weight: 600;
+      color: #374151;
+      background-color: #f9fafb;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    tr:hover {
+      background-color: #f9fafb;
+    }
+
+    .red-badge {
+      background-color: #fef2f2;
+      color: #dc2626;
+      padding: 4px 8px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .issue-text {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .footer {
+      margin-top: 32px;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    .load-button {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 25px;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 20px auto;
+      display: block;
+    }
+
+    .load-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .file-input {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .file-input input[type="file"] {
+      display: none;
+    }
+
+    .file-input label {
+      background: linear-gradient(135deg, #4ecdc4, #44a08d);
+      color: white;
+      padding: 15px 30px;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-block;
+    }
+
+    .file-input label:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .download-button {
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 25px;
+      font-size: 1.1em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 20px 10px;
+      display: inline-block;
+    }
+
+    .download-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .button-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    @media (max-width: 1024px) {
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .charts-grid,
+      .rankings-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="card header">
+      <h1>YouTube 留言分析报告</h1>
+      <p>分析留言数据与用户行为</p>
+    </div>
+
+    <div class="file-input">
+      <label for="jsonFile">📁 选择 JSON 分析文件</label>
+      <input type="file" id="jsonFile" accept=".json">
+    </div>
+
+    <div class="button-container" id="downloadContainer" style="display: none;">
+      <button class="download-button" onclick="downloadAsJPEG()">📷 下载为 JPEG 图片</button>
+    </div>
+
+    <!-- <button class="load-button" onclick="loadSampleData()">载入示例数据 (3PQ29hvRuK4)</button> -->
+
+    <div id="analysisContent" style="display: none;">
+      <!-- Member Info -->
+      <div class="card member-info">
+        <h2 id="name">-</h2>
+        <p id="videoName">-</p>
+        <a id="videoLink" href="#" target="_blank">-</a>
+      </div>
+
+      <!-- Key Metrics -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-header">
+            <div>
+              <div class="metric-label">总留言数</div>
+              <div class="metric-value" id="totalComments">0</div>
+            </div>
+            <svg class="icon" fill="#3b82f6" viewBox="0 0 24 24">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <div>
+              <div class="metric-label">作者数</div>
+              <div class="metric-value" id="totalAuthors">0</div>
+            </div>
+            <svg class="icon" fill="#10b981" viewBox="0 0 24 24">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <div>
+              <div class="metric-label">平均每人留言</div>
+              <div class="metric-value" id="avgComments">0</div>
+            </div>
+            <svg class="icon" fill="#8b5cf6" viewBox="0 0 24 24">
+              <polyline points="23,6 13.5,15.5 8.5,10.5 1,18"></polyline>
+              <polyline points="17,6 23,6 23,12"></polyline>
+            </svg>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <div>
+              <div class="metric-label">可疑账户率</div>
+              <div class="metric-value red" id="suspiciousRate">0%</div>
+            </div>
+            <svg class="icon" fill="#ef4444" viewBox="0 0 24 24">
+              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+              <path d="M12 9v4" />
+              <path d="M12 17h.01" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="charts-grid">
+        <!-- Comment Frequency Distribution -->
+        <div class="card">
+          <h3 class="section-title">留言频率分布</h3>
+          <div class="chart-container">
+            <canvas id="frequencyChart"></canvas>
+          </div>
+        </div>
+
+        <!-- User Types -->
+        <div class="card">
+          <h3 class="section-title">用户类型分布</h3>
+          <div class="pie-chart-container">
+            <canvas id="userTypeChart"></canvas>
+          </div>
+          <div style="margin-top: 16px; text-align: center;">
+            <p style="font-size: 14px; color: #6b7280;">
+              正常用户: <span id="normalCount">0</span> 个 | 可疑账户: <span id="suspiciousCount">0</span> 个
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Rankings -->
+      <div class="rankings-grid">
+        <!-- Top Commenters -->
+        <div class="card">
+          <h3 class="section-title">最活跃留言者 Top 3</h3>
+          <div id="topCommentersRanking"></div>
+        </div>
+
+        <!-- Top Liked -->
+        <div class="card">
+          <h3 class="section-title">获赞最多留言者 Top 3</h3>
+          <div id="topLikedRanking"></div>
+        </div>
+      </div>
+
+      <!-- Suspicious Accounts -->
+      <div class="card">
+        <h3 class="section-title">可疑账户详情</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>排名</th>
+              <th>用户名</th>
+              <th>留言数</th>
+              <th>问题描述</th>
+            </tr>
+          </thead>
+          <tbody id="suspiciousAccountsTable"></tbody>
+        </table>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer">
+        <p>YouTube 留言分析报告 - 数据更新时间: <span id="currentTime"></span></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sample data for demonstration
+    const sampleData = {
+      "videoUrl": "3PQ29hvRuK4",
+      "name": "Felix",
+      "videoName": "音銀 1",
+      "totalComments": 982,
+      "totalAuthors": 621,
+      "avgCommentsPerPerson": 1.58,
+      "suspiciousAccounts": 17,
+      "normalUsers": 604,
+      "suspiciousRate": 2.7,
+      "commentFrequency": [{
+          "comments": 1,
+          "authors": 516
+        },
+        {
+          "comments": 2,
+          "authors": 56
+        },
+        {
+          "comments": 3,
+          "authors": 22
+        },
+        {
+          "comments": 4,
+          "authors": 9
+        },
+        {
+          "comments": 5,
+          "authors": 5
+        },
+        {
+          "comments": 6,
+          "authors": 2
+        },
+        {
+          "comments": 7,
+          "authors": 2
+        },
+        {
+          "comments": 8,
+          "authors": 1
+        },
+        {
+          "comments": 9,
+          "authors": 1
+        },
+        {
+          "comments": 11,
+          "authors": 1
+        },
+        {
+          "comments": 20,
+          "authors": 1
+        },
+        {
+          "comments": 21,
+          "authors": 1
+        },
+        {
+          "comments": 23,
+          "authors": 1
+        },
+        {
+          "comments": 26,
+          "authors": 1
+        },
+        {
+          "comments": 28,
+          "authors": 1
+        },
+        {
+          "comments": 55,
+          "authors": 1
+        }
+      ],
+      "suspiciousAccountsList": [{
+          "username": "@DavidBogdanAsya",
+          "comments": 26,
+          "issues": "异常高留言数: 26; 重复内容率: 35%"
+        },
+        {
+          "username": "@umima-s8n",
+          "comments": 11,
+          "issues": "异常高留言数: 11; 重复内容率: 55%"
+        },
+        {
+          "username": "@felixsuu",
+          "comments": 23,
+          "issues": "异常高留言数: 23; 重复内容率: 30%"
+        },
+        {
+          "username": "@lincl-v3s",
+          "comments": 21,
+          "issues": "异常高留言数: 21; 快速留言: 7分钟内21则留言"
+        },
+        {
+          "username": "@Refelicitas-o7g",
+          "comments": 5,
+          "issues": "重复内容率: 40%; 快速留言: 1分钟内5则留言"
+        }
+      ],
+      "topCommenters": [{
+          "username": "@VioletYu0810",
+          "comments": 55
+        },
+        {
+          "username": "@EchoYu0810",
+          "comments": 28
+        },
+        {
+          "username": "@DavidBogdanAsya",
+          "comments": 26
+        }
+      ],
+      "topLiked": [{
+          "username": "@SamLee-v9u",
+          "likes": 273
+        },
+        {
+          "username": "@성이름-l2n5p",
+          "likes": 258
+        },
+        {
+          "username": "@푸-i6n",
+          "likes": 190
+        }
+      ]
+    };
+
+    // Set current time placeholder
+    document.getElementById('currentTime').textContent = '-';
+
+    // File input handler
+    document.getElementById('jsonFile').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          try {
+            const data = JSON.parse(e.target.result);
+            displayData(data);
+          } catch (error) {
+            alert('JSON 文件格式错误: ' + error.message);
+          }
+        };
+        reader.readAsText(file);
+      }
+    });
+
+    function loadSampleData() {
+      displayData(sampleData);
+    }
+
+    function displayData(data) {
+      document.getElementById('analysisContent').style.display = 'block';
+      document.getElementById('downloadContainer').style.display = 'block';
+
+      // Member info
+      document.getElementById('name').textContent = data.name || '-';
+      document.getElementById('videoName').textContent = data.videoName || '-';
+      document.getElementById('videoLink').textContent = `https://youtu.be/${data.videoUrl}`;
+      document.getElementById('videoLink').href = `https://youtu.be/${data.videoUrl}`;
+
+      // Statistics
+      document.getElementById('totalComments').textContent = data.totalComments.toLocaleString();
+      document.getElementById('totalAuthors').textContent = data.totalAuthors.toLocaleString();
+      document.getElementById('avgComments').textContent = data.avgCommentsPerPerson.toFixed(2);
+      document.getElementById('suspiciousRate').textContent = data.suspiciousRate.toFixed(1) + '%';
+      document.getElementById('suspiciousCount').textContent = data.suspiciousAccounts;
+      document.getElementById('normalCount').textContent = data.normalUsers;
+
+      // Set analysis date
+      if (data.analysisDate) {
+        document.getElementById('currentTime').textContent = new Date(data.analysisDate).toLocaleString('zh-CN');
+      }
+
+      // Create charts
+      createFrequencyChart(data.commentFrequency);
+      createUserTypeChart(data.suspiciousAccounts, data.normalUsers);
+
+      // Display rankings
+      displayTopCommentersRanking(data.topCommenters);
+      displayTopLikedRanking(data.topLiked);
+
+      // Display suspicious accounts table
+      displaySuspiciousAccountsTable(data.suspiciousAccountsList);
+    }
+
+    function createFrequencyChart(frequencyData) {
+      const ctx = document.getElementById('frequencyChart').getContext('2d');
+
+      // Destroy existing chart if it exists
+      if (window.frequencyChart && typeof window.frequencyChart.destroy === 'function') {
+        window.frequencyChart.destroy();
+      }
+
+      window.frequencyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: frequencyData.map(d => `${d.comments} 则留言`),
+          datasets: [{
+            label: '作者数',
+            data: frequencyData.map(d => d.authors),
+            backgroundColor: '#8b5cf6',
+            borderColor: '#7c3aed',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: Math.max(1, Math.floor(Math.max(...frequencyData.map(d => d
+                  .authors)) / 10))
+              }
+            },
+            x: {
+              ticks: {
+                maxRotation: 45,
+                minRotation: 45
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function createUserTypeChart(suspiciousCount, normalCount) {
+      const ctx = document.getElementById('userTypeChart').getContext('2d');
+
+      // Destroy existing chart if it exists
+      if (window.userTypeChart && typeof window.userTypeChart.destroy === 'function') {
+        window.userTypeChart.destroy();
+      }
+
+      window.userTypeChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['正常用户', '可疑账户'],
+          datasets: [{
+            data: [normalCount, suspiciousCount],
+            backgroundColor: ['#10b981', '#ef4444'],
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 20,
+                usePointStyle: true
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  const label = context.label || '';
+                  const value = context.parsed;
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = ((value / total) * 100).toFixed(1);
+                  return `${label}: ${value} (${percentage}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function displayTopCommentersRanking(commenters) {
+      const container = document.getElementById('topCommentersRanking');
+      container.innerHTML = '';
+
+      const rankClasses = ['rank-1', 'rank-2', 'rank-3'];
+
+      commenters.slice(0, 3).forEach((commenter, index) => {
+        const div = document.createElement('div');
+        div.className = 'ranking-item';
+        div.innerHTML = `
+                    <div class="ranking-left">
+                        <div class="rank-badge ${rankClasses[index]}">${index + 1}</div>
+                        <span class="username">${commenter.username}</span>
+                    </div>
+                    <span class="count-badge purple-badge">${commenter.comments} 则</span>
+                `;
+        container.appendChild(div);
+      });
+    }
+
+    function displayTopLikedRanking(liked) {
+      const container = document.getElementById('topLikedRanking');
+      container.innerHTML = '';
+
+      const rankClasses = ['rank-1', 'rank-2', 'rank-3'];
+
+      liked.slice(0, 3).forEach((user, index) => {
+        const div = document.createElement('div');
+        div.className = 'ranking-item';
+        div.innerHTML = `
+                    <div class="ranking-left">
+                        <div class="rank-badge ${rankClasses[index]}">${index + 1}</div>
+                        <span class="username">${user.username}</span>
+                    </div>
+                    <span class="count-badge pink-badge">${user.likes} 赞</span>
+                `;
+        container.appendChild(div);
+      });
+    }
+
+    function displaySuspiciousAccountsTable(accounts) {
+      const tbody = document.getElementById('suspiciousAccountsTable');
+      tbody.innerHTML = '';
+
+      accounts.forEach((account, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+                    <td><span class="red-badge">#${index + 1}</span></td>
+                    <td class="username">${account.username}</td>
+                    <td><span class="count-badge purple-badge">${account.comments} 则</span></td>
+                    <td class="issue-text">${account.issues}</td>
+                `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function downloadAsJPEG() {
+      // Show loading state
+      const button = document.querySelector('.download-button');
+      const originalText = button.innerHTML;
+      button.innerHTML = '📷 生成中...';
+      button.disabled = true;
+
+      // Configure html2canvas options
+      const options = {
+        useCORS: true,
+        allowTaint: true,
+        scale: 2, // Higher quality
+        backgroundColor: '#f8fafc',
+        width: window.innerWidth,
+        height: document.body.scrollHeight,
+        scrollX: 0,
+        scrollY: 0
+      };
+
+      html2canvas(document.body, options).then(canvas => {
+        // Convert to JPEG with high quality
+        const imgData = canvas.toDataURL('image/jpeg', 0.9);
+        
+        // Create download link
+        const link = document.createElement('a');
+        link.download = `YouTube留言分析报告_${new Date().toISOString().slice(0, 10)}.jpeg`;
+        link.href = imgData;
+        
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Reset button state
+        button.innerHTML = originalText;
+        button.disabled = false;
+      }).catch(error => {
+        console.error('生成图片时出错:', error);
+        alert('生成图片失败，请重试');
+        
+        // Reset button state
+        button.innerHTML = originalText;
+        button.disabled = false;
+      });
+    }
+  </script>
+</body>
+
+</html>
