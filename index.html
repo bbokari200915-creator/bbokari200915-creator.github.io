@@ -505,12 +505,25 @@
     function updateSyncStatus(status, message = '') {
       document.getElementById('syncStatus').textContent = status;
       if (lastSyncTime) {
-        document.getElementById('lastSync').textContent = `上次同步: ${lastSyncTime.toLocaleString('zh-CN')}`;
+        document.getElementById('lastSync').textContent = `上次同步: ${lastSyncTime.toLocaleString('zh-CN', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        })}`;
       }
       if (globalData.length > 0) {
         const latestTime = Math.max(...globalData.map(row => parseDateTime(row.更新时间)));
         document.getElementById('latestData').textContent =
-          `最新数据: ${new Date(latestTime).toLocaleString('zh-CN')}`;
+          `最新数据: ${new Date(latestTime).toLocaleString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+          })}`;
       }
       if (message) showStatus(message, status.includes('错误') ? 'error' : 'success');
     }
@@ -548,7 +561,17 @@
       }
 
       console.log(
-        `过滤时间范围: ${currentTimeRange}, 截止时间: ${cutoffTime.toLocaleString()}, 当前时间: ${now.toLocaleString()}`);
+        `过滤时间范围: ${currentTimeRange}, 截止时间: ${cutoffTime.toLocaleString('zh-CN', {
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        })}, 当前时间: ${now.toLocaleString('zh-CN', {
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        })}`);
       const filtered = data.filter(row => {
         const rowTime = parseDateTime(row.更新时间);
         return rowTime >= cutoffTime;
@@ -699,12 +722,15 @@
       return new Chart(ctx, {
         type: 'line',
         data: {
-          labels: timePoints.map(time => parseDateTime(time).toLocaleString('zh-CN', {
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          })),
+          labels: timePoints.map(time => {
+            const date = parseDateTime(time);
+            return date.toLocaleString('zh-CN', {
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit'
+            }).replace(/\//g, '-');
+          }),
           datasets: datasets
         },
         options: {
