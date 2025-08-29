@@ -66,11 +66,28 @@
     .date-selector,
     .time-range-selector,
     .member-selector {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 8px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .selector-buttons {
       display: flex;
       gap: 8px;
       flex-wrap: nowrap;
-      align-items: center;
-      width: 100%;
+      overflow-x: auto;
+    }
+
+    .date-selector .selector-buttons {
+      flex-direction: column;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: nowrap;
       overflow-x: auto;
     }
 
@@ -80,11 +97,10 @@
       font-family: 'Material Icons';
       font-size: 20px;
       color: #9ca3af;
-      margin-right: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-width: 24px;
+      width: 24px;
       font-weight: normal;
       font-style: normal;
       line-height: 1;
@@ -100,15 +116,13 @@
       .date-selector,
       .time-range-selector,
       .member-selector {
-        flex-wrap: nowrap;
-        overflow-x: auto;
+        grid-template-columns: 24px 1fr;
       }
 
       .date-selector .icon,
       .time-range-selector .icon,
       .member-selector .icon {
-        flex-shrink: 0;
-        margin-bottom: 0;
+        font-size: 18px;
       }
     }
 
@@ -134,6 +148,8 @@
       justify-content: center;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      width: fit-content;
+      flex-shrink: 0;
     }
 
     .date-button::before,
@@ -285,12 +301,39 @@
     }
 
     .chart-title {
-      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-size: 1.2rem;
       font-weight: 500;
       margin-bottom: 24px;
       color: #9ca3af;
       letter-spacing: 0.15px;
+    }
+
+    .chart-title-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .chart-title-right {
+      font-size: 0.85rem;
+      color: #f3f4f6;
+      font-weight: 400;
+      background: rgba(59, 59, 59, 0.8);
+      padding: 4px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(107, 114, 128, 0.4);
+      backdrop-filter: blur(4px);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 767px) {
+      .chart-title-right {
+        font-size: 0.75rem;
+        padding: 3px 8px;
+        border-radius: 8px;
+      }
     }
 
     .chart-canvas {
@@ -403,36 +446,45 @@
     <div class="controls">
       <div class="date-selector">
         <span class="icon">videocam</span>
-        <button class="date-button" onclick="selectDate('音银 1')" data-date="音银 1">音银 1</button>
-        <button class="date-button" onclick="selectDate('音银 2')" data-date="音银 2">音银 2</button>
-        <button class="date-button" onclick="selectDate('音中 1')" data-date="音中 1">音中 1</button>
-        <button class="date-button" onclick="selectDate('音中 2')" data-date="音中 2">音中 2</button>
-        <button class="date-button" onclick="selectDate('人歌 1')" data-date="人歌 1">人歌 1</button>
-        <button class="date-button" onclick="selectDate('人歌 2')" data-date="人歌 2">人歌 2</button>
-        <button class="date-button active" onclick="selectDate('MCD 1')" data-date="MCD 1">MCD 1</button>
-        <button class="date-button" onclick="selectDate('MCD 2')" data-date="MCD 2">MCD 2</button>
-        <button class="date-button" onclick="selectDate('音银 2-1')" data-date="音银 2-1">音银 2-1</button>
-        <button class="date-button" onclick="selectDate('音银 2-2')" data-date="音银 2-2">音银 2-2</button>
+        <div class="selector-buttons">
+          <div class="button-row">
+            <button class="date-button" onclick="selectDate('音银 1')" data-date="音银 1">音银 1</button>
+            <button class="date-button" onclick="selectDate('音银 2')" data-date="音银 2">音银 2</button>
+            <button class="date-button" onclick="selectDate('音中 1')" data-date="音中 1">音中 1</button>
+            <button class="date-button" onclick="selectDate('音中 2')" data-date="音中 2">音中 2</button>
+            <button class="date-button" onclick="selectDate('人歌 1')" data-date="人歌 1">人歌 1</button>
+            <button class="date-button" onclick="selectDate('人歌 2')" data-date="人歌 2">人歌 2</button>
+          </div>
+          <div class="button-row">
+            <button class="date-button" onclick="selectDate('MCD 1')" data-date="MCD 1">MCD 1</button>
+            <button class="date-button" onclick="selectDate('MCD 2')" data-date="MCD 2">MCD 2</button>
+            <button class="date-button" onclick="selectDate('音银 2-1')" data-date="音银 2-1">音银 2-1</button>
+            <button class="date-button active" onclick="selectDate('音银 2-2')" data-date="音银 2-2">音银 2-2</button>
+          </div>
+        </div>
       </div>
       <div class="time-range-selector">
         <span class="icon">schedule</span>
-        <button class="time-button active" onclick="selectTimeRange('all')" data-range="all">全部</button>
-        <button class="time-button" onclick="selectTimeRange('6h')" data-range="6h">6小时</button>
-        <button class="time-button" onclick="selectTimeRange('12h')" data-range="12h">12小时</button>
-        <button class="time-button" onclick="selectTimeRange('1d')" data-range="1d">1天</button>
+        <div class="selector-buttons">
+          <button class="time-button active" onclick="selectTimeRange('all')" data-range="all">全部</button>
+          <button class="time-button" onclick="selectTimeRange('6h')" data-range="6h">6小时</button>
+          <button class="time-button" onclick="selectTimeRange('12h')" data-range="12h">12小时</button>
+          <button class="time-button" onclick="selectTimeRange('1d')" data-range="1d">1天</button>
+        </div>
       </div>
       <div class="member-selector">
         <span class="icon">group</span>
-        <button class="member-button active" onclick="toggleMember('Felix')" data-member="Felix">Felix</button>
-        <button class="member-button active" onclick="toggleMember('Hyunjin')" data-member="Hyunjin">Hyunjin</button>
-        <button class="member-button active" onclick="toggleMember('LeeKnow')" data-member="LeeKnow">LeeKnow</button>
-        <button class="member-button" onclick="toggleMember('Han')" data-member="Han">Han</button>
+        <div class="selector-buttons">
+          <button class="member-button active" onclick="toggleMember('Felix')" data-member="Felix">Felix</button>
+          <button class="member-button active" onclick="toggleMember('Hyunjin')" data-member="Hyunjin">Hyunjin</button>
+          <button class="member-button active" onclick="toggleMember('LeeKnow')" data-member="LeeKnow">LeeKnow</button>
+          <button class="member-button" onclick="toggleMember('Han')" data-member="Han">Han</button>
+        </div>
       </div>
       <div class="sync-info">
         <div class="sync-status-row">
           <span id="syncStatus">未连接</span>
           <div class="sync-right">
-            <span id="lastSync"></span>
             <span id="latestData"></span>
             <span style="color: #888; font-size: 11px;"><span class="material-icons"
                 style="font-size: 12px; vertical-align: middle;">wifi</span> 数据每5分钟更新</span>
@@ -444,18 +496,33 @@
 
     <div class="charts-grid">
       <div class="card">
-        <div class="chart-title"><span class="material-icons"
-            style="font-size: 18px; vertical-align: middle; margin-right: 6px;">visibility</span>观看数</div>
+        <div class="chart-title">
+          <div class="chart-title-left">
+            <span class="material-icons"
+              style="font-size: 18px; vertical-align: middle; margin-right: 6px;">visibility</span>观看数
+          </div>
+          <div class="chart-title-right" id="viewCountVideoName"></div>
+        </div>
         <div class="chart-canvas"><canvas id="viewCountChart"></canvas></div>
       </div>
       <div class="card">
-        <div class="chart-title"><span class="material-icons"
-            style="font-size: 18px; vertical-align: middle; margin-right: 6px;">thumb_up</span>点赞数</div>
+        <div class="chart-title">
+          <div class="chart-title-left">
+            <span class="material-icons"
+              style="font-size: 18px; vertical-align: middle; margin-right: 6px;">thumb_up</span>点赞数
+          </div>
+          <div class="chart-title-right" id="likeCountVideoName"></div>
+        </div>
         <div class="chart-canvas"><canvas id="likeCountChart"></canvas></div>
       </div>
       <div class="card">
-        <div class="chart-title"><span class="material-icons"
-            style="font-size: 18px; vertical-align: middle; margin-right: 6px;">chat</span>评论数</div>
+        <div class="chart-title">
+          <div class="chart-title-left">
+            <span class="material-icons"
+              style="font-size: 18px; vertical-align: middle; margin-right: 6px;">chat</span>评论数
+          </div>
+          <div class="chart-title-right" id="commentCountVideoName"></div>
+        </div>
         <div class="chart-canvas"><canvas id="commentCountChart"></canvas></div>
       </div>
     </div>
@@ -464,22 +531,21 @@
   <script>
     let globalData = [],
       charts = {},
-      currentSource = 'MCD 1',
+      currentSource = '音银 2-2',
       currentTimeRange = 'all';
-    let autoSyncInterval = null,
-      lastSyncTime = null;
+    let autoSyncInterval = null;
     let selectedMembers = new Set(['Felix', 'Hyunjin', 'LeeKnow']); // 初始选择（不包括Han）
-    let localFileData = {
-      '音银 1': null,
-      '音银 2': null,
-      '音中 1': null,
-      '音中 2': null,
-      '人歌 1': null,
-      '人歌 2': null,
-      'MCD 1': null,
-      'MCD 2': null,
-      '音银 2-1': null,
-      '音银 2-2': null
+    const videoNames = {
+      '音银 1': '8/22 音银竖版',
+      '音银 2': '8/22 音银横版',
+      '音中 1': '8/23 音中竖版',
+      '音中 2': '8/23 音中横版',
+      '人歌 1': '8/24 人歌竖版',
+      '人歌 2': '8/24 人歌横版',
+      'MCD 1': '8/28 MCD竖版',
+      'MCD 2': '8/28 MCD横版',
+      '音银 2-1': '8/29 音银竖版',
+      '音银 2-2': '8/29 音银横版'
     };
     const sheetsUrls = {
       '音银 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=714013901',
@@ -529,42 +595,6 @@
       }
     }
 
-    function handleFileUpload(input, source) {
-      const file = input.files[0];
-      if (!file) return;
-      if (!file.name.toLowerCase().endsWith('.csv')) {
-        showStatus('请选择CSV格式的文件', 'error');
-        input.value = '';
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        Papa.parse(e.target.result, {
-          header: true,
-          dynamicTyping: false,
-          skipEmptyLines: true,
-          complete: function (results) {
-            const newData = results.data.filter(row => row.成员 && row.视频ID && row.更新时间);
-            if (newData.length === 0) {
-              showStatus(`${source} CSV文件中未找到有效数据`, 'error');
-              input.value = '';
-              return;
-            }
-            localFileData[source] = newData;
-            showStatus(`${source} CSV文件上传成功 - ${newData.length} 条数据`, 'success');
-            if (currentSource === source) loadData();
-            updateButtonStates();
-          },
-          error: function (error) {
-            showStatus(`${source} CSV解析错误: ${error.message}`, 'error');
-            input.value = '';
-          }
-        });
-      };
-      reader.onerror = () => showStatus(`读取 ${source} 文件失败`, 'error');
-      reader.readAsText(file, 'UTF-8');
-    }
 
     function updateButtonStates() {
       document.querySelectorAll('.date-button').forEach(btn => {
@@ -593,14 +623,6 @@
 
     function updateSyncStatus(status, message = '') {
       document.getElementById('syncStatus').innerHTML = status;
-      if (lastSyncTime) {
-        document.getElementById('lastSync').textContent = `上次同步: ${lastSyncTime.toLocaleString('zh-CN', {
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit'
-        })}`;
-      }
       if (globalData.length > 0) {
         const latestTime = Math.max(...globalData.map(row => parseDateTime(row.更新时间)));
         document.getElementById('latestData').textContent =
@@ -716,7 +738,6 @@
                 '<span class="material-icons" style="font-size: 14px; vertical-align: middle; color: #4ade80;">check_circle</span> 同步完成',
                 `${currentSource} 数据无变化`);
             }
-            lastSyncTime = new Date();
           },
           error: function (error) {
             updateSyncStatus('⚠ 连接错误', 'CSV解析错误: ' + error.message);
@@ -731,6 +752,12 @@
       if (globalData.length === 0) return;
       Object.values(charts).forEach(chart => chart && chart.destroy());
       charts = {};
+
+      // Update video names in chart titles
+      const videoName = videoNames[currentSource] || currentSource;
+      document.getElementById('viewCountVideoName').textContent = videoName;
+      document.getElementById('likeCountVideoName').textContent = videoName;
+      document.getElementById('commentCountVideoName').textContent = videoName;
 
       const timeFilteredData = filterDataByTimeRange(globalData);
       const filteredData = filterDataByMembers(timeFilteredData);
