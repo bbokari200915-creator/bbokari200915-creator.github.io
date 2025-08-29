@@ -462,7 +462,7 @@
   <script>
     let globalData = [],
       charts = {},
-      currentSource = '音银 1',
+      currentSource = 'MCD 1',
       currentTimeRange = 'all';
     let autoSyncInterval = null,
       lastSyncTime = null;
@@ -476,6 +476,8 @@
       '人歌 2': null,
       'MCD 1': null,
       'MCD 2': null,
+      '音银 2-1': null,
+      '音银 2-2': null
     };
     const sheetsUrls = {
       '音银 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=714013901',
@@ -485,7 +487,9 @@
       '人歌 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=812478534',
       '人歌 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1360746050',
       'MCD 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=450256864',
-      'MCD 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1647939178'
+      'MCD 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1647939178',
+      '音银 2-1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1890376294',
+      '音银 2-2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1496514790'
     };
 
     function selectDate(source) {
