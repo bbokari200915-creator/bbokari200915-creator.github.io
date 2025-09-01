@@ -713,7 +713,9 @@
               <button class="date-button" onclick="selectDate('MCD 2')" data-date="MCD 2">MCD 2</button>
               <button class="date-button" onclick="selectDate('音银 2-1')" data-date="音银 2-1">音银 2-1</button>
               <button class="date-button" onclick="selectDate('音银 2-2')" data-date="音银 2-2">音银 2-2</button>
-              <button class="date-button active" onclick="selectDate('音中 2-1')" data-date="音中 2-1">音中 2-1</button>
+              <button class="date-button" onclick="selectDate('音中 2-1')" data-date="音中 2-1">音中 2-1</button>
+              <button class="date-button" onclick="selectDate('音中 2-2')" data-date="音中 2-2">音中 2-2</button>
+              <button class="date-button active" onclick="selectDate('人歌 2-1')" data-date="人歌 2-1">人歌 2-1</button>
             </div>
           </div>
         </div>
@@ -788,7 +790,7 @@
   <script>
     let globalData = [],
       charts = {},
-      currentSource = '音中 2-1',
+      currentSource = '人歌 2-1',
       currentTimeRange = 'all';
     let autoSyncInterval = null;
     let selectedMembers = new Set(['Felix', 'Hyunjin', 'LeeKnow']); // 初始选择（不包括Han）
@@ -804,6 +806,8 @@
       '音银 2-1': '8/29 音银竖版',
       '音银 2-2': '8/29 音银横版',
       '音中 2-1': '8/30 音中竖版',
+      '音中 2-2': '8/30 音中横版',
+      '人歌 2-1': '8/31 人歌竖版',
     };
     const summarySheetUrl =
       'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=2106034272';
@@ -820,6 +824,8 @@
       '音银 2-1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1890376294',
       '音银 2-2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1496514790',
       '音中 2-1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=2015597463',
+      '音中 2-2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1175319066',
+      '人歌 2-1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=61578535',
     };
 
     function selectDate(source) {
