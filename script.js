@@ -1,53 +1,48 @@
-let globalData = [],
-  charts = {},
-  currentSource = '人歌 2-2',
-  currentTimeRange = '7d';
+let globalData = [];
+let charts = {};
 let autoSyncInterval = null;
-let selectedMembers = new Set(['Felix', 'Hyunjin', 'LeeKnow']); // 初始选择
 
-const memberColors = {
-  'Felix': '#64B5F6',
-  'Hyunjin': '#FFB74D',
-  'LeeKnow': '#81C784',
-  'Han': '#F06292'
-};
+// Configuration variables - will be loaded from config.json
+let currentSource;
+let currentTimeRange;
+let selectedMembers;
+let memberColors;
+let videoNames;
+let summarySheetUrl;
+let sheetsUrls;
 
-const videoNames = {
-  '音银 1': '8/22 音银竖版',
-  '音银 2': '8/22 音银横版',
-  '音中 1': '8/23 音中竖版',
-  '音中 2': '8/23 音中横版',
-  '人歌 1': '8/24 人歌竖版',
-  '人歌 2': '8/24 人歌横版',
-  'MCD 1': '8/28 MCD竖版',
-  'MCD 2': '8/28 MCD横版',
-  '音银 2-1': '8/29 音银竖版',
-  '音银 2-2': '8/29 音银横版',
-  '音中 2-1': '8/30 音中竖版',
-  '音中 2-2': '8/30 音中横版',
-  '人歌 2-1': '8/31 人歌竖版',
-  '人歌 2-2': '8/31 人歌横版',
-};
+// Load configuration from config.json
+async function loadConfig() {
+  try {
+    const response = await fetch('./config.json');
+    const config = await response.json();
 
-const summarySheetUrl =
-  'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=2106034272';
+    // Set default values
+    currentSource = config.defaultSettings.currentSource;
+    currentTimeRange = config.defaultSettings.currentTimeRange;
+    selectedMembers = new Set(config.defaultSettings.selectedMembers);
 
-const sheetsUrls = {
-  '音银 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=714013901',
-  '音银 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1229040293',
-  '音中 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1677477366',
-  '音中 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1834153764',
-  '人歌 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=812478534',
-  '人歌 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1360746050',
-  'MCD 1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=450256864',
-  'MCD 2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1647939178',
-  '音银 2-1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1890376294',
-  '音银 2-2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1496514790',
-  '音中 2-1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=2015597463',
-  '音中 2-2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1175319066',
-  '人歌 2-1': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=61578535',
-  '人歌 2-2': 'https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1868124412',
-};
+    // Set configuration objects
+    memberColors = config.memberColors;
+    videoNames = config.videoNames;
+    summarySheetUrl = config.urls.summarySheetUrl;
+    sheetsUrls = config.urls.sheetsUrls;
+
+    console.log('Configuration loaded successfully');
+    return true;
+  } catch (error) {
+    console.error('Error loading configuration:', error);
+    // Fallback to default values if config loading fails
+    currentSource = '';
+    currentTimeRange = '7d';
+    selectedMembers = new Set();
+    memberColors = {};
+    videoNames = {};
+    summarySheetUrl = '';
+    sheetsUrls = {};
+    return false;
+  }
+}
 
 function selectDate(source) {
   document.querySelectorAll('.date-button').forEach(btn => btn.classList.remove('active'));
@@ -403,7 +398,10 @@ function createTrendChart(canvasId, timePoints, dataKey, members, memberColors, 
   });
 }
 
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
+  // Load configuration first
+  await loadConfig();
+
   updateButtonStates();
   setTimeout(() => {
     loadData();
@@ -573,6 +571,8 @@ function populateSummaryTable() {
 }
 
 // Load summary data when page loads
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
+  // Ensure config is loaded before loading summary data
+  await loadConfig();
   loadSummaryData();
 });

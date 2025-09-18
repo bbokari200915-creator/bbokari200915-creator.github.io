@@ -1,0 +1,48 @@
+{
+  "defaultSettings": {
+    "currentSource": "人歌 2-2",
+    "currentTimeRange": "7d",
+    "selectedMembers": ["Felix", "Hyunjin", "LeeKnow"]
+  },
+  "memberColors": {
+    "Felix": "#64B5F6",
+    "Hyunjin": "#FFB74D",
+    "LeeKnow": "#81C784",
+    "Han": "#F06292"
+  },
+  "videoNames": {
+    "音银 1": "8/22 音银竖版",
+    "音银 2": "8/22 音银横版",
+    "音中 1": "8/23 音中竖版",
+    "音中 2": "8/23 音中横版",
+    "人歌 1": "8/24 人歌竖版",
+    "人歌 2": "8/24 人歌横版",
+    "MCD 1": "8/28 MCD竖版",
+    "MCD 2": "8/28 MCD横版",
+    "音银 2-1": "8/29 音银竖版",
+    "音银 2-2": "8/29 音银横版",
+    "音中 2-1": "8/30 音中竖版",
+    "音中 2-2": "8/30 音中横版",
+    "人歌 2-1": "8/31 人歌竖版",
+    "人歌 2-2": "8/31 人歌横版"
+  },
+  "urls": {
+    "summarySheetUrl": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=2106034272",
+    "sheetsUrls": {
+      "音银 1": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=714013901",
+      "音银 2": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1229040293",
+      "音中 1": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1677477366",
+      "音中 2": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1834153764",
+      "人歌 1": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=812478534",
+      "人歌 2": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1360746050",
+      "MCD 1": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=450256864",
+      "MCD 2": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1647939178",
+      "音银 2-1": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1890376294",
+      "音银 2-2": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1496514790",
+      "音中 2-1": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=2015597463",
+      "音中 2-2": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1175319066",
+      "人歌 2-1": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=61578535",
+      "人歌 2-2": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1868124412"
+    }
+  }
+}
