@@ -11,6 +11,24 @@ let videoNames;
 let summarySheetUrl;
 let sheetsUrls;
 
+// Check authentication status
+function checkAuthentication() {
+  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  if (!isLoggedIn) {
+    window.location.href = './login.html';
+    return false;
+  }
+  return true;
+}
+
+// Logout function
+function logout() {
+  localStorage.removeItem('isLoggedIn');
+  localStorage.removeItem('currentUser');
+  localStorage.removeItem('rememberMe');
+  window.location.href = './login.html';
+}
+
 // Load configuration from config.json
 async function loadConfig() {
   try {
@@ -399,6 +417,18 @@ function createTrendChart(canvasId, timePoints, dataKey, members, memberColors, 
 }
 
 window.addEventListener('load', async () => {
+  // Check authentication first
+  if (!checkAuthentication()) {
+    return;
+  }
+
+  // Display current user
+  const currentUser = localStorage.getItem('currentUser') || '用户';
+  const userElement = document.getElementById('currentUser');
+  if (userElement) {
+    userElement.textContent = currentUser;
+  }
+
   // Load configuration first
   await loadConfig();
 
@@ -572,6 +602,11 @@ function populateSummaryTable() {
 
 // Load summary data when page loads
 document.addEventListener('DOMContentLoaded', async function () {
+  // Check authentication first
+  if (!checkAuthentication()) {
+    return;
+  }
+  
   // Ensure config is loaded before loading summary data
   await loadConfig();
   loadSummaryData();

@@ -44,5 +44,11 @@
       "人歌 2-1": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=61578535",
       "人歌 2-2": "https://docs.google.com/spreadsheets/d/1lnFHt_4oFxxvjQk-Lnn3B6OoxQK4SV0fMi0Z466QoRg/export?format=csv&gid=1868124412"
     }
+  },
+  "auth": {
+    "credentials": [{
+      "username": "admin",
+      "password": "admin123"
+    }]
   }
 }

@@ -16,6 +16,18 @@
 
 <body>
   <div class="container">
+    <!-- Header with logout button -->
+    <div class="header-bar">
+      <div class="user-info">
+        <span class="material-icons">account_circle</span>
+        <span id="currentUser">用户</span>
+      </div>
+      <button class="logout-button" onclick="logout()" title="登出">
+        <span class="material-icons">logout</span>
+        登出
+      </button>
+    </div>
+
     <!-- Material Design 3 Secondary Tabs -->
     <div class="md3-secondary-tabs" role="tablist" aria-label="Dashboard sections">
       <button class="md3-secondary-tab active" role="tab" aria-selected="true" aria-controls="summary-panel"
