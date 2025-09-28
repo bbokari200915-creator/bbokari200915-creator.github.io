@@ -183,7 +183,38 @@ body {
   border-collapse: collapse;
   background: #1e1e1e;
   border-radius: 8px;
-  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  table-layout: auto;
+}
+
+.data-table th:nth-child(1),
+.data-table td:nth-child(1) {
+  width: 40px;
+  min-width: 40px;
+}
+
+.data-table th:nth-child(2),
+.data-table td:nth-child(2) {
+  width: 120px;
+  min-width: 120px;
+}
+
+.data-table th:nth-child(3),
+.data-table td:nth-child(3) {
+  width: 80px;
+  min-width: 80px;
+}
+
+.data-table th:nth-child(4),
+.data-table td:nth-child(4) {
+  width: 80px;
+  min-width: 80px;
+}
+
+.data-table th:nth-child(5),
+.data-table td:nth-child(5) {
+  width: 80px;
+  min-width: 80px;
 }
 
 .data-table th {
@@ -223,24 +254,40 @@ body {
 
 /* Responsive Design */
 @media (max-width: 767px) {
+  .header-bar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   .section-header {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
-  
-  .export-controls {
-    width: 100%;
-    justify-content: flex-start;
-  }
-  
+
   .data-table th,
   .data-table td {
-    padding: 8px 12px;
+    padding: 8px 8px;
     font-size: 13px;
   }
-  
-  .section-header h3 {
-    font-size: 1.2rem;
+
+  .section-header h4 {
+    margin: 8px 0;
+    line-height: 1.2;
+  }
+
+  /* Reduce padding for table containers on mobile */
+  #yongLixxTableContainer .data-section,
+  #otherUsersTableContainer .data-section {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  #yongLixxTableContainer,
+  #otherUsersTableContainer {
+    padding-left: 0px;
+    padding-right: 0px;
   }
 }
 
@@ -254,6 +301,7 @@ body {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

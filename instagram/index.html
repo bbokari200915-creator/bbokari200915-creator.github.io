@@ -21,7 +21,6 @@
         <span>Instagram 数据查看器</span>
       </div>
       <div class="user-actions">
-        <span id="currentUser" style="color: #666; margin-right: 16px;"></span>
         <button id="dashboardBtn"
           style="background: none; border: 1px solid #666; color: #666; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 8px;"
           title="返回仪表板">
@@ -44,33 +43,31 @@
     </div>
 
     <!-- yong.lixx Data table section -->
-    <div id="yongLixxTableContainer" class="data-section" style="display: none;">
-      <div class="section-header">
-        <h4><span class="material-icons">account_circle</span> yong.lixx 帖子</h4>
-        <div id="yongLixxDataTableTitle" style="color: #666; font-size: 14px; text-align: right;"></div>
-      </div>
-
-      <div class="table-container">
-        <table id="yongLixxTable" class="data-table">
-          <thead id="yongLixxTableHeader"></thead>
-          <tbody id="yongLixxTableBody"></tbody>
-        </table>
-      </div>
+    <div class="section-header" id="yongLixxSectionHeader" style="display: none;">
+      <h4><span class="material-icons">account_circle</span> yong.lixx 帖子</h4>
+      <div id="yongLixxDataTableTitle" style="color: #666; font-size: 14px; text-align: right;"></div>
     </div>
 
-    <!-- Other users Data table section -->
-    <div id="otherUsersTableContainer" class="data-section" style="display: none;">
-      <div class="section-header">
-        <h4><span class="material-icons">group</span> 其他用户帖子</h4>
-        <div id="otherUsersDataTableTitle" style="color: #666; font-size: 14px; text-align: right;"></div>
-      </div>
+    <div class="table-container" id="yongLixxTableContainer" style="display: none;">
+      <table id="yongLixxTable" class="data-table">
+        <thead id="yongLixxTableHeader"></thead>
+        <tbody id="yongLixxTableBody"></tbody>
+      </table>
+    </div>
 
-      <div class="table-container">
-        <table id="otherUsersTable" class="data-table">
-          <thead id="otherUsersTableHeader"></thead>
-          <tbody id="otherUsersTableBody"></tbody>
-        </table>
-      </div>
+    <div style="padding: 16px;"></div>
+
+    <!-- Other users Data table section -->
+    <div class="section-header" id="otherUsersSectionHeader" style="display: none;">
+      <h4><span class="material-icons">group</span> 其他用户帖子</h4>
+      <div id="otherUsersDataTableTitle" style="color: #666; font-size: 14px; text-align: right;"></div>
+    </div>
+
+    <div class="table-container" id="otherUsersTableContainer" style="display: none;">
+      <table id="otherUsersTable" class="data-table">
+        <thead id="otherUsersTableHeader"></thead>
+        <tbody id="otherUsersTableBody"></tbody>
+      </table>
     </div>
   </div>
 

@@ -19,11 +19,11 @@ function checkAuth() {
     return false;
   }
 
-  // Display current user
-  const currentUser = localStorage.getItem('currentUser');
-  if (currentUser) {
-    document.getElementById('currentUser').textContent = `欢迎, ${currentUser}`;
-  }
+  // Display current user (removed since currentUser element no longer exists)
+  // const currentUser = localStorage.getItem('currentUser');
+  // if (currentUser) {
+  //   document.getElementById('currentUser').textContent = `欢迎, ${currentUser}`;
+  // }
 
   return true;
 }
@@ -36,7 +36,7 @@ function goToDashboard() {
 // Handle logout
 function handleLogout() {
   localStorage.removeItem('isLoggedIn');
-  localStorage.removeItem('currentUser');
+  // localStorage.removeItem('currentUser');
   localStorage.removeItem('rememberMe');
   window.location.href = './login.html';
 }
@@ -435,11 +435,11 @@ window.addEventListener('load', async () => {
   }
 
   // Display current user
-  const currentUser = localStorage.getItem('currentUser') || '用户';
-  const userElement = document.getElementById('currentUser');
-  if (userElement) {
-    userElement.textContent = `欢迎, ${currentUser}`;
-  }
+  // const currentUser = localStorage.getItem('currentUser') || '用户';
+  // const userElement = document.getElementById('currentUser');
+  // if (userElement) {
+  //   userElement.textContent = `欢迎, ${currentUser}`;
+  // }
 
   // Load configuration first
   await loadConfig();

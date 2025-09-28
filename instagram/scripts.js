@@ -131,19 +131,19 @@ function displayTable(data) {
       minute: '2-digit',
       second: '2-digit'
     });
-    
+
     // Update both section titles with the formatted date
     const yongLixxTitle = document.getElementById('yongLixxDataTableTitle');
     const otherUsersTitle = document.getElementById('otherUsersDataTableTitle');
-    const titleText = `数据抓取时间: ${formattedDate}`;
-    
+    const titleText = `抓取时间: ${formattedDate}`;
+
     if (yongLixxTitle) yongLixxTitle.textContent = titleText;
     if (otherUsersTitle) otherUsersTitle.textContent = titleText;
   } else {
     // Set default title if no date available
     const yongLixxTitle = document.getElementById('yongLixxDataTableTitle');
     const otherUsersTitle = document.getElementById('otherUsersDataTableTitle');
-    
+
     if (yongLixxTitle) yongLixxTitle.textContent = 'Data Table';
     if (otherUsersTitle) otherUsersTitle.textContent = 'Data Table';
   }
@@ -152,18 +152,16 @@ function displayTable(data) {
   const targetFields = [
     'No.',
     'ownerUsername',
-    'image',
-    'url',
     'likesCount',
     'commentsCount',
-    'videoPlayCount'
+    'videoPlayCount',
+    'url'
   ];
 
   // Define display names for each field
   const fieldDisplayNames = {
     'No.': 'No.',
-    'ownerUsername': '@account',
-    'image': 'Image',
+    'ownerUsername': 'Account',
     'url': 'Link',
     'likesCount': 'Likes',
     'commentsCount': 'Comments',
@@ -220,10 +218,12 @@ function displayTable(data) {
   });
 
   // Get separate table elements
+  const yongLixxSectionHeader = document.getElementById('yongLixxSectionHeader');
   const yongLixxTableContainer = document.getElementById('yongLixxTableContainer');
   const yongLixxTableHeader = document.getElementById('yongLixxTableHeader');
   const yongLixxTableBody = document.getElementById('yongLixxTableBody');
 
+  const otherUsersSectionHeader = document.getElementById('otherUsersSectionHeader');
   const otherUsersTableContainer = document.getElementById('otherUsersTableContainer');
   const otherUsersTableHeader = document.getElementById('otherUsersTableHeader');
   const otherUsersTableBody = document.getElementById('otherUsersTableBody');
@@ -237,16 +237,20 @@ function displayTable(data) {
   // Create yong.lixx table if data exists
   if (yongLixxData.length > 0) {
     createTableSection(yongLixxData, yongLixxTableHeader, yongLixxTableBody, targetFields, fieldDisplayNames);
+    yongLixxSectionHeader.style.display = 'flex';
     yongLixxTableContainer.style.display = 'block';
   } else {
+    yongLixxSectionHeader.style.display = 'none';
     yongLixxTableContainer.style.display = 'none';
   }
 
   // Create other users table if data exists
   if (otherUsersData.length > 0) {
     createTableSection(otherUsersData, otherUsersTableHeader, otherUsersTableBody, targetFields, fieldDisplayNames);
+    otherUsersSectionHeader.style.display = 'flex';
     otherUsersTableContainer.style.display = 'block';
   } else {
+    otherUsersSectionHeader.style.display = 'none';
     otherUsersTableContainer.style.display = 'none';
   }
 }
@@ -297,10 +301,10 @@ function createTableSection(tableData, tableHeader, tableBody, targetFields, fie
         if (cellValue) {
           td.innerHTML = `
             <div style="display: flex; align-items: center; gap: 8px;">
-              <a href="${cellValue}" target="_blank" style="color: #64B5F6; text-decoration: none; flex: 1; transition: color 0.2s ease;" onmouseover="this.style.color='#90CAF9'" onmouseout="this.style.color='#64B5F6'">${cellValue.length > 50 ? cellValue.substring(0, 50) + '...' : cellValue}</a>
               <button onclick="copyToClipboard(\`${cellValue}\`, this)" style="background: none; border: none; cursor: pointer; padding: 4px; border-radius: 3px; color: #9ca3af; font-size: 14px; transition: all 0.2s ease;" title="Copy URL" onmouseover="this.style.color='#e1e3e1'; this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.color='#9ca3af'; this.style.background='none'">
                 <span class="material-icons" style="font-size: 16px;">content_copy</span>
               </button>
+              <a href="${cellValue}" target="_blank" style="color: #64B5F6; text-decoration: none; flex: 1; transition: color 0.2s ease;" onmouseover="this.style.color='#90CAF9'" onmouseout="this.style.color='#64B5F6'">${cellValue.length > 50 ? cellValue.substring(0, 50) + '...' : cellValue}</a>
             </div>
           `;
         } else {
@@ -418,10 +422,10 @@ function checkAuth() {
   }
 
   // Display current user
-  const currentUser = localStorage.getItem('currentUser');
-  if (currentUser) {
-    document.getElementById('currentUser').textContent = `欢迎, ${currentUser}`;
-  }
+  // const currentUser = localStorage.getItem('currentUser');
+  // if (currentUser) {
+  //   document.getElementById('currentUser').textContent = `欢迎, ${currentUser}`;
+  // }
 
   return true;
 }
@@ -434,7 +438,7 @@ function goToDashboard() {
 // Handle logout
 function handleLogout() {
   localStorage.removeItem('isLoggedIn');
-  localStorage.removeItem('currentUser');
+  // localStorage.removeItem('currentUser');
   localStorage.removeItem('rememberMe');
   window.location.href = '../login.html';
 }
