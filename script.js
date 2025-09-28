@@ -12,17 +12,29 @@ let summarySheetUrl;
 let sheetsUrls;
 
 // Check authentication status
-function checkAuthentication() {
+function checkAuth() {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
   if (!isLoggedIn) {
     window.location.href = './login.html';
     return false;
   }
+
+  // Display current user
+  const currentUser = localStorage.getItem('currentUser');
+  if (currentUser) {
+    document.getElementById('currentUser').textContent = `欢迎, ${currentUser}`;
+  }
+
   return true;
 }
 
-// Logout function
-function logout() {
+// Go to dashboard function
+function goToDashboard() {
+  window.location.href = './dashboard.html';
+}
+
+// Handle logout
+function handleLogout() {
   localStorage.removeItem('isLoggedIn');
   localStorage.removeItem('currentUser');
   localStorage.removeItem('rememberMe');
@@ -418,7 +430,7 @@ function createTrendChart(canvasId, timePoints, dataKey, members, memberColors, 
 
 window.addEventListener('load', async () => {
   // Check authentication first
-  if (!checkAuthentication()) {
+  if (!checkAuth()) {
     return;
   }
 
@@ -426,7 +438,7 @@ window.addEventListener('load', async () => {
   const currentUser = localStorage.getItem('currentUser') || '用户';
   const userElement = document.getElementById('currentUser');
   if (userElement) {
-    userElement.textContent = currentUser;
+    userElement.textContent = `欢迎, ${currentUser}`;
   }
 
   // Load configuration first
@@ -603,10 +615,21 @@ function populateSummaryTable() {
 // Load summary data when page loads
 document.addEventListener('DOMContentLoaded', async function () {
   // Check authentication first
-  if (!checkAuthentication()) {
+  if (!checkAuth()) {
     return;
   }
-  
+
+  // Add event listeners
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', handleLogout);
+  }
+
+  const dashboardBtn = document.getElementById('dashboardBtn');
+  if (dashboardBtn) {
+    dashboardBtn.addEventListener('click', goToDashboard);
+  }
+
   // Ensure config is loaded before loading summary data
   await loadConfig();
   loadSummaryData();

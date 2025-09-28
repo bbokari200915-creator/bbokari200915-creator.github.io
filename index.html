@@ -19,13 +19,24 @@
     <!-- Header with logout button -->
     <div class="header-bar">
       <div class="user-info">
-        <span class="material-icons">account_circle</span>
-        <span id="currentUser">用户</span>
+        <span class="material-icons">play_circle_filled</span>
+        <span>YouTube 数据查看器</span>
       </div>
-      <button class="logout-button" onclick="logout()" title="登出">
-        <span class="material-icons">logout</span>
-        登出
-      </button>
+      <div class="user-actions">
+        <span id="currentUser" style="color: #666; margin-right: 16px;"></span>
+        <button id="dashboardBtn"
+          style="background: none; border: 1px solid #666; color: #666; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 8px;"
+          title="返回仪表板">
+          <span class="material-icons" style="font-size: 16px; vertical-align: middle;">dashboard</span>
+          仪表板
+        </button>
+        <button id="logoutBtn"
+          style="background: none; border: 1px solid #666; color: #666; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;"
+          title="登出">
+          <span class="material-icons" style="font-size: 16px; vertical-align: middle;">logout</span>
+          登出
+        </button>
+      </div>
     </div>
 
     <!-- Material Design 3 Secondary Tabs -->

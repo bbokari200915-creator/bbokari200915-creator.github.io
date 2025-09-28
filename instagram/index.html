@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instagram 数据仪表板</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header with title -->
+    <div class="header-bar">
+      <div class="user-info">
+        <span class="material-icons">photo_camera</span>
+        <span>Instagram 数据查看器</span>
+      </div>
+      <div class="user-actions">
+        <span id="currentUser" style="color: #666; margin-right: 16px;"></span>
+        <button id="dashboardBtn"
+          style="background: none; border: 1px solid #666; color: #666; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-right: 8px;"
+          title="返回仪表板">
+          <span class="material-icons" style="font-size: 16px; vertical-align: middle;">dashboard</span>
+          仪表板
+        </button>
+        <button id="logoutBtn"
+          style="background: none; border: 1px solid #666; color: #666; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;"
+          title="登出">
+          <span class="material-icons" style="font-size: 16px; vertical-align: middle;">logout</span>
+          登出
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading indicator -->
+    <div id="loading" class="loading-container" style="display: none;">
+      <div class="loading-spinner"></div>
+      <p><span class="material-icons">refresh</span> 正在加载和解析数据...</p>
+    </div>
+
+    <!-- yong.lixx Data table section -->
+    <div id="yongLixxTableContainer" class="data-section" style="display: none;">
+      <div class="section-header">
+        <h4><span class="material-icons">account_circle</span> yong.lixx 帖子</h4>
+        <div id="yongLixxDataTableTitle" style="color: #666; font-size: 14px; text-align: right;"></div>
+      </div>
+
+      <div class="table-container">
+        <table id="yongLixxTable" class="data-table">
+          <thead id="yongLixxTableHeader"></thead>
+          <tbody id="yongLixxTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Other users Data table section -->
+    <div id="otherUsersTableContainer" class="data-section" style="display: none;">
+      <div class="section-header">
+        <h4><span class="material-icons">group</span> 其他用户帖子</h4>
+        <div id="otherUsersDataTableTitle" style="color: #666; font-size: 14px; text-align: right;"></div>
+      </div>
+
+      <div class="table-container">
+        <table id="otherUsersTable" class="data-table">
+          <thead id="otherUsersTableHeader"></thead>
+          <tbody id="otherUsersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="scripts.js"></script>
+</body>
+
+</html>
