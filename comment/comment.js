@@ -26,10 +26,10 @@ async function main() {
     const result = await analyzer.analyzeVideo(videoId, 5000); // 最多獲取5000條留言
 
     if (result) {
-      // Export data to rawdata folder with videoId as filename
+      // Export data to rawData folder with videoId as filename
       analyzer.exportData(result);
 
-      console.log('\n📋 處理完成！數據已保存到 rawdata 資料夾');
+      console.log('\n📋 處理完成！數據已保存到 rawData 資料夾');
       // console.log('你可以使用以下數據進行進一步分析：');
       // console.log('- result.allComments: 所有留言數據');
       // console.log('- result.groupedComments: 按作者分組的留言');

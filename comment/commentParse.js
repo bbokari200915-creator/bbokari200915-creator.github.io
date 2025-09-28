@@ -12,8 +12,8 @@ if (!videoId) {
 }
 
 (async () => {
-  // Read and parse the data from rawdata folder
-  const filePath = path.join(__dirname, 'rawdata', `${videoId}.json`);
+  // Read and parse the data from rawData folder
+  const filePath = path.join(__dirname, 'rawData', `${videoId}.json`);
   const data = fs.readFileSync(filePath, 'utf8');
   const analysisData = JSON.parse(data);
 

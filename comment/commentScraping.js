@@ -226,17 +226,17 @@ class YouTubeCommentAnalyzer {
     // fs is already imported at the top
     // path is already imported at the top
 
-    // Create rawdata directory if it doesn't exist
-    const rawdataDir = path.join(__dirname, 'rawdata');
-    if (!fs.existsSync(rawdataDir)) {
-      fs.mkdirSync(rawdataDir, {
+    // Create rawData directory if it doesn't exist
+    const rawDataDir = path.join(__dirname, 'rawData');
+    if (!fs.existsSync(rawDataDir)) {
+      fs.mkdirSync(rawDataDir, {
         recursive: true
       });
     }
 
     // Use videoId as filename if not provided
     const actualFilename = filename || `${analysisResult.videoId}.json`;
-    const fullPath = path.join(rawdataDir, actualFilename);
+    const fullPath = path.join(rawDataDir, actualFilename);
 
     const exportData = {
       videoId: analysisResult.videoId,
@@ -270,7 +270,7 @@ async function main() {
     const result = await analyzer.analyzeVideo(videoId, 5000); // 最多獲取5000條留言
 
     if (result) {
-      // 導出數據到 rawdata 資料夾，檔名為 videoId.json
+      // 導出數據到 rawData 資料夾，檔名為 videoId.json
       analyzer.exportData(result);
 
       // 可以進一步處理數據
