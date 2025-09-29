@@ -137,7 +137,8 @@ function displayTable(data) {
     'likesCount',
     'commentsCount',
     'videoPlayCount',
-    'url'
+    'url',
+    'timestamp'
   ];
 
   // Define display names for each field
@@ -208,7 +209,12 @@ function displayTable(data) {
     }
   });
 
-  // Re-number the items in each group
+  // Sort data by timestamp
+  felixData.sort((a, b) => (new Date(a.timestamp) - new Date(b.timestamp)) < 0 ? -1 : 1);
+  bigMagazineData.sort((a, b) => (new Date(a.timestamp) - new Date(b.timestamp)) < 0 ? -1 : 1);
+  smallMagazineData.sort((a, b) => (new Date(a.timestamp) - new Date(b.timestamp)) < 0 ? -1 : 1);
+
+  // Re-number the items
   felixData.forEach((item, index) => {
     item['No.'] = index + 1;
   });
@@ -218,6 +224,11 @@ function displayTable(data) {
   bigMagazineData.forEach((item, index) => {
     item['No.'] = index + 1;
   });
+
+  // Sort data by timestamp
+  felixData.sort((a, b) => (new Date(a.timestamp) - new Date(b.timestamp)) < 0 ? 1 : -1);
+  bigMagazineData.sort((a, b) => (new Date(a.timestamp) - new Date(b.timestamp)) < 0 ? 1 : -1);
+  smallMagazineData.sort((a, b) => (new Date(a.timestamp) - new Date(b.timestamp)) < 0 ? 1 : -1);
 
   // Get separate table elements
   const yongLixxSectionHeader = document.getElementById('yongLixxSectionHeader');
