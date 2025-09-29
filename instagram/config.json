@@ -1,0 +1,19 @@
+{
+  "userCategories": {
+    "felix": ["yong.lixx"],
+    "bigMagazine": [],
+    "smallMagazine": []
+  },
+  "defaultCategory": "felix",
+  "categoryRules": {
+    "felix": {
+      "displayName": "Felix"
+    },
+    "bigMagazine": {
+      "displayName": "大雜誌"
+    },
+    "smallMagazine": {
+      "displayName": "小雜誌"
+    }
+  }
+}

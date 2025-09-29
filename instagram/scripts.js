@@ -110,43 +110,25 @@ function displayTable(data) {
     return;
   }
 
-  // Find the latest date from the data
-  let latestDate = null;
-  data.forEach(item => {
-    if (item.latestDate) {
-      const itemDate = new Date(item.latestDate);
-      if (!isNaN(itemDate.getTime()) && (!latestDate || itemDate > latestDate)) {
-        latestDate = itemDate;
-      }
-    }
+  // Update titles with timestamp from data
+  const formattedDate = data[0] ? data[0].latestDate : new Date().toLocaleString('zh-CN', {
+    timeZone: 'Asia/Shanghai',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit'
   });
 
-  // Update table title with latest date
-  if (latestDate) {
-    const formattedDate = latestDate.toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
+  const yongLixxTitle = document.getElementById('yongLixxDataTableTitle');
+  const smallMagazineTitle = document.getElementById('smallMagazineDataTableTitle');
+  const bigMagazineTitle = document.getElementById('bigMagazineDataTableTitle');
+  const titleText = `抓取时间: ${formattedDate}`;
 
-    // Update both section titles with the formatted date
-    const yongLixxTitle = document.getElementById('yongLixxDataTableTitle');
-    const otherUsersTitle = document.getElementById('otherUsersDataTableTitle');
-    const titleText = `抓取时间: ${formattedDate}`;
-
-    if (yongLixxTitle) yongLixxTitle.textContent = titleText;
-    if (otherUsersTitle) otherUsersTitle.textContent = titleText;
-  } else {
-    // Set default title if no date available
-    const yongLixxTitle = document.getElementById('yongLixxDataTableTitle');
-    const otherUsersTitle = document.getElementById('otherUsersDataTableTitle');
-
-    if (yongLixxTitle) yongLixxTitle.textContent = 'Data Table';
-    if (otherUsersTitle) otherUsersTitle.textContent = 'Data Table';
-  }
+  if (yongLixxTitle) yongLixxTitle.textContent = titleText;
+  if (smallMagazineTitle) smallMagazineTitle.textContent = titleText;
+  if (bigMagazineTitle) bigMagazineTitle.textContent = titleText;
 
   // Define the specific fields to display and their corresponding display names
   const targetFields = [
@@ -205,15 +187,35 @@ function displayTable(data) {
     return;
   }
 
-  // Separate data into two groups
-  const yongLixxData = allData.filter(item => item.ownerUsername === 'yong.lixx');
-  const otherUsersData = allData.filter(item => item.ownerUsername !== 'yong.lixx');
+  // Separate data based on config categories
+  const felixData = [];
+  const bigMagazineData = [];
+  const smallMagazineData = [];
+
+  allData.forEach(item => {
+    const category = categorizeUser(item.ownerUsername);
+    switch (category) {
+      case 'felix':
+        felixData.push(item);
+        break;
+      case 'bigMagazine':
+        bigMagazineData.push(item);
+        break;
+      case 'smallMagazine':
+      default:
+        smallMagazineData.push(item);
+        break;
+    }
+  });
 
   // Re-number the items in each group
-  yongLixxData.forEach((item, index) => {
+  felixData.forEach((item, index) => {
     item['No.'] = index + 1;
   });
-  otherUsersData.forEach((item, index) => {
+  smallMagazineData.forEach((item, index) => {
+    item['No.'] = index + 1;
+  });
+  bigMagazineData.forEach((item, index) => {
     item['No.'] = index + 1;
   });
 
@@ -223,24 +225,31 @@ function displayTable(data) {
   const yongLixxTableHeader = document.getElementById('yongLixxTableHeader');
   const yongLixxTableBody = document.getElementById('yongLixxTableBody');
 
-  const otherUsersSectionHeader = document.getElementById('otherUsersSectionHeader');
-  const otherUsersTableContainer = document.getElementById('otherUsersTableContainer');
-  const otherUsersTableHeader = document.getElementById('otherUsersTableHeader');
-  const otherUsersTableBody = document.getElementById('otherUsersTableBody');
+  const smallMagazineSectionHeader = document.getElementById('smallMagazineSectionHeader');
+  const smallMagazineTableContainer = document.getElementById('smallMagazineTableContainer');
+  const smallMagazineTableHeader = document.getElementById('smallMagazineTableHeader');
+  const smallMagazineTableBody = document.getElementById('smallMagazineTableBody');
+
+  const bigMagazineSectionHeader = document.getElementById('bigMagazineSectionHeader');
+  const bigMagazineTableContainer = document.getElementById('bigMagazineTableContainer');
+  const bigMagazineTableHeader = document.getElementById('bigMagazineTableHeader');
+  const bigMagazineTableBody = document.getElementById('bigMagazineTableBody');
 
   // Clear existing table content and mobile cards
   yongLixxTableHeader.innerHTML = '';
   yongLixxTableBody.innerHTML = '';
-  otherUsersTableHeader.innerHTML = '';
-  otherUsersTableBody.innerHTML = '';
-  
+  if (smallMagazineTableHeader) smallMagazineTableHeader.innerHTML = '';
+  if (smallMagazineTableBody) smallMagazineTableBody.innerHTML = '';
+  if (bigMagazineTableHeader) bigMagazineTableHeader.innerHTML = '';
+  if (bigMagazineTableBody) bigMagazineTableBody.innerHTML = '';
+
   // Remove existing mobile cards
   const existingCards = document.querySelectorAll('.mobile-cards');
   existingCards.forEach(cards => cards.remove());
 
-  // Create yong.lixx table if data exists
-  if (yongLixxData.length > 0) {
-    createTableSection(yongLixxData, yongLixxTableHeader, yongLixxTableBody, targetFields, fieldDisplayNames);
+  // Create felix table if data exists
+  if (felixData.length > 0) {
+    createTableSection(felixData, yongLixxTableHeader, yongLixxTableBody, targetFields, fieldDisplayNames);
     yongLixxSectionHeader.style.display = 'flex';
     yongLixxTableContainer.style.display = 'block';
   } else {
@@ -248,14 +257,24 @@ function displayTable(data) {
     yongLixxTableContainer.style.display = 'none';
   }
 
-  // Create other users table if data exists
-  if (otherUsersData.length > 0) {
-    createTableSection(otherUsersData, otherUsersTableHeader, otherUsersTableBody, targetFields, fieldDisplayNames);
-    otherUsersSectionHeader.style.display = 'flex';
-    otherUsersTableContainer.style.display = 'block';
+  // Create small magazine table if data exists
+  if (smallMagazineData.length > 0 && smallMagazineTableHeader && smallMagazineTableBody) {
+    createTableSection(smallMagazineData, smallMagazineTableHeader, smallMagazineTableBody, targetFields, fieldDisplayNames);
+    if (smallMagazineSectionHeader) smallMagazineSectionHeader.style.display = 'flex';
+    if (smallMagazineTableContainer) smallMagazineTableContainer.style.display = 'block';
   } else {
-    otherUsersSectionHeader.style.display = 'none';
-    otherUsersTableContainer.style.display = 'none';
+    if (smallMagazineSectionHeader) smallMagazineSectionHeader.style.display = 'none';
+    if (smallMagazineTableContainer) smallMagazineTableContainer.style.display = 'none';
+  }
+
+  // Create big magazine table if data exists
+  if (bigMagazineData.length > 0 && bigMagazineTableHeader && bigMagazineTableBody) {
+    createTableSection(bigMagazineData, bigMagazineTableHeader, bigMagazineTableBody, targetFields, fieldDisplayNames);
+    if (bigMagazineSectionHeader) bigMagazineSectionHeader.style.display = 'flex';
+    if (bigMagazineTableContainer) bigMagazineTableContainer.style.display = 'block';
+  } else {
+    if (bigMagazineSectionHeader) bigMagazineSectionHeader.style.display = 'none';
+    if (bigMagazineTableContainer) bigMagazineTableContainer.style.display = 'none';
   }
 }
 
@@ -273,7 +292,7 @@ function createTableSection(tableData, tableHeader, tableBody, targetFields, fie
   // Create mobile cards container
   const mobileCards = document.createElement('div');
   mobileCards.className = 'mobile-cards';
-  
+
   // Insert mobile cards after the table container
   const tableContainer = tableBody.parentElement.parentElement;
   tableContainer.parentElement.insertBefore(mobileCards, tableContainer.nextSibling);
@@ -283,16 +302,17 @@ function createTableSection(tableData, tableHeader, tableBody, targetFields, fie
     // Create mobile card
     const card = document.createElement('div');
     card.className = 'mobile-card';
-    
+
     // Card header with number and account
     const cardHeader = document.createElement('div');
     cardHeader.className = 'mobile-card-header';
+
     cardHeader.innerHTML = `
       <div class="mobile-card-number">#${row['No.']}</div>
       <div class="mobile-card-account">${row['ownerUsername'] || 'N/A'}</div>
     `;
     card.appendChild(cardHeader);
-    
+
     // Card stats
     const cardStats = document.createElement('div');
     cardStats.className = 'mobile-card-stats';
@@ -311,7 +331,7 @@ function createTableSection(tableData, tableHeader, tableBody, targetFields, fie
       </div>
     `;
     card.appendChild(cardStats);
-    
+
     // Card link
     if (row['url']) {
       const cardLink = document.createElement('div');
@@ -324,7 +344,7 @@ function createTableSection(tableData, tableHeader, tableBody, targetFields, fie
       `;
       card.appendChild(cardLink);
     }
-    
+
     mobileCards.appendChild(card);
     const tr = document.createElement('tr');
     targetFields.forEach(field => {
@@ -343,19 +363,7 @@ function createTableSection(tableData, tableHeader, tableBody, targetFields, fie
       }
 
       // Special formatting for different field types
-      if (field === 'image') {
-        if (cellValue) {
-          td.innerHTML = `
-            <div style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 1px solid #404040; cursor: pointer; transition: all 0.2s ease;" onclick="window.open('${cellValue}', '_blank')" title="Click to view full image" onmouseover="this.style.borderColor='#64B5F6'" onmouseout="this.style.borderColor='#404040'">
-              <img src="${cellValue}" alt="Instagram image" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.innerHTML='<div style=\\'width: 100%; height: 100%; background: #2a2a2a; display: flex; align-items: center; justify-content: center;\\'><span class=\\'material-icons\\' style=\\'color: #666; font-size: 24px;\\'>broken_image</span></div>'">
-            </div>`;
-        } else {
-          td.innerHTML = `
-            <div style="width: 80px; height: 80px; border-radius: 8px; background: #2a2a2a; display: flex; align-items: center; justify-content: center; border: 1px solid #404040;">
-              <span class="material-icons" style="color: #666; font-size: 24px;">image</span>
-            </div>`;
-        }
-      } else if (field === 'url') {
+      if (field === 'url') {
         if (cellValue) {
           td.innerHTML = `
             <div style="display: flex; align-items: center; gap: 8px;">
@@ -366,19 +374,10 @@ function createTableSection(tableData, tableHeader, tableBody, targetFields, fie
             </div>
           `;
         } else {
-          td.textContent = '';
+          td.textContent = 'N/A';
         }
-      } else if (field === 'No.') {
-        td.style.textAlign = 'center';
-        td.style.fontWeight = 'bold';
-        td.textContent = cellValue;
       } else if (field === 'likesCount' || field === 'commentsCount' || field === 'videoPlayCount') {
-        // Format numbers with commas (xxx,xxx,xxx)
-        if (cellValue && !isNaN(cellValue)) {
-          td.textContent = parseInt(cellValue).toLocaleString();
-        } else {
-          td.textContent = cellValue || '';
-        }
+        td.textContent = parseInt(cellValue).toLocaleString();
       } else {
         // Truncate long text for other fields
         if (cellValue.length > 100) {
@@ -501,8 +500,43 @@ function handleLogout() {
   window.location.href = '../login.html';
 }
 
+// Load configuration
+let config = null;
+
+async function loadConfig() {
+  try {
+    const response = await fetch('config.json');
+    config = await response.json();
+    console.log('Config loaded:', config);
+  } catch (error) {
+    console.error('Error loading config:', error);
+    // Fallback config
+    config = {
+      userCategories: {
+        felix: ["yong.lixx"],
+        bigMagazine: [],
+        smallMagazine: []
+      },
+      defaultCategory: "felix"
+    };
+  }
+}
+
+// Function to categorize user based on config
+function categorizeUser(ownerUsername) {
+  if (!config) return 'felix';
+
+  for (const [category, users] of Object.entries(config.userCategories)) {
+    if (users.includes(ownerUsername)) {
+      return category;
+    }
+  }
+
+  return config.defaultCategory || 'felix';
+}
+
 // Handle drag and drop and auto-load data
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
   // Check authentication first
   if (!checkAuth()) {
     return;
@@ -519,6 +553,9 @@ document.addEventListener('DOMContentLoaded', function () {
     dashboardBtn.addEventListener('click', goToDashboard);
   }
 
+  // Load config first
+  await loadConfig();
+
   // Auto-load CSV data when page loads
   setTimeout(() => {
     loadCsvData();
@@ -530,3 +567,30 @@ document.addEventListener('DOMContentLoaded', function () {
     loadCsvData();
   }, 600000);
 });
+
+// Make function available globally
+window.switchInstagramTab = function (tabName) {
+  // Remove active class from all tabs and panels
+  document.querySelectorAll('.md3-secondary-tab').forEach(tab => {
+    tab.classList.remove('active');
+    tab.setAttribute('aria-selected', 'false');
+  });
+  document.querySelectorAll('.tab-content').forEach(panel => {
+    panel.classList.remove('active');
+  });
+
+  // Add active class to selected tab and panel
+  const selectedTab = document.getElementById(`${tabName}-tab`);
+  const selectedPanel = document.getElementById(`${tabName}-panel`);
+
+  if (selectedTab && selectedPanel) {
+    selectedTab.classList.add('active');
+    selectedTab.setAttribute('aria-selected', 'true');
+    selectedPanel.classList.add('active');
+  }
+
+  // Load data when Felix, small-magazine, or big-magazine tab is selected
+  if (tabName === 'felix' || tabName === 'small-magazine' || tabName === 'big-magazine') {
+    loadCsvData();
+  }
+};

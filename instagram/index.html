@@ -36,38 +36,74 @@
       </div>
     </div>
 
+    <!-- Material Design 3 Secondary Tabs -->
+    <div class="md3-secondary-tabs" role="tablist" aria-label="Instagram sections">
+      <button class="md3-secondary-tab active" role="tab" aria-selected="true" aria-controls="felix-panel"
+        id="felix-tab" onclick="switchInstagramTab('felix')">
+        <span class="material-icons">person</span>
+        Felix
+      </button>
+      <button class="md3-secondary-tab" role="tab" aria-selected="false" aria-controls="big-magazine-panel"
+        id="big-magazine-tab" onclick="switchInstagramTab('big-magazine')">
+        <span class="material-icons">book</span>
+        大雜誌
+      </button>
+      <button class="md3-secondary-tab" role="tab" aria-selected="false" aria-controls="small-magazine-panel"
+        id="small-magazine-tab" onclick="switchInstagramTab('small-magazine')">
+        <span class="material-icons">menu_book</span>
+        小雜誌
+      </button>
+    </div>
+
     <!-- Loading indicator -->
     <div id="loading" class="loading-container" style="display: none;">
       <div class="loading-spinner"></div>
       <p><span class="material-icons">refresh</span> 正在加载和解析数据...</p>
     </div>
 
-    <!-- yong.lixx Data table section -->
-    <div class="section-header" id="yongLixxSectionHeader" style="display: none;">
-      <h4><span class="material-icons">account_circle</span> yong.lixx 帖子</h4>
-      <div id="yongLixxDataTableTitle" style="color: #666; font-size: 14px; text-align: right;"></div>
+    <!-- Tab Content Panels -->
+    <div id="felix-panel" class="tab-content active" role="tabpanel" aria-labelledby="felix-tab">
+      <!-- yong.lixx Data table section -->
+      <div class="section-header" id="yongLixxSectionHeader" style="display: none;">
+        <div id="yongLixxDataTableTitle" style="color: #666; font-size: 14px; text-align: right;"></div>
+      </div>
+
+      <div class="table-container" id="yongLixxTableContainer" style="display: none;">
+        <table id="yongLixxTable" class="data-table">
+          <thead id="yongLixxTableHeader"></thead>
+          <tbody id="yongLixxTableBody"></tbody>
+        </table>
+      </div>
     </div>
 
-    <div class="table-container" id="yongLixxTableContainer" style="display: none;">
-      <table id="yongLixxTable" class="data-table">
-        <thead id="yongLixxTableHeader"></thead>
-        <tbody id="yongLixxTableBody"></tbody>
-      </table>
+    <!-- 大雜誌 Panel -->
+    <div id="big-magazine-panel" class="tab-content" role="tabpanel" aria-labelledby="big-magazine-tab">
+      <!-- Big Magazine Data table section -->
+      <div class="section-header" id="bigMagazineSectionHeader" style="display: none;">
+        <div id="bigMagazineDataTableTitle" style="color: #666; font-size: 14px; text-align: right;"></div>
+      </div>
+
+      <div class="table-container" id="bigMagazineTableContainer" style="display: none;">
+        <table id="bigMagazineTable" class="data-table">
+          <thead id="bigMagazineTableHeader"></thead>
+          <tbody id="bigMagazineTableBody"></tbody>
+        </table>
+      </div>
     </div>
 
-    <div style="padding: 16px;"></div>
+    <!-- 小雜誌 Panel -->
+    <div id="small-magazine-panel" class="tab-content" role="tabpanel" aria-labelledby="small-magazine-tab">
+      <!-- Small Magazine Data table section -->
+      <div class="section-header" id="smallMagazineSectionHeader" style="display: none;">
+        <div id="smallMagazineDataTableTitle" style="color: #666; font-size: 14px; text-align: right;"></div>
+      </div>
 
-    <!-- Other users Data table section -->
-    <div class="section-header" id="otherUsersSectionHeader" style="display: none;">
-      <h4><span class="material-icons">group</span> 其他用户帖子</h4>
-      <div id="otherUsersDataTableTitle" style="color: #666; font-size: 14px; text-align: right;"></div>
-    </div>
-
-    <div class="table-container" id="otherUsersTableContainer" style="display: none;">
-      <table id="otherUsersTable" class="data-table">
-        <thead id="otherUsersTableHeader"></thead>
-        <tbody id="otherUsersTableBody"></tbody>
-      </table>
+      <div class="table-container" id="smallMagazineTableContainer" style="display: none;">
+        <table id="smallMagazineTable" class="data-table">
+          <thead id="smallMagazineTableHeader"></thead>
+          <tbody id="smallMagazineTableBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
