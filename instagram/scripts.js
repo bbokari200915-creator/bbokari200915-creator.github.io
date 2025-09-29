@@ -228,11 +228,15 @@ function displayTable(data) {
   const otherUsersTableHeader = document.getElementById('otherUsersTableHeader');
   const otherUsersTableBody = document.getElementById('otherUsersTableBody');
 
-  // Clear existing table content
+  // Clear existing table content and mobile cards
   yongLixxTableHeader.innerHTML = '';
   yongLixxTableBody.innerHTML = '';
   otherUsersTableHeader.innerHTML = '';
   otherUsersTableBody.innerHTML = '';
+  
+  // Remove existing mobile cards
+  const existingCards = document.querySelectorAll('.mobile-cards');
+  existingCards.forEach(cards => cards.remove());
 
   // Create yong.lixx table if data exists
   if (yongLixxData.length > 0) {
@@ -266,8 +270,62 @@ function createTableSection(tableData, tableHeader, tableBody, targetFields, fie
   });
   tableHeader.appendChild(headerRow);
 
-  // Create data rows
+  // Create mobile cards container
+  const mobileCards = document.createElement('div');
+  mobileCards.className = 'mobile-cards';
+  
+  // Insert mobile cards after the table container
+  const tableContainer = tableBody.parentElement.parentElement;
+  tableContainer.parentElement.insertBefore(mobileCards, tableContainer.nextSibling);
+
+  // Create data rows and mobile cards
   tableData.forEach((row, index) => {
+    // Create mobile card
+    const card = document.createElement('div');
+    card.className = 'mobile-card';
+    
+    // Card header with number and account
+    const cardHeader = document.createElement('div');
+    cardHeader.className = 'mobile-card-header';
+    cardHeader.innerHTML = `
+      <div class="mobile-card-number">#${row['No.']}</div>
+      <div class="mobile-card-account">${row['ownerUsername'] || 'N/A'}</div>
+    `;
+    card.appendChild(cardHeader);
+    
+    // Card stats
+    const cardStats = document.createElement('div');
+    cardStats.className = 'mobile-card-stats';
+    cardStats.innerHTML = `
+      <div class="mobile-card-stat">
+        <div class="mobile-card-stat-label">Likes</div>
+        <div class="mobile-card-stat-value">${row['likesCount'] || '0'}</div>
+      </div>
+      <div class="mobile-card-stat">
+        <div class="mobile-card-stat-label">Comments</div>
+        <div class="mobile-card-stat-value">${row['commentsCount'] || '0'}</div>
+      </div>
+      <div class="mobile-card-stat">
+        <div class="mobile-card-stat-label">Views</div>
+        <div class="mobile-card-stat-value">${row['videoPlayCount'] || '0'}</div>
+      </div>
+    `;
+    card.appendChild(cardStats);
+    
+    // Card link
+    if (row['url']) {
+      const cardLink = document.createElement('div');
+      cardLink.className = 'mobile-card-link';
+      cardLink.innerHTML = `
+        <button onclick="copyToClipboard(\`${row['url']}\`, this)" style="background: none; border: none; cursor: pointer; padding: 4px; border-radius: 3px; color: #9ca3af; font-size: 14px; transition: all 0.2s ease;" title="Copy URL">
+          <span class="material-icons" style="font-size: 16px;">content_copy</span>
+        </button>
+        <a href="${row['url']}" target="_blank" style="color: #64B5F6; text-decoration: none; flex: 1; transition: color 0.2s ease; font-size: 13px;">${row['url'].length > 40 ? row['url'].substring(0, 40) + '...' : row['url']}</a>
+      `;
+      card.appendChild(cardLink);
+    }
+    
+    mobileCards.appendChild(card);
     const tr = document.createElement('tr');
     targetFields.forEach(field => {
       const td = document.createElement('td');
@@ -465,4 +523,10 @@ document.addEventListener('DOMContentLoaded', function () {
   setTimeout(() => {
     loadCsvData();
   }, 1000);
+
+  // Set up automatic refresh every 10 minutes (600,000 milliseconds)
+  setInterval(() => {
+    console.log('Auto-refreshing data...');
+    loadCsvData();
+  }, 600000);
 });

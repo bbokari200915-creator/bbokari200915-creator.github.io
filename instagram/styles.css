@@ -266,28 +266,100 @@ body {
     align-items: center;
   }
 
-  .data-table th,
-  .data-table td {
-    padding: 8px 8px;
-    font-size: 13px;
-  }
-
   .section-header h4 {
     margin: 8px 0;
     line-height: 1.2;
   }
 
-  /* Reduce padding for table containers on mobile */
-  #yongLixxTableContainer .data-section,
-  #otherUsersTableContainer .data-section {
-    padding-left: 12px;
-    padding-right: 12px;
+  /* Hide table and show card layout on mobile */
+  .data-table {
+    display: none;
   }
 
+  .table-container {
+    overflow-x: visible;
+  }
+
+  /* Card layout for mobile */
+  .mobile-cards {
+    display: block !important;
+  }
+
+  .mobile-card {
+    background: #1e1e1e;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid #333;
+  }
+
+  .mobile-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #333;
+  }
+
+  .mobile-card-number {
+    background: #2a2a2a;
+    color: #e1e3e1;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .mobile-card-account {
+    color: #64B5F6;
+    font-weight: 500;
+  }
+
+  .mobile-card-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .mobile-card-stat {
+    text-align: center;
+    padding: 8px;
+    background: #2a2a2a;
+    border-radius: 6px;
+  }
+
+  .mobile-card-stat-label {
+    font-size: 11px;
+    color: #999;
+    margin-bottom: 4px;
+  }
+
+  .mobile-card-stat-value {
+    font-size: 14px;
+    color: #e1e3e1;
+    font-weight: 500;
+  }
+
+  .mobile-card-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Reduce padding for table containers on mobile */
   #yongLixxTableContainer,
   #otherUsersTableContainer {
     padding-left: 0px;
     padding-right: 0px;
+  }
+}
+
+/* Desktop: hide mobile cards */
+@media (min-width: 768px) {
+  .mobile-cards {
+    display: none;
   }
 }
 
