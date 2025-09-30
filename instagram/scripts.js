@@ -138,6 +138,7 @@ function displayTable(data) {
     'commentsCount',
     'videoPlayCount',
     'url',
+    'shortCode',
     'timestamp'
   ];
 
@@ -314,13 +315,25 @@ function createTableSection(tableData, tableHeader, tableBody, targetFields, fie
     const card = document.createElement('div');
     card.className = 'mobile-card';
 
-    // Card header with number and account
+    // Card header with number, link, and account
     const cardHeader = document.createElement('div');
     cardHeader.className = 'mobile-card-header';
 
+    const linkHtml = row['url'] ? `
+      <div class="mobile-card-link-header">
+        <button onclick="copyToClipboard(\`${row['url']}\`, this)" style="background: none; border: none; cursor: pointer; padding: 4px; border-radius: 3px; color: #9ca3af; font-size: 14px; transition: all 0.2s ease;" title="Copy URL">
+          <span class="material-icons" style="font-size: 16px;">content_copy</span>
+        </button>
+        <a href="${row['url']}" target="_blank" style="color: #999; text-decoration: none; transition: color 0.2s ease; font-size: 13px;">${row['shortCode'] || 'Link'}</a>
+      </div>
+    ` : '';
+
     cardHeader.innerHTML = `
-      <div class="mobile-card-number">#${row['No.']}</div>
-      <div class="mobile-card-account">${row['ownerUsername'] || 'N/A'}</div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div class="mobile-card-number">#${row['No.']}</div>
+        ${linkHtml}
+      </div>
+      <div class="mobile-card-account">@${row['ownerUsername'] || 'N/A'}</div>
     `;
     card.appendChild(cardHeader);
 
@@ -342,19 +355,6 @@ function createTableSection(tableData, tableHeader, tableBody, targetFields, fie
       </div>
     `;
     card.appendChild(cardStats);
-
-    // Card link
-    if (row['url']) {
-      const cardLink = document.createElement('div');
-      cardLink.className = 'mobile-card-link';
-      cardLink.innerHTML = `
-        <button onclick="copyToClipboard(\`${row['url']}\`, this)" style="background: none; border: none; cursor: pointer; padding: 4px; border-radius: 3px; color: #9ca3af; font-size: 14px; transition: all 0.2s ease;" title="Copy URL">
-          <span class="material-icons" style="font-size: 16px;">content_copy</span>
-        </button>
-        <a href="${row['url']}" target="_blank" style="color: #64B5F6; text-decoration: none; flex: 1; transition: color 0.2s ease; font-size: 13px;">${row['url'].length > 40 ? row['url'].substring(0, 40) + '...' : row['url']}</a>
-      `;
-      card.appendChild(cardLink);
-    }
 
     mobileCards.appendChild(card);
     const tr = document.createElement('tr');

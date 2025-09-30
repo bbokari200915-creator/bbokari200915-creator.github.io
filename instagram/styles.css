@@ -312,7 +312,8 @@ body {
   }
 
   .mobile-card-account {
-    color: #64B5F6;
+    color: #e1e3e1;
+    font-size: 13px;
     font-weight: 500;
     display: flex;
     align-items: center;
@@ -328,7 +329,6 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 12px;
-    margin-bottom: 12px;
   }
 
   .mobile-card-stat {
@@ -345,15 +345,28 @@ body {
   }
 
   .mobile-card-stat-value {
-    font-size: 14px;
-    color: #e1e3e1;
-    font-weight: 500;
+    font-size: 16px;
+    color: #ffffff;
+    font-weight: 700;
   }
 
   .mobile-card-link {
     display: flex;
     align-items: center;
     gap: 8px;
+  }
+
+  .mobile-card-link-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 200px;
+  }
+
+  .mobile-card-link-header a {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   /* Reduce padding for table containers on mobile */
@@ -495,6 +508,7 @@ body {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -506,6 +520,7 @@ body {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

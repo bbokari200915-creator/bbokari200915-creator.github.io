@@ -1,7 +1,7 @@
 {
   "userCategories": {
     "felix": ["yong.lixx"],
-    "bigMagazine": [],
+    "bigMagazine": ["koreadispatch"],
     "smallMagazine": []
   },
   "defaultCategory": "felix",
