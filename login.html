@@ -299,7 +299,7 @@
       const rememberMe = localStorage.getItem('rememberMe') === 'true';
 
       if (isLoggedIn && rememberMe) {
-        window.location.href = './dashboard.html';
+        window.location.href = './index.html'; //'./dashboard.html';
       }
     }
 
@@ -365,7 +365,7 @@
 
           // Redirect to dashboard selection page after a short delay
           setTimeout(() => {
-            window.location.href = './dashboard.html';
+            window.location.href = './index.html'; //'./dashboard.html';
           }, 1000);
         } else {
           showToast('账号或密码错误，请重试');
