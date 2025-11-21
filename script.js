@@ -13,11 +13,11 @@ let sheetsUrls;
 
 // Check authentication status
 function checkAuth() {
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  if (!isLoggedIn) {
-    window.location.href = './login.html';
-    return false;
-  }
+  // const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  // if (!isLoggedIn) {
+  //   window.location.href = './login.html';
+  //   return false;
+  // }
 
   // Display current user (removed since currentUser element no longer exists)
   // const currentUser = localStorage.getItem('currentUser');
