@@ -15,8 +15,8 @@
     "音银 2": "11/21 音银横版",
     "音中 1": "11/22 音中竖版",
     "音中 2": "11/22 音中横版",
-    "人歌 1": "/ 人歌竖版",
-    "人歌 2": "/ 人歌横版",
+    "人歌 1": "人歌竖版",
+    "人歌 2": "人歌横版"
   },
   "urls": {
     "summarySheetUrl": "https://docs.google.com/spreadsheets/d/1Rn6GFda2OuNkNXlB7o2xLz-YXUknpo8Qe3txCAxCEyA/export?format=csv&gid=0",
