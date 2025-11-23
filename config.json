@@ -15,8 +15,8 @@
     "音银 2": "11/21 音银横版",
     "音中 1": "11/22 音中竖版",
     "音中 2": "11/22 音中横版",
-    "人歌 1": "人歌竖版",
-    "人歌 2": "人歌横版"
+    "人歌 1": "11/23 人歌竖版",
+    "人歌 2": "11/23 人歌横版"
   },
   "urls": {
     "summarySheetUrl": "https://docs.google.com/spreadsheets/d/1Rn6GFda2OuNkNXlB7o2xLz-YXUknpo8Qe3txCAxCEyA/export?format=csv&gid=0",
@@ -25,7 +25,7 @@
       "音银 2": "https://docs.google.com/spreadsheets/d/1Rn6GFda2OuNkNXlB7o2xLz-YXUknpo8Qe3txCAxCEyA/export?format=csv&gid=570063794",
       "音中 1": "https://docs.google.com/spreadsheets/d/1Rn6GFda2OuNkNXlB7o2xLz-YXUknpo8Qe3txCAxCEyA/export?format=csv&gid=101856234",
       "音中 2": "",
-      "人歌 1": "",
+      "人歌 1": "https://docs.google.com/spreadsheets/d/1Rn6GFda2OuNkNXlB7o2xLz-YXUknpo8Qe3txCAxCEyA/export?format=csv&gid=457049118",
       "人歌 2": "",
       "MCD 1": "",
       "MCD 2": "",
